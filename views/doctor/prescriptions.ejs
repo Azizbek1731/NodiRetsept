@@ -1,20 +1,20 @@
-<%- include('../partials/app-head', { pageTitle: 'Retseptlar', pageSub: total + ' ta retsept' }) %>
+<%- include('../partials/app-head', { pageTitle: t('nav.prescriptions'), pageSub: t('rxlist.count', { n: total }) }) %>
 
 <div class="page-head">
-  <div><h2 class="mb-0">Mening retseptlarim</h2>
-    <p class="muted small mb-0">ID, bemor yoki tashxis bo'yicha qidiring</p></div>
-  <button class="btn btn-primary" data-rx-new><%- icon('plus',{size:17}) %> Retsept yozish</button>
+  <div><h2 class="mb-0"><%= t('rxlist.mine') %></h2>
+    <p class="muted small mb-0"><%= t('rxlist.subtitle') %></p></div>
+  <button class="btn btn-primary" data-rx-new><%- icon('plus',{size:17}) %> <%= t('dash.writeRx') %></button>
 </div>
 
 <div class="card mb-3">
   <form method="get" class="row wrap gap-2">
     <div class="grow" style="min-width:180px">
-      <input type="search" name="q" value="<%= q %>" placeholder="NR-XXXX-XXXX, bemor yoki tashxis…">
+      <input type="search" name="q" value="<%= q %>" placeholder="<%= t('rxlist.searchPlaceholder') %>">
     </div>
-    <div><input type="date" name="from" value="<%= from || '' %>" title="Dan"></div>
-    <div><input type="date" name="to" value="<%= to || '' %>" title="Gacha"></div>
-    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Filtr</button>
-    <% if (q || from || to) { %><a class="btn btn-ghost" href="/prescriptions">Tozalash</a><% } %>
+    <div><input type="date" name="from" value="<%= from || '' %>" title="<%= t('rxlist.from') %>"></div>
+    <div><input type="date" name="to" value="<%= to || '' %>" title="<%= t('rxlist.to') %>"></div>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> <%= t('common.filter') %></button>
+    <% if (q || from || to) { %><a class="btn btn-ghost" href="/prescriptions"><%= t('common.clear') %></a><% } %>
   </form>
 </div>
 
@@ -22,13 +22,13 @@
   <% if (prescriptions.length) { %>
     <div class="table-wrap">
       <table class="table">
-        <thead><tr><th>ID</th><th>Bemor</th><th>Tashxis</th><th class="hide-sm">Sana</th>
-          <th class="num hide-sm">Dori</th><th class="num hide-sm">Ko'rilgan</th><th></th></tr></thead>
+        <thead><tr><th><%= t('table.id') %></th><th><%= t('table.patient') %></th><th><%= t('table.diagnosis') %></th><th class="hide-sm"><%= t('table.date') %></th>
+          <th class="num hide-sm"><%= t('table.drugs') %></th><th class="num hide-sm"><%= t('table.viewed') %></th><th></th></tr></thead>
         <tbody>
           <% prescriptions.forEach(function (r) { %>
             <tr>
               <td class="mono small nowrap"><%= r.pretty_id %>
-                <% if (r.status === 'cancelled') { %><br><span class="badge danger">bekor qilingan</span><% } %></td>
+                <% if (r.status === 'cancelled') { %><br><span class="badge danger"><%= t('rxlist.cancelled') %></span><% } %></td>
               <td><a class="rowlink" href="/patients/<%= r.patient_id %>"><%= r.patient_name %></a>
                 <div class="tiny muted"><%= r.birth_year || '' %></div></td>
               <td class="truncate" style="max-width:240px"><%= r.diagnosis || '—' %></td>
@@ -36,13 +36,13 @@
               <td class="num hide-sm"><%= r.item_count %></td>
               <td class="num hide-sm small"><%= r.view_count %></td>
               <td class="right nowrap">
-                <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>" title="Ko'rish"><%- icon('eye',{size:15}) %></a>
+                <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>" title="<%= t('common.view') %>"><%- icon('eye',{size:15}) %></a>
                 <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>/pdf" title="PDF"><%- icon('download',{size:15}) %></a>
-                <button class="btn btn-sm btn-ghost" data-rx-edit="<%= r.id %>" title="Tahrirlash"><%- icon('edit',{size:15}) %></button>
+                <button class="btn btn-sm btn-ghost" data-rx-edit="<%= r.id %>" title="<%= t('common.edit') %>"><%- icon('edit',{size:15}) %></button>
                 <% if (r.status === 'cancelled') { %>
-                  <button class="btn btn-sm btn-ghost" data-rx-restore="<%= r.id %>" title="Qayta faollashtirish"><%- icon('refresh',{size:15}) %></button>
+                  <button class="btn btn-sm btn-ghost" data-rx-restore="<%= r.id %>" title="<%= t('rxlist.restoreBtn') %>"><%- icon('refresh',{size:15}) %></button>
                 <% } else { %>
-                  <button class="btn btn-sm btn-ghost" data-rx-cancel="<%= r.id %>" title="Bekor qilish"><%- icon('x',{size:15}) %></button>
+                  <button class="btn btn-sm btn-ghost" data-rx-cancel="<%= r.id %>" title="<%= t('rxlist.cancelBtn') %>"><%- icon('x',{size:15}) %></button>
                 <% } %>
               </td>
             </tr>
@@ -52,9 +52,9 @@
     </div>
     <%- include('../partials/pager', { total, page, perPage, query: { q, from, to } }) %>
   <% } else { %>
-    <div class="empty"><%- icon('file',{size:46}) %><h3>Retsept topilmadi</h3>
-      <p>Filtrni o'zgartiring yoki yangi retsept yozing.</p>
-      <button class="btn btn-primary mt-2" data-rx-new><%- icon('plus',{size:16}) %> Retsept yozish</button></div>
+    <div class="empty"><%- icon('file',{size:46}) %><h3><%= t('rxlist.empty') %></h3>
+      <p><%= t('rxlist.emptyText') %></p>
+      <button class="btn btn-primary mt-2" data-rx-new><%- icon('plus',{size:16}) %> <%= t('dash.writeRx') %></button></div>
   <% } %>
 </div>
 

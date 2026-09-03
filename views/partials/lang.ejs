@@ -1,0 +1,7 @@
+<div class="lang-switch" role="group" aria-label="<%= t('lang.choose') %>">
+  <% locales.forEach(function (l) { %>
+    <a href="/lang/<%= l.code %>?next=<%= encodeURIComponent(currentUrl) %>"
+       class="<%= l.code === locale ? 'active' : '' %>"
+       hreflang="<%= l.code %>" title="<%= l.name %>"><%= l.short %></a>
+  <% }) %>
+</div>

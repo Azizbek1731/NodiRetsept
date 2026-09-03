@@ -1,12 +1,12 @@
-<%- include('../partials/app-head', { pageTitle: 'Retseptlar', pageSub: total + ' ta retsept' }) %>
+<%- include('../partials/app-head', { pageTitle: t('rxlist.allTitle'), pageSub: t('rxlist.count', { n: total }) }) %>
 
 <div class="card mb-3">
   <form method="get" class="row wrap gap-2">
     <div class="grow" style="min-width:170px">
-      <input type="search" name="q" value="<%= q %>" placeholder="NR-XXXX-XXXX, bemor yoki tashxis…"></div>
+      <input type="search" name="q" value="<%= q %>" placeholder="<%= t('rxlist.searchPlaceholder') %>"></div>
     <div>
       <select name="doctor">
-        <option value="">Barcha shifokorlar</option>
+        <option value=""><%= t('rxlist.allDoctors') %></option>
         <% doctors.forEach(function (d) { %>
           <option value="<%= d.id %>" <%= String(doctorId) === String(d.id) ? 'selected' : '' %>><%= d.full_name %></option>
         <% }) %>
@@ -14,8 +14,8 @@
     </div>
     <div><input type="date" name="from" value="<%= from || '' %>"></div>
     <div><input type="date" name="to" value="<%= to || '' %>"></div>
-    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Filtr</button>
-    <% if (q || from || to || doctorId) { %><a class="btn btn-ghost" href="/admin/prescriptions">Tozalash</a><% } %>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> <%= t('common.filter') %></button>
+    <% if (q || from || to || doctorId) { %><a class="btn btn-ghost" href="/admin/prescriptions"><%= t('common.clear') %></a><% } %>
   </form>
 </div>
 
@@ -23,13 +23,13 @@
   <% if (prescriptions.length) { %>
     <div class="table-wrap">
       <table class="table">
-        <thead><tr><th>ID</th><th>Bemor</th><th class="hide-sm">Shifokor</th><th>Tashxis</th>
-          <th class="hide-sm">Sana</th><th class="num hide-sm">Ko'rilgan</th><th></th></tr></thead>
+        <thead><tr><th><%= t('table.id') %></th><th><%= t('table.patient') %></th><th class="hide-sm"><%= t('table.doctor') %></th><th><%= t('table.diagnosis') %></th>
+          <th class="hide-sm"><%= t('table.date') %></th><th class="num hide-sm"><%= t('table.viewed') %></th><th></th></tr></thead>
         <tbody>
           <% prescriptions.forEach(function (r) { %>
             <tr>
               <td class="mono small nowrap"><%= r.pretty_id %>
-                <% if (r.status === 'cancelled') { %><br><span class="badge danger">bekor</span><% } %></td>
+                <% if (r.status === 'cancelled') { %><br><span class="badge danger"><%= t('rxlist.cancelledShort') %></span><% } %></td>
               <td class="truncate" style="max-width:190px"><%= r.patient_name %>
                 <div class="tiny muted"><%= r.birth_year || '' %></div></td>
               <td class="hide-sm small"><%= fmt.shortName(r.doctor_name) %></td>
@@ -47,7 +47,7 @@
     </div>
     <%- include('../partials/pager', { total, page, perPage, query: { q, from, to, doctor: doctorId } }) %>
   <% } else { %>
-    <div class="empty"><%- icon('file',{size:46}) %><h3>Retsept topilmadi</h3></div>
+    <div class="empty"><%- icon('file',{size:46}) %><h3><%= t('rxlist.empty') %></h3></div>
   <% } %>
 </div>
 

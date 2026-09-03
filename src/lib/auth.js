@@ -37,7 +37,7 @@ function wantsJson(req) {
 
 function requireAuth(req, res, next) {
   if (req.user) return next();
-  if (wantsJson(req)) return res.status(401).json({ ok: false, error: 'Avval tizimga kiring' });
+  if (wantsJson(req)) return res.status(401).json({ ok: false, error: req.t('err.loginFirst') });
   const back = encodeURIComponent(req.originalUrl || '/');
   return res.redirect(`/login?next=${back}`);
 }
@@ -46,10 +46,9 @@ function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user) return requireAuth(req, res, next);
     if (roles.includes(req.user.role)) return next();
-    if (wantsJson(req)) return res.status(403).json({ ok: false, error: 'Ruxsat yo\'q' });
+    if (wantsJson(req)) return res.status(403).json({ ok: false, error: req.t('err.noAccess') });
     return res.status(403).render('error', {
-      title: 'Ruxsat yo\'q', code: 403,
-      message: 'Bu bo\'limga kirish huquqingiz yo\'q.',
+      title: req.t('err.noAccess'), code: 403, message: req.t('err.noAccessPage'),
     });
   };
 }

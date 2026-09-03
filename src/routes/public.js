@@ -14,7 +14,7 @@ module.exports = function publicRoutes(lookupLimiter) {
   router.get('/', (req, res) => {
     if (req.user) return res.redirect(req.user.role === 'admin' ? '/admin' : '/dashboard');
     res.render('public/home', {
-      title: 'NodiRetsept — retseptni onlayn tekshirish',
+      title: req.t('home.title'),
       bodyClass: 'public-page',
       notFound: req.query.notfound ? String(req.query.q || '') : null,
     });
@@ -34,7 +34,7 @@ module.exports = function publicRoutes(lookupLimiter) {
 
   // QR skaner sahifasi
   router.get('/scan', (req, res) => {
-    res.render('public/scan', { title: 'QR kodni skanerlash', bodyClass: 'public-page' });
+    res.render('public/scan', { title: req.t('scan.title'), bodyClass: 'public-page' });
   });
 
   // Retseptni ommaviy ko'rish
@@ -43,7 +43,7 @@ module.exports = function publicRoutes(lookupLimiter) {
       const rx = rxLib.getByPublicId(req.params.publicId);
       if (!rx) {
         return res.status(404).render('public/not-found', {
-          title: 'Retsept topilmadi', bodyClass: 'public-page',
+          title: req.t('notfound.title'), bodyClass: 'public-page',
           q: String(req.params.publicId || ''),
         });
       }
@@ -55,7 +55,7 @@ module.exports = function publicRoutes(lookupLimiter) {
       rx.url = qr.prescriptionUrl(rx.public_id);
       rx.qrDataUrl = await qr.toDataUrl(rx.url, { width: 320 });
       res.render('public/prescription', {
-        title: `Retsept ${rx.pretty_id}`,
+        title: `${req.t('rx.title')} ${rx.pretty_id}`,
         bodyClass: 'public-page rx-page',
         rx,
         isStaff: !!req.user,
@@ -68,9 +68,9 @@ module.exports = function publicRoutes(lookupLimiter) {
     try {
       const rx = rxLib.getByPublicId(req.params.publicId);
       if (!rx) return res.status(404).render('public/not-found', {
-        title: 'Retsept topilmadi', bodyClass: 'public-page', q: String(req.params.publicId || ''),
+        title: req.t('notfound.title'), bodyClass: 'public-page', q: String(req.params.publicId || ''),
       });
-      const buf = await pdfLib.buildPrescriptionPdf(rx);
+      const buf = await pdfLib.buildPrescriptionPdf(rx, req.locale);
       h.run('INSERT INTO access_log (prescription_id, channel, meta, created_at) VALUES (?,?,?,?)',
         rx.id, 'pdf', null, new Date().toISOString());
       res.setHeader('Content-Type', 'application/pdf');

@@ -2,7 +2,7 @@
 <div class="auth-card">
   <div class="brandline">
     <img class="logo" src="/static/img/logo-mark.svg" alt="NodiRetsept" width="42" height="42">
-    <span><span class="nm">NodiRetsept</span><small>Shifokor va administrator kabineti</small></span>
+    <span><span class="nm">NodiRetsept</span><small><%= t('auth.subtitle') %></small></span>
   </div>
 
   <% if (error) { %>
@@ -12,19 +12,20 @@
   <form method="post" action="/login" autocomplete="on">
     <input type="hidden" name="next" value="<%= next %>">
     <div class="field">
-      <label for="username">Login</label>
+      <label for="username"><%= t('auth.login') %></label>
       <input type="text" id="username" name="username" value="<%= username %>" required autofocus
-             autocapitalize="none" autocomplete="username" placeholder="Masalan: nodira">
+             autocapitalize="none" autocomplete="username" placeholder="<%= t('auth.loginPlaceholder') %>">
     </div>
     <div class="field">
-      <label for="password">Parol</label>
+      <label for="password"><%= t('auth.password') %></label>
       <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
     </div>
-    <button class="btn btn-primary btn-lg btn-block mt-1">Kirish</button>
+    <button class="btn btn-primary btn-lg btn-block mt-1"><%= t('auth.submit') %></button>
   </form>
 
+  <div class="center mt-2"><%- include('partials/lang') %></div>
   <div class="auth-hint">
-    Bemormisiz? <a href="/">Retseptni ID yoki QR orqali toping</a>
+    <%= t('auth.patientQ') %> <a href="/"><%= t('auth.patientLink') %></a>
   </div>
 </div>
 <div id="toasts"></div>

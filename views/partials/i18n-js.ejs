@@ -1,0 +1,22 @@
+<script>
+  /* Klient JS uchun tarjimalar — serverda tanlangan tilda uzatiladi */
+  window.I18N = <%- JSON.stringify({
+    locale,
+    js: t('js.copied') !== 'js.copied' ? {
+      copied: t('js.copied'), copyFailed: t('js.copyFailed'), patientAdded: t('js.patientAdded'),
+      enterName: t('js.enterName'), enterYear: t('js.enterYear'), selectExisting: t('js.selectExisting'),
+      rxSaved: t('js.rxSaved'), cancelConfirm: t('js.cancelConfirm'), restoreConfirm: t('js.restoreConfirm'),
+      cancelled: t('js.cancelled'), restored: t('js.restored'),
+      selectPatientFirst: t('js.selectPatientFirst'), enterVisitDate: t('js.enterVisitDate'),
+      enterDiagnosis: t('js.enterDiagnosis'), needDrugOrPhysio: t('js.needDrugOrPhysio'),
+      yearsOld: t('js.yearsOld'), yearShort: t('js.yearShort'), rxCount: t('js.rxCount'),
+      notFoundInList: t('js.notFoundInList'), createNewCard: t('js.createNewCard'),
+      newPatient: t('editor.newPatient'), notSpecified: t('common.notSpecified'),
+      editTitle: t('editor.editTitle'), readyTitle: t('editor.readyTitle'),
+      updatedTitle: t('editor.updatedTitle'), readySub: t('editor.readySub'),
+      submitEdit: t('editor.submitEdit'),
+      scanUnsupported: t('scan.errUnsupported'), scanDenied: t('scan.errDenied'),
+      scanOpen: t('scan.errOpen'), scanNotOurs: t('scan.errNotOurs'), scanFound: t('scan.found')
+    } : {}
+  }) %>;
+</script>

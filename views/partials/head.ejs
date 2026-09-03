@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="<%= locale %>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e7c86">
-<meta name="description" content="NodiRetsept — shifokor yozgan retseptni QR kod yoki ID orqali onlayn olish tizimi.">
+<meta name="description" content="<%= t('meta.description') %>">
 <title><%= title %> · NodiRetsept</title>
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="icon" type="image/svg+xml" href="/static/img/logo-mark.svg">
@@ -16,9 +16,9 @@
 <!-- Ijtimoiy tarmoqlarda havola ko'rinishi -->
 <meta property="og:site_name" content="NodiRetsept">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="uz_UZ">
+<meta property="og:locale" content="<%= { ru: 'ru_RU', en: 'en_US', 'uz-Cyrl': 'uz_Cyrl_UZ' }[locale] || 'uz_UZ' %>">
 <meta property="og:title" content="<%= title %>">
-<meta property="og:description" content="Shifokor yozgan retseptni QR kod yoki ID orqali onlayn oling va PDF sifatida yuklab oling.">
+<meta property="og:description" content="<%= t('meta.ogDescription') %>">
 <meta property="og:image" content="<%= publicUrl %>/static/img/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -26,7 +26,7 @@
 <meta property="og:url" content="<%= publicUrl %><%= currentPath %>">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<%= title %>">
-<meta name="twitter:description" content="Shifokor yozgan retseptni QR kod yoki ID orqali onlayn oling.">
+<meta name="twitter:description" content="<%= t('meta.ogDescription') %>">
 <meta name="twitter:image" content="<%= publicUrl %>/static/img/og-image.jpg">
 </head>
 <body class="<%= bodyClass || '' %>">

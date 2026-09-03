@@ -5,9 +5,9 @@
     <h2 class="mt-2"><%= title %></h2>
     <p class="muted"><%= message %></p>
     <div class="row center gap-2" style="justify-content:center">
-      <a class="btn btn-primary" href="/">Bosh sahifa</a>
+      <a class="btn btn-primary" href="/"><%= t('notfound.home') %></a>
       <% if (currentUser) { %>
-        <a class="btn" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>">Kabinetga qaytish</a>
+        <a class="btn" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>"><%= t('notfound.backCabinet') %></a>
       <% } %>
     </div>
   </div>

@@ -3,16 +3,15 @@
   <div class="avatar lg" style="margin:0 auto 14px;background:var(--danger-bg);color:var(--danger);border-color:#f3ccc8">
     <%- icon('alert',{size:26}) %>
   </div>
-  <h2>Retsept topilmadi</h2>
+  <h2><%= t('notfound.title') %></h2>
   <p class="muted">
-    <% if (q) { %><strong><%= q %></strong> bo'yicha hech narsa topilmadi.<br><% } %>
-    ID ni tekshiring — u <span class="mono">NR-XXXX-XXXX</span> ko'rinishida bo'ladi.
-    Muammo davom etsa shifokoringizga murojaat qiling.
+    <% if (q) { %><%- t('notfound.nothing', { id: q }) %><br><% } %>
+    <%- t('notfound.checkId') %>
   </p>
   <form class="search-form mt-2" method="get" action="/search">
     <input type="text" name="id" data-rx-id-input placeholder="NR-XXXX-XXXX" required>
-    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Qayta izlash</button>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> <%= t('notfound.again') %></button>
   </form>
-  <div class="mt-2"><a class="btn btn-ghost" href="/scan"><%- icon('qr',{size:16}) %> QR kodni skanerlash</a></div>
+  <div class="mt-2"><a class="btn btn-ghost" href="/scan"><%- icon('qr',{size:16}) %> <%= t('home.scanQr') %></a></div>
 </div>
 <%- include('../partials/pub-foot') %>

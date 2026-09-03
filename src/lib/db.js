@@ -164,6 +164,13 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires);
 `);
 
+/* ── Migratsiyalar (mavjud bazani yangilash) ────────────── */
+function addColumnIfMissing(table, column, definition) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
+  if (!cols.includes(column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+}
+addColumnIfMissing('telegram_users', 'lang', 'TEXT');   // bot tili
+
 /** Tashqi kod uchun qulay yordamchilar */
 const helpers = {
   get(sql, ...params) { return db.prepare(sql).get(...params); },

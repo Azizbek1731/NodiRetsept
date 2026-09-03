@@ -4,10 +4,10 @@
     <div class="modal-head">
       <span class="avatar" style="background:var(--brand);color:#fff;border-color:transparent"><%- icon('rx',{size:19}) %></span>
       <div class="grow">
-        <h2 id="rxModalTitle">Retsept yozish</h2>
-        <div class="sub" id="rxModalSub">Bemorni tanlang va tayinlovlarni kiriting</div>
+        <h2 id="rxModalTitle"><%= t('editor.newTitle') %></h2>
+        <div class="sub" id="rxModalSub"><%= t('editor.subtitle') %></div>
       </div>
-      <button class="btn btn-ghost btn-icon" data-rx-close aria-label="Yopish"><%- icon('x',{size:19}) %></button>
+      <button class="btn btn-ghost btn-icon" data-rx-close aria-label="<%= t('common.close') %>"><%- icon('x',{size:19}) %></button>
     </div>
 
     <div class="modal-body">
@@ -17,7 +17,7 @@
 
         <!-- Bemor tanlash -->
         <fieldset>
-          <legend>1. Bemor</legend>
+          <legend><%= t('editor.step1') %></legend>
           <div id="patientPicked" class="hide mb-2">
             <div class="selected-patient">
               <span class="avatar" id="ppAvatar">—</span>
@@ -25,65 +25,65 @@
                 <div class="strong" id="ppName">—</div>
                 <div class="small muted" id="ppMeta">—</div>
               </div>
-              <button type="button" class="btn btn-sm" id="ppChange">O'zgartirish</button>
+              <button type="button" class="btn btn-sm" id="ppChange"><%= t('editor.change') %></button>
             </div>
             <input type="hidden" name="patient_id" id="patientId">
           </div>
 
           <div id="patientSearchWrap">
             <div class="field picker" style="margin-bottom:6px">
-              <label for="patientSearch">Bemorni qidiring <span class="req">*</span></label>
-              <input type="text" id="patientSearch" autocomplete="off" placeholder="F.I.Sh., telefon yoki bemor kodi…">
+              <label for="patientSearch"><%= t('editor.searchPatient') %> <span class="req">*</span></label>
+              <input type="text" id="patientSearch" autocomplete="off" placeholder="<%= t('editor.searchPlaceholder') %>">
               <div class="picker-results" id="patientResults"></div>
             </div>
-            <div class="hint">Bemor ro'yxatda bo'lmasa — qidiruv natijasidagi «+ Yangi bemor qo'shish» tugmasidan foydalaning.</div>
+            <div class="hint"><%= t('editor.searchHint') %></div>
           </div>
 
           <!-- Yangi bemor -->
           <div id="newPatientBox" class="hide card mt-2" style="background:#fbfdfd">
             <div class="row between mb-2">
-              <h4 class="mb-0">Yangi bemor qo'shish</h4>
-              <button type="button" class="btn btn-ghost btn-sm" id="npCancel"><%- icon('x',{size:15}) %> Bekor</button>
+              <h4 class="mb-0"><%= t('editor.newPatient') %></h4>
+              <button type="button" class="btn btn-ghost btn-sm" id="npCancel"><%- icon('x',{size:15}) %> <%= t('common.cancel') %></button>
             </div>
             <div class="form-grid">
               <div class="field">
-                <label for="npName">Ism, familiya, sharifi <span class="req">*</span></label>
-                <input type="text" id="npName" placeholder="Masalan: Rahimov Jasur Baxtiyorovich">
+                <label for="npName"><%= t('editor.npName') %> <span class="req">*</span></label>
+                <input type="text" id="npName" placeholder="<%= t('editor.npNamePlaceholder') %>">
               </div>
               <div class="field">
-                <label for="npYear">Tug'ilgan yili <span class="req">*</span></label>
+                <label for="npYear"><%= t('editor.npYear') %> <span class="req">*</span></label>
                 <input type="number" id="npYear" min="1900" max="<%= new Date().getFullYear() %>" placeholder="1990" inputmode="numeric">
               </div>
               <div class="field">
-                <label for="npGender">Jinsi</label>
-                <select id="npGender"><option value="">—</option><option>Erkak</option><option>Ayol</option></select>
+                <label for="npGender"><%= t('editor.npGender') %></label>
+                <select id="npGender"><option value="">—</option><% editor.genders.forEach(function(g){ %><option><%= g %></option><% }) %></select>
               </div>
               <div class="field">
-                <label for="npPhone">Telefon</label>
+                <label for="npPhone"><%= t('editor.npPhone') %></label>
                 <input type="tel" id="npPhone" placeholder="+998 90 123 45 67">
               </div>
             </div>
             <div class="field">
-              <label for="npAddress">Manzil</label>
-              <input type="text" id="npAddress" placeholder="Shahar, tuman, ko'cha">
+              <label for="npAddress"><%= t('editor.npAddress') %></label>
+              <input type="text" id="npAddress" placeholder="<%= t('editor.npAddressPlaceholder') %>">
             </div>
             <div class="row end">
-              <button type="button" class="btn btn-primary" id="npSave"><%- icon('check',{size:16}) %> Bemorni saqlash</button>
+              <button type="button" class="btn btn-primary" id="npSave"><%- icon('check',{size:16}) %> <%= t('editor.npSave') %></button>
             </div>
           </div>
         </fieldset>
 
         <!-- Blanka -->
         <fieldset>
-          <legend>2. Retsept blankasi</legend>
+          <legend><%= t('editor.step2') %></legend>
           <div class="form-grid">
             <div class="field">
-              <label for="rxDate">Kelgan sanasi <span class="req">*</span></label>
+              <label for="rxDate"><%= t('editor.visitDate') %> <span class="req">*</span></label>
               <input type="date" id="rxDate" name="visit_date" value="<%= editor.today %>">
             </div>
             <% if (editor.canPickDoctor) { %>
             <div class="field">
-              <label for="rxDoctor">Shifokor</label>
+              <label for="rxDoctor"><%= t('editor.doctorSelect') %></label>
               <select id="rxDoctor" name="doctor_id">
                 <% editor.doctors.forEach(function(d){ %>
                   <option value="<%= d.id %>"><%= d.full_name %><%= d.specialty ? ' — ' + d.specialty : '' %></option>
@@ -93,16 +93,16 @@
             <% } %>
           </div>
           <div class="field">
-            <label for="rxComplaints">Shikoyatlar</label>
-            <textarea id="rxComplaints" name="complaints" rows="2" placeholder="Bemorning shikoyatlari…"></textarea>
+            <label for="rxComplaints"><%= t('editor.complaints') %></label>
+            <textarea id="rxComplaints" name="complaints" rows="2" placeholder="<%= t('editor.complaintsPlaceholder') %>"></textarea>
           </div>
           <div class="form-grid dx">
             <div class="field">
-              <label for="rxDiagnosis">Dastlabki tashxis <span class="req">*</span></label>
-              <input type="text" id="rxDiagnosis" name="diagnosis" placeholder="Masalan: O'tkir respirator virusli infeksiya">
+              <label for="rxDiagnosis"><%= t('editor.diagnosis') %> <span class="req">*</span></label>
+              <input type="text" id="rxDiagnosis" name="diagnosis" placeholder="<%= t('editor.diagnosisPlaceholder') %>">
             </div>
             <div class="field">
-              <label for="rxIcd">МКБ-10 kodi</label>
+              <label for="rxIcd"><%= t('editor.icd') %></label>
               <input type="text" id="rxIcd" name="icd10" placeholder="J06.9" style="text-transform:uppercase">
             </div>
           </div>
@@ -110,30 +110,30 @@
 
         <!-- Dorilar -->
         <fieldset>
-          <legend>3. Rp. — dori vositalari</legend>
+          <legend><%= t('editor.step3') %></legend>
           <div id="drugList"></div>
-          <button type="button" class="btn btn-soft btn-block" id="addDrug"><%- icon('plus',{size:16}) %> Dori qo'shish</button>
+          <button type="button" class="btn btn-soft btn-block" id="addDrug"><%- icon('plus',{size:16}) %> <%= t('editor.addDrug') %></button>
         </fieldset>
 
         <!-- Fizioterapiya va tavsiyalar -->
         <fieldset>
-          <legend>4. Fizioterapiya va tavsiyalar</legend>
+          <legend><%= t('editor.step4') %></legend>
           <div class="field">
-            <label for="rxPhysio">Fizioterapiya va muolajalar</label>
-            <textarea id="rxPhysio" name="physiotherapy" rows="2" placeholder="Masalan: Magnitoterapiya — 10 seans; massaj — 8 seans"></textarea>
+            <label for="rxPhysio"><%= t('editor.physio') %></label>
+            <textarea id="rxPhysio" name="physiotherapy" rows="2" placeholder="<%= t('editor.physioPlaceholder') %>"></textarea>
             <div class="suggest-row">
-              <% ['Magnitoterapiya — 10 seans','Elektroforez — 10 seans','UVCh — 5 seans','Massaj — 10 seans','Davolash gimnastikasi','Ingalyatsiya — 5 kun'].forEach(function(s){ %>
+              <% editor.physioSuggest.forEach(function(s){ %>
                 <button type="button" data-append="#rxPhysio" data-text="<%= s %>"><%= s %></button>
               <% }) %>
             </div>
           </div>
           <div class="field">
-            <label for="rxRecommend">Tavsiyalar</label>
-            <textarea id="rxRecommend" name="recommendations" rows="2" placeholder="Parhez, rejim, nazorat tahlillari…"></textarea>
+            <label for="rxRecommend"><%= t('editor.recommendations') %></label>
+            <textarea id="rxRecommend" name="recommendations" rows="2" placeholder="<%= t('editor.recommendationsPlaceholder') %>"></textarea>
           </div>
           <div class="form-grid">
             <div class="field">
-              <label for="rxNext">Keyingi qabul sanasi</label>
+              <label for="rxNext"><%= t('editor.nextVisit') %></label>
               <input type="date" id="rxNext" name="next_visit">
             </div>
           </div>
@@ -141,23 +141,22 @@
 
         <!-- Shifokor -->
         <fieldset style="margin-bottom:0">
-          <legend>5. Shifokor ma'lumotlari</legend>
+          <legend><%= t('editor.step5') %></legend>
           <div class="card" style="background:#fbfdfd;padding:14px">
             <div class="row gap-2">
               <span class="avatar"><%= fmt.initials(currentUser.full_name) %></span>
               <div class="grow">
                 <div class="strong"><%= currentUser.full_name %></div>
                 <div class="small muted">
-                  <%= currentUser.specialty || 'Shifokor' %><% if (currentUser.phone) { %> · <%= fmt.phoneFmt(currentUser.phone) %><% } %>
+                  <%= currentUser.specialty || t('profile.doctorRole') %><% if (currentUser.phone) { %> · <%= fmt.phoneFmt(currentUser.phone) %><% } %>
                 </div>
               </div>
               <span class="badge <%= currentUser.stamp_path ? 'ok' : 'warn' %>">
-                <%- icon('stamp',{size:13}) %> <%= currentUser.stamp_path ? 'Pechat mavjud' : 'Pechat yuklanmagan' %>
+                <%- icon('stamp',{size:13}) %> <%= currentUser.stamp_path ? t('editor.stampOk') : t('editor.stampMissing') %>
               </span>
             </div>
             <% if (!currentUser.stamp_path && currentUser.role === 'doctor') { %>
-              <div class="hint mt-1">Blankada pechat chiqishi uchun <a href="/profile">profilingizga</a> pechat rasmini yuklang
-                yoki administratorga murojaat qiling.</div>
+              <div class="hint mt-1"><%- t('editor.stampHint') %></div>
             <% } %>
           </div>
         </fieldset>
@@ -167,27 +166,27 @@
 
       <!-- ── Muvaffaqiyat ── -->
       <div id="rxSuccess" class="hide success-panel">
-        <div class="mb-2"><span class="badge ok"><%- icon('checkCircle',{size:14}) %> Retsept saqlandi</span></div>
-        <div class="qr-box"><img id="okQr" alt="QR kod"></div>
+        <div class="mb-2"><span class="badge ok"><%- icon('checkCircle',{size:14}) %> <%= t('editor.savedBadge') %></span></div>
+        <div class="qr-box"><img id="okQr" alt="QR"></div>
         <div class="idbig" id="okId">—</div>
-        <div class="small muted">Bemor QR kodni skanerlab yoki ushbu ID ni kiritib retseptni ochadi</div>
+        <div class="small muted"><%= t('editor.qrHint') %></div>
         <div class="copy-field">
           <input type="text" id="okLink" readonly>
-          <button type="button" class="btn btn-sm" id="okCopy"><%- icon('copy',{size:14}) %> Nusxa</button>
+          <button type="button" class="btn btn-sm" id="okCopy"><%- icon('copy',{size:14}) %> <%= t('common.copy') %></button>
         </div>
         <div class="rx-actions mt-3">
-          <a class="btn btn-primary" id="okView" target="_blank"><%- icon('eye',{size:16}) %> Retseptni ochish</a>
-          <a class="btn" id="okPdf"><%- icon('download',{size:16}) %> PDF yuklab olish</a>
-          <a class="btn" id="okPrint" target="_blank"><%- icon('print',{size:16}) %> Chop etish</a>
+          <a class="btn btn-primary" id="okView" target="_blank"><%- icon('eye',{size:16}) %> <%= t('editor.openRx') %></a>
+          <a class="btn" id="okPdf"><%- icon('download',{size:16}) %> <%= t('rx.downloadPdf') %></a>
+          <a class="btn" id="okPrint" target="_blank"><%- icon('print',{size:16}) %> <%= t('common.print') %></a>
         </div>
       </div>
     </div>
 
     <div class="modal-foot">
-      <div class="grow small muted hide-sm" id="rxFootHint">Saqlangach retseptga ID va QR kod avtomatik beriladi</div>
-      <button type="button" class="btn" data-rx-close>Yopish</button>
-      <button type="button" class="btn btn-primary" id="rxSave"><%- icon('check',{size:16}) %> Saqlash va QR olish</button>
-      <button type="button" class="btn btn-primary hide" id="rxAgain"><%- icon('plus',{size:16}) %> Yangi retsept</button>
+      <div class="grow small muted hide-sm" id="rxFootHint"><%= t('editor.footHint') %></div>
+      <button type="button" class="btn" data-rx-close><%= t('common.close') %></button>
+      <button type="button" class="btn btn-primary" id="rxSave"><%- icon('check',{size:16}) %> <%= t('editor.submit') %></button>
+      <button type="button" class="btn btn-primary hide" id="rxAgain"><%- icon('plus',{size:16}) %> <%= t('editor.again') %></button>
     </div>
   </div>
 </div>
@@ -197,50 +196,50 @@
   <div class="drug-row" data-drug-row>
     <div class="drug-head">
       <span class="drug-num">1</span>
-      <div class="grow strong small">Dori vositasi</div>
-      <button type="button" class="btn btn-ghost btn-sm" data-drug-remove title="O'chirish"><%- icon('trash',{size:15}) %></button>
+      <div class="grow strong small"><%= t('editor.drugItem') %></div>
+      <button type="button" class="btn btn-ghost btn-sm" data-drug-remove title="<%= t('editor.removeDrug') %>"><%- icon('trash',{size:15}) %></button>
     </div>
     <div class="grid-3">
       <div class="field picker">
-        <label>Xalqaro nomi (INN) <span class="req">*</span></label>
-        <input type="text" data-f="drug_name" autocomplete="off" placeholder="Masalan: Amoxicillinum">
+        <label><%= t('editor.drugName') %> <span class="req">*</span></label>
+        <input type="text" data-f="drug_name" autocomplete="off" placeholder="<%= t('editor.drugNamePlaceholder') %>">
         <div class="picker-results" data-drug-results></div>
       </div>
       <div class="field">
-        <label>Dozasi</label>
+        <label><%= t('editor.strength') %></label>
         <input type="text" data-f="strength" placeholder="500 mg">
       </div>
       <div class="field">
-        <label>Shakli</label>
+        <label><%= t('editor.form') %></label>
         <input type="text" data-f="form" list="formList" placeholder="tab.">
       </div>
     </div>
     <div class="grid-4">
       <div class="field">
-        <label>Miqdori (D.t.d. N.)</label>
+        <label><%= t('editor.quantity') %></label>
         <input type="text" data-f="quantity" placeholder="20" inputmode="numeric">
       </div>
       <div class="field">
-        <label>Bir martalik doza</label>
-        <input type="text" data-f="dose" placeholder="1 tabletkadan">
+        <label><%= t('editor.dose') %></label>
+        <input type="text" data-f="dose" placeholder="<%= t('editor.dosePlaceholder') %>">
       </div>
       <div class="field">
-        <label>Yuborish yo'li</label>
-        <input type="text" data-f="route" list="routeList" placeholder="ichga">
+        <label><%= t('editor.route') %></label>
+        <input type="text" data-f="route" list="routeList" placeholder="<%= editor.routes[0] || '' %>">
       </div>
       <div class="field">
-        <label>Qabul chastotasi</label>
-        <input type="text" data-f="frequency" list="freqList" placeholder="kuniga 3 mahal">
+        <label><%= t('editor.frequency') %></label>
+        <input type="text" data-f="frequency" list="freqList" placeholder="<%= editor.frequencies[2] || '' %>">
       </div>
     </div>
     <div class="grid-3">
       <div class="field">
-        <label>Davomiyligi</label>
-        <input type="text" data-f="duration" list="durList" placeholder="7 kun">
+        <label><%= t('editor.duration') %></label>
+        <input type="text" data-f="duration" list="durList" placeholder="<%= editor.durations[2] || '' %>">
       </div>
       <div class="field" style="grid-column:span 2">
-        <label>Qo'shimcha ko'rsatma</label>
-        <input type="text" data-f="instructions" list="instrList" placeholder="ovqatdan keyin">
+        <label><%= t('editor.instructions') %></label>
+        <input type="text" data-f="instructions" list="instrList" placeholder="<%= editor.instructions[2] || '' %>">
       </div>
     </div>
     <div class="rx-preview-line" data-preview>Rp.: …</div>

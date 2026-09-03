@@ -5,67 +5,67 @@
   const on = (k) => (t && t[k] != null ? !!Number(t[k]) : (ph && ph[k] != null ? !!Number(ph[k]) : true));
 %>
 <fieldset>
-  <legend>Klinika ma'lumotlari</legend>
+  <legend><%= t('tpl.clinicInfo') %></legend>
   <div class="form-grid">
     <div class="field">
-      <label>Klinika nomi</label>
-      <input type="text" name="clinic_name" value="<%= v('clinic_name') %>" placeholder="<%= p('clinic_name') || 'Klinika nomi' %>">
+      <label><%= t('tpl.clinicName') %></label>
+      <input type="text" name="clinic_name" value="<%= v('clinic_name') %>" placeholder="<%= p('clinic_name') || t('tpl.clinicName') %>">
     </div>
     <div class="field">
-      <label>Qo'shimcha sarlavha</label>
-      <input type="text" name="clinic_subtitle" value="<%= v('clinic_subtitle') %>" placeholder="<%= p('clinic_subtitle') || 'Ko\'p tarmoqli tibbiyot markazi' %>">
+      <label><%= t('tpl.clinicSubtitle') %></label>
+      <input type="text" name="clinic_subtitle" value="<%= v('clinic_subtitle') %>" placeholder="<%= p('clinic_subtitle') || '' %>">
     </div>
     <div class="field">
-      <label>Manzil</label>
-      <input type="text" name="address" value="<%= v('address') %>" placeholder="<%= p('address') || 'Toshkent sh., ...' %>">
+      <label><%= t('common.address') %></label>
+      <input type="text" name="address" value="<%= v('address') %>" placeholder="<%= p('address') || '' %>">
     </div>
     <div class="field">
-      <label>Telefon</label>
+      <label><%= t('common.phone') %></label>
       <input type="text" name="phone" value="<%= v('phone') %>" placeholder="<%= p('phone') || '+998 71 200 00 00' %>">
     </div>
     <div class="field">
-      <label>E-pochta</label>
-      <input type="text" name="email" value="<%= v('email') %>" placeholder="<%= p('email') || 'info@klinika.uz' %>">
+      <label><%= t('common.email') %></label>
+      <input type="text" name="email" value="<%= v('email') %>" placeholder="<%= p('email') || 'info@example.uz' %>">
     </div>
     <div class="field">
-      <label>Veb-sayt</label>
-      <input type="text" name="website" value="<%= v('website') %>" placeholder="<%= p('website') || 'klinika.uz' %>">
+      <label><%= t('common.website') %></label>
+      <input type="text" name="website" value="<%= v('website') %>" placeholder="<%= p('website') || 'example.uz' %>">
     </div>
   </div>
 </fieldset>
 
 <fieldset>
-  <legend>Ko'rinish</legend>
+  <legend><%= t('tpl.look') %></legend>
   <div class="form-grid">
     <div class="field">
-      <label>Asosiy rang</label>
+      <label><%= t('tpl.accentColor') %></label>
       <div class="row gap-1">
         <input type="color" name="accent_color" value="<%= v('accent_color') || p('accent_color') || '#0e7c86' %>" style="max-width:70px">
-        <span class="small muted">Blanka chizig'i, sarlavha va «Rp.» belgisi rangi</span>
+        <span class="small muted"><%= t('tpl.accentHint') %></span>
       </div>
     </div>
   </div>
   <div class="field">
-    <label>Sarlavha ostidagi izoh</label>
-    <input type="text" name="header_note" value="<%= v('header_note') %>" placeholder="ixtiyoriy">
+    <label><%= t('tpl.headerNote') %></label>
+    <input type="text" name="header_note" value="<%= v('header_note') %>" placeholder="<%= t('common.optional') %>">
   </div>
   <div class="field">
-    <label>Blanka pastidagi izoh</label>
+    <label><%= t('tpl.footerNote') %></label>
     <input type="text" name="footer_note" value="<%= v('footer_note') %>"
-           placeholder="<%= p('footer_note') || 'Ushbu retsept elektron shaklda rasmiylashtirilgan…' %>">
+           placeholder="<%= p('footer_note') || '' %>">
   </div>
 </fieldset>
 
 <fieldset>
-  <legend>Blankada ko'rinadigan bo'limlar</legend>
+  <legend><%= t('tpl.sections') %></legend>
   <div class="form-grid">
-    <label class="check"><input type="checkbox" name="show_logo" <%= on('show_logo') ? 'checked' : '' %>> Logotip</label>
-    <label class="check"><input type="checkbox" name="show_qr" <%= on('show_qr') ? 'checked' : '' %>> QR kod</label>
-    <label class="check"><input type="checkbox" name="show_complaints" <%= on('show_complaints') ? 'checked' : '' %>> Shikoyatlar</label>
-    <label class="check"><input type="checkbox" name="show_icd" <%= on('show_icd') ? 'checked' : '' %>> МКБ-10 kodi</label>
-    <label class="check"><input type="checkbox" name="show_physio" <%= on('show_physio') ? 'checked' : '' %>> Fizioterapiya</label>
-    <label class="check"><input type="checkbox" name="show_recommendations" <%= on('show_recommendations') ? 'checked' : '' %>> Tavsiyalar</label>
-    <label class="check"><input type="checkbox" name="show_signature" <%= on('show_signature') ? 'checked' : '' %>> Imzo</label>
-    <label class="check"><input type="checkbox" name="show_stamp" <%= on('show_stamp') ? 'checked' : '' %>> Vrach pechati</label>
+    <label class="check"><input type="checkbox" name="show_logo" <%= on('show_logo') ? 'checked' : '' %>> <%= t('tpl.showLogo') %></label>
+    <label class="check"><input type="checkbox" name="show_qr" <%= on('show_qr') ? 'checked' : '' %>> <%= t('tpl.showQr') %></label>
+    <label class="check"><input type="checkbox" name="show_complaints" <%= on('show_complaints') ? 'checked' : '' %>> <%= t('tpl.showComplaints') %></label>
+    <label class="check"><input type="checkbox" name="show_icd" <%= on('show_icd') ? 'checked' : '' %>> <%= t('tpl.showIcd') %></label>
+    <label class="check"><input type="checkbox" name="show_physio" <%= on('show_physio') ? 'checked' : '' %>> <%= t('tpl.showPhysio') %></label>
+    <label class="check"><input type="checkbox" name="show_recommendations" <%= on('show_recommendations') ? 'checked' : '' %>> <%= t('tpl.showRecommendations') %></label>
+    <label class="check"><input type="checkbox" name="show_signature" <%= on('show_signature') ? 'checked' : '' %>> <%= t('tpl.showSignature') %></label>
+    <label class="check"><input type="checkbox" name="show_stamp" <%= on('show_stamp') ? 'checked' : '' %>> <%= t('tpl.showStamp') %></label>
   </div>
 </fieldset>

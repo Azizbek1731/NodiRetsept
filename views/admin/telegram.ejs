@@ -1,36 +1,36 @@
-<%- include('../partials/app-head', { pageTitle: 'Telegram bot', pageSub: total + ' ta foydalanuvchi' }) %>
+<%- include('../partials/app-head', { pageTitle: t('nav.telegram'), pageSub: String(total) }) %>
 
 <div class="grid sidebar-right">
   <div class="col gap-3">
     <div class="card">
       <div class="row between wrap gap-2 mb-2">
-        <h3 class="mb-0">Bot holati</h3>
+        <h3 class="mb-0"><%= t('admin.botStatus') %></h3>
         <span class="badge <%= botInfo.running ? 'ok' : (enabled ? 'warn' : 'danger') %>">
-          <%= botInfo.running ? 'ishlayapti' : (enabled ? 'ulanmoqda…' : 'o\'chirilgan') %>
+          <%= botInfo.running ? t('admin.botRunning') : (enabled ? t('admin.botConnecting') : t('dash.disabled')) %>
         </span>
       </div>
       <div class="rx-kv">
-        <div><span class="k">Bot manzili</span><span class="v">
+        <div><span class="k"><%= t('admin.botAddress') %></span><span class="v">
           <% if (botInfo.username) { %>
             <a href="https://t.me/<%= botInfo.username %>" target="_blank" rel="noopener">@<%= botInfo.username %></a>
           <% } else { %>—<% } %></span></div>
-        <div><span class="k">Token</span><span class="v mono"><%= tokenTail || 'kiritilmagan' %></span></div>
-        <div><span class="k">Ishga tushgan</span><span class="v"><%= botInfo.startedAt ? fmt.dateTime(botInfo.startedAt) : '—' %></span></div>
-        <div><span class="k">Xatolik</span><span class="v"><%= botInfo.error || 'yo\'q' %></span></div>
+        <div><span class="k"><%= t('admin.botToken') %></span><span class="v mono"><%= tokenTail || t('admin.botNotSet') %></span></div>
+        <div><span class="k"><%= t('admin.botStarted') %></span><span class="v"><%= botInfo.startedAt ? fmt.dateTime(botInfo.startedAt) : '—' %></span></div>
+        <div><span class="k"><%= t('admin.botError') %></span><span class="v"><%= botInfo.error || t('common.no') %></span></div>
       </div>
       <% if (!enabled) { %>
         <div class="flash error mt-2"><%- icon('alert',{size:18}) %>
-          <span><code>.env</code> faylida <code>TELEGRAM_BOT_TOKEN</code> va <code>TELEGRAM_ENABLED=true</code> ni tekshiring, so'ng serverni qayta ishga tushiring.</span></div>
+          <span><%- t('admin.botEnvHint') %></span></div>
       <% } %>
     </div>
 
     <div class="card flush">
-      <div class="card-head"><h3>Bot foydalanuvchilari</h3><span class="badge"><%= total %></span></div>
+      <div class="card-head"><h3><%= t('admin.botUsers') %></h3><span class="badge"><%= total %></span></div>
       <% if (users.length) { %>
         <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>Foydalanuvchi</th><th>Telefon</th><th class="hide-sm">Chat ID</th>
-              <th class="hide-sm">Ro'yxatdan o'tgan</th><th class="hide-sm">Oxirgi faollik</th></tr></thead>
+            <thead><tr><th><%= t('table.user') %></th><th><%= t('table.phone') %></th><th class="hide-sm"><%= t('admin.botChatId') %></th>
+              <th class="hide-sm"><%= t('admin.botRegistered') %></th><th class="hide-sm"><%= t('admin.botLastSeen') %></th></tr></thead>
             <tbody>
               <% users.forEach(function (u) { %>
                 <tr>
@@ -47,17 +47,17 @@
           </table>
         </div>
       <% } else { %>
-        <div class="empty"><%- icon('send',{size:46}) %><h3>Hali foydalanuvchi yo'q</h3>
-          <p>Bemorlar botga <code>/start</code> yozgach shu yerda ko'rinadi.</p></div>
+        <div class="empty"><%- icon('send',{size:46}) %><h3><%= t('admin.botNoUsers') %></h3>
+          <p><%- t('admin.botNoUsersText') %></p></div>
       <% } %>
     </div>
 
     <div class="card flush">
-      <div class="card-head"><h3>Bot orqali yuborilgan retseptlar</h3></div>
+      <div class="card-head"><h3><%= t('admin.botSent') %></h3></div>
       <% if (sends.length) { %>
         <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>Retsept</th><th>Vaqt</th><th class="hide-sm">Chat</th></tr></thead>
+            <thead><tr><th><%= t('nav.mRx') %></th><th><%= t('table.time') %></th><th class="hide-sm">Chat</th></tr></thead>
             <tbody>
               <% sends.forEach(function (s) { %>
                 <tr>
@@ -69,27 +69,26 @@
             </tbody>
           </table>
         </div>
-      <% } else { %><div class="empty" style="padding:26px"><div class="small">Hali yuborilmagan</div></div><% } %>
+      <% } else { %><div class="empty" style="padding:26px"><div class="small"><%= t('admin.botNotSent') %></div></div><% } %>
     </div>
   </div>
 
   <div class="col gap-3">
     <div class="card">
-      <h4>Bot qanday ishlaydi</h4>
+      <h4><%= t('admin.botHowTitle') %></h4>
       <ol class="small" style="padding-left:18px;line-height:1.9;margin:0;color:var(--ink-2)">
-        <li>Bemor botga <code>/start</code> bosadi</li>
-        <li>Telefon raqamini yuboradi</li>
-        <li><strong>🔍 Retseptni izlash</strong> tugmasini bosadi</li>
-        <li>Retsept ID sini kiritadi</li>
-        <li>Bot PDF faylni yuboradi</li>
+        <li><%- t('admin.botHow1') %></li>
+        <li><%- t('admin.botHow2') %></li>
+        <li><%- t('admin.botHow3') %></li>
+        <li><%- t('admin.botHow4') %></li>
+        <li><%- t('admin.botHow5') %></li>
       </ol>
       <hr>
-      <p class="small muted mb-1"><strong>🧾 Mening retseptlarim</strong> tugmasi bemorning telefon raqami
-        bo'yicha unga tegishli retseptlarni topadi — buning uchun bemor kartasida telefon to'ldirilgan bo'lishi kerak.</p>
+      <p class="small muted mb-1"><%- t('admin.botMineNote') %></p>
     </div>
     <div class="card">
-      <h4>QR chuqur havolasi</h4>
-      <p class="small muted">Botga to'g'ridan-to'g'ri retsept ochadigan havola:</p>
+      <h4><%= t('admin.botDeepLink') %></h4>
+      <p class="small muted"><%= t('admin.botDeepLinkText') %></p>
       <div class="copy-field">
         <input type="text" readonly value="https://t.me/<%= botInfo.username || 'bot' %>?start=NR-XXXXXXXX">
       </div>

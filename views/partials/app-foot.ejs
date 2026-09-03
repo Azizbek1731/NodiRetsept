@@ -4,24 +4,25 @@
 
 <nav class="mobile-nav">
   <% if (currentUser.role === 'doctor') { %>
-    <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'active' : '' %>"><%- icon('dashboard', {size:21}) %> Panel</a>
-    <a href="/patients" class="<%= currentPath.startsWith('/patients') ? 'active' : '' %>"><%- icon('users', {size:21}) %> Bemorlar</a>
+    <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'active' : '' %>"><%- icon('dashboard', {size:21}) %> <%= t('nav.mPanel') %></a>
+    <a href="/patients" class="<%= currentPath.startsWith('/patients') ? 'active' : '' %>"><%- icon('users', {size:21}) %> <%= t('nav.mPatients') %></a>
     <div class="fab-slot" style="flex:1">
-      <button class="fab" data-rx-new aria-label="Retsept yozish"><%- icon('plus', {size:24}) %></button>
+      <button class="fab" data-rx-new aria-label="<%= t('dash.writeRx') %>"><%- icon('plus', {size:24}) %></button>
     </div>
-    <a href="/prescriptions" class="<%= currentPath.startsWith('/prescriptions') ? 'active' : '' %>"><%- icon('file', {size:21}) %> Retsept</a>
-    <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%- icon('user', {size:21}) %> Profil</a>
+    <a href="/prescriptions" class="<%= currentPath.startsWith('/prescriptions') ? 'active' : '' %>"><%- icon('file', {size:21}) %> <%= t('nav.mRx') %></a>
+    <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%- icon('user', {size:21}) %> <%= t('nav.mProfile') %></a>
   <% } else { %>
-    <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>"><%- icon('dashboard', {size:21}) %> Panel</a>
-    <a href="/admin/doctors" class="<%= currentPath.startsWith('/admin/doctors') ? 'active' : '' %>"><%- icon('users', {size:21}) %> Shifokor</a>
-    <a href="/admin/prescriptions" class="<%= currentPath.startsWith('/admin/prescriptions') ? 'active' : '' %>"><%- icon('file', {size:21}) %> Retsept</a>
-    <a href="/admin/blank" class="<%= currentPath.startsWith('/admin/blank') ? 'active' : '' %>"><%- icon('edit', {size:21}) %> Blanka</a>
-    <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%- icon('user', {size:21}) %> Profil</a>
+    <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>"><%- icon('dashboard', {size:21}) %> <%= t('nav.mPanel') %></a>
+    <a href="/admin/doctors" class="<%= currentPath.startsWith('/admin/doctors') ? 'active' : '' %>"><%- icon('users', {size:21}) %> <%= t('nav.mDoctors') %></a>
+    <a href="/admin/prescriptions" class="<%= currentPath.startsWith('/admin/prescriptions') ? 'active' : '' %>"><%- icon('file', {size:21}) %> <%= t('nav.mRx') %></a>
+    <a href="/admin/blank" class="<%= currentPath.startsWith('/admin/blank') ? 'active' : '' %>"><%- icon('edit', {size:21}) %> <%= t('nav.mBlank') %></a>
+    <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%- icon('user', {size:21}) %> <%= t('nav.mProfile') %></a>
   <% } %>
 </nav>
 
 <div id="toasts"></div>
 <% if (typeof editor !== 'undefined' && editor) { %><%- include('rx-modal', { editor }) %><% } %>
+<%- include('i18n-js') %>
 <script src="/static/js/app.js"></script>
 <% if (typeof editor !== 'undefined' && editor) { %><script src="/static/js/rx-editor.js"></script><% } %>
 <% if (typeof pageScript !== 'undefined' && pageScript) { %><script src="/static/js/<%= pageScript %>"></script><% } %>

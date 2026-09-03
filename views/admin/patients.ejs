@@ -1,11 +1,11 @@
-<%- include('../partials/app-head', { pageTitle: 'Bemorlar', pageSub: total + ' ta bemor' }) %>
+<%- include('../partials/app-head', { pageTitle: t('patients.allTitle'), pageSub: t('patients.count', { n: total }) }) %>
 
 <div class="card mb-3">
   <form method="get" class="row wrap gap-2">
     <div class="grow" style="min-width:200px">
-      <input type="search" name="q" value="<%= q %>" placeholder="F.I.Sh., telefon yoki bemor kodi…"></div>
-    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Qidirish</button>
-    <% if (q) { %><a class="btn btn-ghost" href="/admin/patients">Tozalash</a><% } %>
+      <input type="search" name="q" value="<%= q %>" placeholder="<%= t('patients.searchPlaceholder') %>"></div>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> <%= t('common.search') %></button>
+    <% if (q) { %><a class="btn btn-ghost" href="/admin/patients"><%= t('common.clear') %></a><% } %>
   </form>
 </div>
 
@@ -13,8 +13,8 @@
   <% if (patients.length) { %>
     <div class="table-wrap">
       <table class="table">
-        <thead><tr><th>Bemor</th><th>Kod</th><th class="hide-sm">Tug'ilgan yili</th><th class="hide-sm">Telefon</th>
-          <th class="num">Retsept</th><th class="hide-sm">Kim qo'shgan</th><th class="hide-sm">Oxirgi tashrif</th></tr></thead>
+        <thead><tr><th><%= t('table.patient') %></th><th><%= t('table.code') %></th><th class="hide-sm"><%= t('table.birthYear') %></th><th class="hide-sm"><%= t('table.phone') %></th>
+          <th class="num"><%= t('table.rxCount') %></th><th class="hide-sm"><%= t('table.addedBy') %></th><th class="hide-sm"><%= t('table.lastVisit') %></th></tr></thead>
         <tbody>
           <% patients.forEach(function (p) { %>
             <tr>
@@ -33,7 +33,7 @@
     </div>
     <%- include('../partials/pager', { total, page, perPage, query: { q } }) %>
   <% } else { %>
-    <div class="empty"><%- icon('users',{size:46}) %><h3>Bemor topilmadi</h3></div>
+    <div class="empty"><%- icon('users',{size:46}) %><h3><%= t('patients.notFound') %></h3></div>
   <% } %>
 </div>
 

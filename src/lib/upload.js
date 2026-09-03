@@ -23,7 +23,8 @@ function makeUploader(subdir) {
     limits: { fileSize: 3 * 1024 * 1024, files: 2 },
     fileFilter: (req, file, cb) => {
       if (!ALLOWED.has(file.mimetype)) {
-        return cb(Object.assign(new Error('Faqat PNG yoki JPG rasm yuklash mumkin (PDF blankaga ham shu rasm joylanadi).'), { status: 400, expose: true }));
+        const msg = (req.t ? req.t('err.onlyImages') : 'Only PNG or JPG images are allowed.');
+        return cb(Object.assign(new Error(msg), { status: 400, expose: true }));
       }
       cb(null, true);
     },

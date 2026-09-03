@@ -58,7 +58,7 @@ router.get('/', (req, res) => {
     enabled: config.telegram.enabled && !!config.telegram.token,
   };
   res.render('admin/dashboard', {
-    title: 'Administrator paneli', bodyClass: 'app-page admin',
+    title: req.t('admin.title'), bodyClass: 'app-page admin',
     stats, doctors, recent, tg,
     audits: h.all(`SELECT a.*, u.full_name FROM audit_log a LEFT JOIN users u ON u.id = a.user_id
                    ORDER BY a.id DESC LIMIT 12`),
@@ -76,12 +76,12 @@ router.get('/doctors', (req, res) => {
     WHERE u.role = 'doctor' ${q ? 'AND (u.full_name LIKE ? OR u.username LIKE ? OR u.specialty LIKE ?)' : ''}
     ORDER BY u.is_active DESC, u.full_name`,
     ...(q ? [`%${q}%`, `%${q}%`, `%${q}%`] : []));
-  res.render('admin/doctors', { title: 'Shifokorlar', bodyClass: 'app-page admin', doctors: rows, q });
+  res.render('admin/doctors', { title: req.t('nav.doctors'), bodyClass: 'app-page admin', doctors: rows, q });
 });
 
 router.get('/doctors/new', (req, res) => {
   res.render('admin/doctor-form', {
-    title: 'Yangi shifokor', bodyClass: 'app-page admin',
+    title: req.t('admin.newDoctor'), bodyClass: 'app-page admin',
     doctor: null, template: null, globalTemplate: rxLib.globalTemplate(), errors: [],
   });
 });
@@ -90,13 +90,13 @@ router.post('/doctors', (req, res) => {
   const b = req.body || {};
   const errors = [];
   const username = String(b.username || '').trim().toLowerCase();
-  if (!/^[a-z0-9._-]{3,32}$/.test(username)) errors.push('Login 3–32 ta lotin harfi, raqam yoki . _ - belgilaridan iborat bo\'lsin.');
-  if (h.get('SELECT 1 FROM users WHERE username = ? COLLATE NOCASE', username)) errors.push('Bunday login band.');
-  if (String(b.full_name || '').trim().length < 5) errors.push('Shifokorning to\'liq F.I.Sh. ni kiriting.');
-  if (String(b.password || '').length < 6) errors.push('Parol kamida 6 belgidan iborat bo\'lsin.');
+  if (!/^[a-z0-9._-]{3,32}$/.test(username)) errors.push(req.t('err.loginFormat'));
+  if (h.get('SELECT 1 FROM users WHERE username = ? COLLATE NOCASE', username)) errors.push(req.t('err.loginTaken'));
+  if (String(b.full_name || '').trim().length < 5) errors.push(req.t('err.doctorFio'));
+  if (String(b.password || '').length < 6) errors.push(req.t('err.passwordMin'));
   if (errors.length) {
     return res.status(400).render('admin/doctor-form', {
-      title: 'Yangi shifokor', bodyClass: 'app-page admin',
+      title: req.t('admin.newDoctor'), bodyClass: 'app-page admin',
       doctor: { ...b, id: null }, template: null, globalTemplate: rxLib.globalTemplate(), errors,
     });
   }
@@ -107,7 +107,7 @@ router.post('/doctors', (req, res) => {
     s(b.license_number), s(b.clinic_name), s(b.room), b.is_active ? 1 : 1, new Date().toISOString());
   const id = Number(info.lastInsertRowid);
   h.audit(req.user.id, 'doctor.create', 'user', id, { username });
-  flash(req, 'success', `Shifokor qo'shildi. Login: ${username}`);
+  flash(req, 'success', req.t('admin.doctorAdded', { login: username }));
   res.redirect(`/admin/doctors/${id}`);
 });
 
@@ -134,7 +134,7 @@ router.post('/doctors/:id', (req, res, next) => {
     String(b.full_name || doctor.full_name).trim(), s(b.phone), s(b.specialty), s(b.license_number),
     s(b.clinic_name), s(b.room), b.is_active ? 1 : 0, id);
   h.audit(req.user.id, 'doctor.update', 'user', id, null);
-  flash(req, 'success', 'Shifokor ma\'lumotlari yangilandi.');
+  flash(req, 'success', req.t('admin.doctorUpdated'));
   res.redirect(`/admin/doctors/${id}`);
 });
 
@@ -143,11 +143,11 @@ router.post('/doctors/:id/password', (req, res, next) => {
   const doctor = h.get("SELECT id FROM users WHERE id = ? AND role = 'doctor'", id);
   if (!doctor) return next();
   const pwd = String((req.body || {}).password || '');
-  if (pwd.length < 6) flash(req, 'error', 'Parol kamida 6 belgidan iborat bo\'lsin.');
+  if (pwd.length < 6) flash(req, 'error', req.t('err.passwordMin'));
   else {
     h.run('UPDATE users SET password_hash = ? WHERE id = ?', auth.hashPassword(pwd), id);
     h.audit(req.user.id, 'doctor.password', 'user', id, null);
-    flash(req, 'success', 'Yangi parol o\'rnatildi.');
+    flash(req, 'success', req.t('admin.passwordSet'));
   }
   res.redirect(`/admin/doctors/${id}`);
 });
@@ -168,7 +168,7 @@ router.post('/doctors/:id/media',
       h.run('UPDATE users SET signature_path = ? WHERE id = ?', upload.relPath(files.signature[0]), id);
     }
     h.audit(req.user.id, 'doctor.media', 'user', id, null);
-    flash(req, 'success', 'Muhr/imzo yuklandi.');
+    flash(req, 'success', req.t('admin.mediaUploaded'));
     res.redirect(`/admin/doctors/${id}#blank`);
   });
 
@@ -179,7 +179,7 @@ router.post('/doctors/:id/media/delete', (req, res, next) => {
   const kind = (req.body || {}).kind === 'signature' ? 'signature_path' : 'stamp_path';
   upload.remove(doctor[kind]);
   h.run(`UPDATE users SET ${kind} = NULL WHERE id = ?`, id);
-  flash(req, 'success', 'Rasm o\'chirildi.');
+  flash(req, 'success', req.t('admin.mediaDeleted'));
   res.redirect(`/admin/doctors/${id}#blank`);
 });
 
@@ -188,7 +188,7 @@ router.post('/doctors/:id/blank', (req, res, next) => {
   if (!h.get("SELECT 1 FROM users WHERE id = ? AND role = 'doctor'", id)) return next();
   saveTemplate(id, req.body || {});
   h.audit(req.user.id, 'blank.update', 'doctor', id, null);
-  flash(req, 'success', 'Shifokorning shaxsiy blankasi saqlandi.');
+  flash(req, 'success', req.t('admin.blankSaved'));
   res.redirect(`/admin/doctors/${id}#blank`);
 });
 
@@ -196,7 +196,7 @@ router.post('/doctors/:id/blank/reset', (req, res, next) => {
   const id = Number(req.params.id);
   if (!h.get("SELECT 1 FROM users WHERE id = ? AND role = 'doctor'", id)) return next();
   h.run('DELETE FROM blank_templates WHERE doctor_id = ?', id);
-  flash(req, 'success', 'Shaxsiy blanka o\'chirildi — endi umumiy blanka ishlatiladi.');
+  flash(req, 'success', req.t('admin.blankReset'));
   res.redirect(`/admin/doctors/${id}#blank`);
 });
 
@@ -204,7 +204,7 @@ router.post('/doctors/:id/blank/reset', (req, res, next) => {
 
 router.get('/blank', (req, res) => {
   res.render('admin/blank', {
-    title: 'Retsept blankasi', bodyClass: 'app-page admin',
+    title: req.t('nav.blank'), bodyClass: 'app-page admin',
     template: rxLib.globalTemplate(),
     sample: rxLib.hydrate(h.get('SELECT * FROM prescriptions ORDER BY id DESC LIMIT 1')),
   });
@@ -213,7 +213,7 @@ router.get('/blank', (req, res) => {
 router.post('/blank', (req, res) => {
   saveTemplate(null, req.body || {});
   h.audit(req.user.id, 'blank.update', 'global', null, null);
-  flash(req, 'success', 'Umumiy blanka saqlandi.');
+  flash(req, 'success', req.t('admin.globalBlankSaved'));
   res.redirect('/admin/blank');
 });
 
@@ -222,11 +222,11 @@ router.post('/blank/logo', upload.logos.single('logo'), (req, res) => {
   if (req.file) {
     upload.remove(t.logo_path);
     h.run('UPDATE blank_templates SET logo_path = ? WHERE id = ?', upload.relPath(req.file), t.id);
-    flash(req, 'success', 'Logotip yuklandi.');
+    flash(req, 'success', req.t('admin.logoUploaded'));
   } else if ((req.body || {}).remove) {
     upload.remove(t.logo_path);
     h.run('UPDATE blank_templates SET logo_path = NULL WHERE id = ?', t.id);
-    flash(req, 'success', 'Logotip o\'chirildi.');
+    flash(req, 'success', req.t('admin.logoDeleted'));
   }
   res.redirect('/admin/blank');
 });
@@ -247,7 +247,7 @@ router.get('/patients', (req, res) => {
     ${where} ORDER BY p.id DESC LIMIT ? OFFSET ?`, ...params, perPage, (page - 1) * perPage);
   const total = h.get(`SELECT COUNT(*) AS n FROM patients p ${where}`, ...params).n;
   res.render('admin/patients', {
-    title: 'Barcha bemorlar', bodyClass: 'app-page admin',
+    title: req.t('patients.allTitle'), bodyClass: 'app-page admin',
     patients, total, page, perPage, q,
   });
 });
@@ -263,7 +263,7 @@ router.get('/prescriptions', (req, res) => {
     doctorId, q, from, to, limit: perPage, offset: (page - 1) * perPage,
   });
   res.render('admin/prescriptions', {
-    title: 'Barcha retseptlar', bodyClass: 'app-page admin',
+    title: req.t('rxlist.allTitle'), bodyClass: 'app-page admin',
     prescriptions: rows, total, page, perPage, q, from, to, doctorId,
     doctors: h.all("SELECT id, full_name FROM users WHERE role='doctor' ORDER BY full_name"),
   });
@@ -271,7 +271,7 @@ router.get('/prescriptions', (req, res) => {
 
 router.get('/telegram', (req, res) => {
   res.render('admin/telegram', {
-    title: 'Telegram bot', bodyClass: 'app-page admin',
+    title: req.t('nav.telegram'), bodyClass: 'app-page admin',
     enabled: config.telegram.enabled && !!config.telegram.token,
     tokenTail: config.telegram.token ? `…${config.telegram.token.slice(-6)}` : null,
     users: h.all('SELECT * FROM telegram_users ORDER BY id DESC LIMIT 100'),
@@ -284,7 +284,7 @@ router.get('/telegram', (req, res) => {
 
 router.get('/settings', (req, res) => {
   res.render('admin/settings', {
-    title: 'Sozlamalar', bodyClass: 'app-page admin',
+    title: req.t('nav.settings'), bodyClass: 'app-page admin',
     config: {
       publicUrl: config.publicUrl, port: config.port, env: config.env,
       dbPath: config.paths.db, telegram: config.telegram.enabled && !!config.telegram.token,

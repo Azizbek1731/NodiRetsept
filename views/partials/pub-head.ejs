@@ -2,14 +2,15 @@
 <header class="pub-header">
   <a class="pub-brand" href="/">
     <img class="logo" src="/static/img/logo-mark.svg" alt="NodiRetsept" width="36" height="36">
-    <span>NodiRetsept<small>Elektron retsept xizmati</small></span>
+    <span>NodiRetsept<small><%= t('brand.service') %></small></span>
   </a>
   <div class="row gap-1">
-    <a class="btn btn-ghost btn-sm hide-sm" href="/scan"><%- icon('qr', {size:16}) %> QR skaner</a>
+    <%- include('lang') %>
+    <a class="btn btn-ghost btn-sm hide-sm" href="/scan"><%- icon('qr', {size:16}) %> <%= t('footer.scan') %></a>
     <% if (currentUser) { %>
-      <a class="btn btn-soft btn-sm" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>">Kabinet</a>
+      <a class="btn btn-soft btn-sm" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>"><%= t('nav.cabinet') %></a>
     <% } else { %>
-      <a class="btn btn-soft btn-sm" href="/login"><%- icon('user', {size:16}) %> Shifokor kirishi</a>
+      <a class="btn btn-soft btn-sm" href="/login"><%- icon('user', {size:16}) %> <%= t('auth.doctorLogin') %></a>
     <% } %>
   </div>
 </header>

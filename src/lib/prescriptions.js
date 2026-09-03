@@ -265,7 +265,7 @@ function stats(doctorId = null) {
     const mStart = new Date(d.getFullYear(), d.getMonth() - i, 1);
     const mEnd = new Date(d.getFullYear(), d.getMonth() - i + 1, 0);
     months.push({
-      label: fmt.MONTHS_UZ[mStart.getMonth()].slice(0, 3),
+      month: mStart.getMonth(),          // nomi ko'rinishda tilga qarab qo'yiladi
       value: count(fmt.toISODate(mStart), fmt.toISODate(mEnd)),
     });
   }

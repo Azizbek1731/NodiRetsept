@@ -1,25 +1,25 @@
-<%- include('../partials/app-head', { pageTitle: 'Bemorlar', pageSub: total + ' ta bemor' }) %>
+<%- include('../partials/app-head', { pageTitle: t('nav.patients'), pageSub: t('patients.count', { n: total }) }) %>
 
 <div class="page-head">
   <div>
-    <h2 class="mb-0">Bemorlar</h2>
-    <p class="muted small mb-0">Bemorni tanlab, to'g'ridan-to'g'ri retsept yozishingiz mumkin</p>
+    <h2 class="mb-0"><%= t('nav.patients') %></h2>
+    <p class="muted small mb-0"><%= t('patients.subtitle') %></p>
   </div>
-  <button class="btn btn-primary" data-rx-new><%- icon('plus',{size:17}) %> Retsept yozish</button>
+  <button class="btn btn-primary" data-rx-new><%- icon('plus',{size:17}) %> <%= t('dash.writeRx') %></button>
 </div>
 
 <div class="card mb-3">
   <form method="get" class="row wrap gap-2">
     <div class="grow" style="min-width:200px">
-      <input type="search" name="q" value="<%= q %>" placeholder="F.I.Sh., telefon yoki bemor kodi bo'yicha qidirish…">
+      <input type="search" name="q" value="<%= q %>" placeholder="<%= t('patients.searchPlaceholder') %>">
     </div>
     <input type="hidden" name="scope" value="<%= scope %>">
-    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Qidirish</button>
-    <% if (q) { %><a class="btn btn-ghost" href="/patients?scope=<%= scope %>">Tozalash</a><% } %>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> <%= t('common.search') %></button>
+    <% if (q) { %><a class="btn btn-ghost" href="/patients?scope=<%= scope %>"><%= t('common.clear') %></a><% } %>
   </form>
   <div class="row gap-1 mt-2">
-    <a class="chip <%= scope === 'mine' ? 'active' : '' %>" href="/patients?scope=mine<%= q ? '&q='+encodeURIComponent(q) : '' %>">Mening bemorlarim</a>
-    <a class="chip <%= scope === 'all' ? 'active' : '' %>" href="/patients?scope=all<%= q ? '&q='+encodeURIComponent(q) : '' %>">Barcha bemorlar</a>
+    <a class="chip <%= scope === 'mine' ? 'active' : '' %>" href="/patients?scope=mine<%= q ? '&q='+encodeURIComponent(q) : '' %>"><%= t('patients.mine') %></a>
+    <a class="chip <%= scope === 'all' ? 'active' : '' %>" href="/patients?scope=all<%= q ? '&q='+encodeURIComponent(q) : '' %>"><%= t('patients.all') %></a>
   </div>
 </div>
 
@@ -28,8 +28,8 @@
     <div class="table-wrap">
       <table class="table">
         <thead>
-          <tr><th>Bemor</th><th>Kod</th><th class="hide-sm">Tug'ilgan yili</th><th class="hide-sm">Telefon</th>
-              <th class="num">Retsept</th><th class="hide-sm">Oxirgi tashrif</th><th></th></tr>
+          <tr><th><%= t('table.patient') %></th><th><%= t('table.code') %></th><th class="hide-sm"><%= t('table.birthYear') %></th><th class="hide-sm"><%= t('table.phone') %></th>
+              <th class="num"><%= t('table.rxCount') %></th><th class="hide-sm"><%= t('table.lastVisit') %></th><th></th></tr>
         </thead>
         <tbody>
           <% patients.forEach(function (p) { %>
@@ -49,7 +49,7 @@
               <td class="right nowrap">
                 <button class="btn btn-sm btn-soft" data-rx-new
                   data-patient='<%- JSON.stringify({ id: p.id, full_name: p.full_name, birth_year: p.birth_year, gender: p.gender, phone: p.phone, code: p.code, age: fmt.age(p.birth_year) }) %>'>
-                  <%- icon('rx',{size:14}) %> <span class="hide-sm">Retsept</span>
+                  <%- icon('rx',{size:14}) %> <span class="hide-sm"><%= t('nav.mRx') %></span>
                 </button>
                 <a class="btn btn-sm btn-ghost" href="/patients/<%= p.id %>"><%- icon('chevronRight',{size:15}) %></a>
               </td>
@@ -62,9 +62,9 @@
   <% } else { %>
     <div class="empty">
       <%- icon('users',{size:46}) %>
-      <h3><%= q ? 'Hech narsa topilmadi' : 'Bemorlar ro\'yxati bo\'sh' %></h3>
-      <p><%= q ? 'Boshqa so\'rov bilan urinib ko\'ring yoki yangi bemor qo\'shing.' : 'Retsept yozish oynasida yangi bemor qo\'shishingiz mumkin.' %></p>
-      <button class="btn btn-primary mt-2" data-rx-new><%- icon('plus',{size:16}) %> Retsept yozish</button>
+      <h3><%= q ? t('patients.emptyFound') : t('patients.emptyList') %></h3>
+      <p><%= q ? t('patients.emptyFoundText') : t('patients.emptyListText') %></p>
+      <button class="btn btn-primary mt-2" data-rx-new><%- icon('plus',{size:16}) %> <%= t('dash.writeRx') %></button>
     </div>
   <% } %>
 </div>

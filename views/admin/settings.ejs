@@ -1,12 +1,12 @@
-<%- include('../partials/app-head', { pageTitle: 'Sozlamalar' }) %>
+<%- include('../partials/app-head', { pageTitle: t('nav.settings') }) %>
 
 <div class="grid c4 mb-3">
   <div class="card stat"><div class="stat-icon"><%- icon('users',{size:19}) %></div>
-    <div class="stat-label">Shifokorlar</div><div class="stat-value"><%= counts.doctors %></div></div>
+    <div class="stat-label"><%= t('nav.doctors') %></div><div class="stat-value"><%= counts.doctors %></div></div>
   <div class="card stat"><div class="stat-icon"><%- icon('heart',{size:19}) %></div>
-    <div class="stat-label">Bemorlar</div><div class="stat-value"><%= counts.patients %></div></div>
+    <div class="stat-label"><%= t('nav.patients') %></div><div class="stat-value"><%= counts.patients %></div></div>
   <div class="card stat"><div class="stat-icon"><%- icon('file',{size:19}) %></div>
-    <div class="stat-label">Retseptlar</div><div class="stat-value"><%= counts.prescriptions %></div></div>
+    <div class="stat-label"><%= t('nav.prescriptions') %></div><div class="stat-value"><%= counts.prescriptions %></div></div>
   <div class="card stat"><div class="stat-icon"><%- icon('send',{size:19}) %></div>
     <div class="stat-label">Telegram</div><div class="stat-value"><%= counts.telegram %></div></div>
 </div>
@@ -14,30 +14,29 @@
 <div class="grid sidebar-right">
   <div class="col gap-3">
     <div class="card">
-      <h3>Tizim konfiguratsiyasi</h3>
-      <p class="small muted">Bu qiymatlar loyihaning <code>.env</code> faylidan o'qiladi. O'zgartirgach serverni qayta ishga tushiring.</p>
+      <h3><%= t('admin.sysConfig') %></h3>
+      <p class="small muted"><%- t('admin.sysConfigHint') %></p>
       <div class="rx-kv">
-        <div><span class="k">Sayt manzili</span><span class="v mono"><%= config.publicUrl %></span></div>
-        <div><span class="k">Port</span><span class="v mono"><%= config.port %></span></div>
-        <div><span class="k">Rejim</span><span class="v"><%= config.env %></span></div>
-        <div><span class="k">Telegram bot</span><span class="v"><%= config.telegram ? 'yoqilgan' : 'o\'chirilgan' %></span></div>
-        <div><span class="k">Ma'lumotlar bazasi</span><span class="v mono tiny"><%= config.dbPath %></span></div>
+        <div><span class="k"><%= t('admin.siteUrl') %></span><span class="v mono"><%= config.publicUrl %></span></div>
+        <div><span class="k"><%= t('admin.port') %></span><span class="v mono"><%= config.port %></span></div>
+        <div><span class="k"><%= t('admin.mode') %></span><span class="v"><%= config.env %></span></div>
+        <div><span class="k"><%= t('nav.telegram') %></span><span class="v"><%= config.telegram ? t('dash.enabled') : t('dash.disabled') %></span></div>
+        <div><span class="k"><%= t('admin.database') %></span><span class="v mono tiny"><%= config.dbPath %></span></div>
       </div>
       <div class="flash info mt-2"><%- icon('alert',{size:18}) %>
-        <span><strong>Muhim:</strong> QR kodlar <code>PUBLIC_URL</code> manziliga yo'naltiriladi.
-        Serverga joylashtirganda uni haqiqiy domenga o'zgartiring, aks holda QR kodlar <code>localhost</code> ga ishora qiladi.</span></div>
+        <span><%- t('admin.publicUrlWarn') %></span></div>
     </div>
 
     <div class="card flush">
-      <div class="card-head"><h3>Harakatlar tarixi</h3></div>
+      <div class="card-head"><h3><%= t('admin.auditTitle') %></h3></div>
       <div class="table-wrap">
         <table class="table">
-          <thead><tr><th>Vaqt</th><th>Foydalanuvchi</th><th>Amal</th><th class="hide-sm">Obyekt</th></tr></thead>
+          <thead><tr><th><%= t('table.time') %></th><th><%= t('table.user') %></th><th><%= t('table.action') %></th><th class="hide-sm"><%= t('table.object') %></th></tr></thead>
           <tbody>
             <% audits.forEach(function (a) { %>
               <tr>
                 <td class="small nowrap"><%= fmt.dateTime(a.created_at) %></td>
-                <td class="small"><%= a.full_name || 'Tizim' %></td>
+                <td class="small"><%= a.full_name || t('dash.system') %></td>
                 <td><span class="badge"><%= a.action %></span></td>
                 <td class="hide-sm tiny muted"><%= a.entity || '' %> <%= a.entity_id || '' %></td>
               </tr>
@@ -50,16 +49,14 @@
 
   <div class="col gap-3">
     <div class="card">
-      <h4>Zaxira nusxa</h4>
-      <p class="small muted">Butun ma'lumotlar bazasi bitta faylda saqlanadi. Zaxira olish uchun shu faylni nusxalang:</p>
+      <h4><%= t('admin.backupTitle') %></h4>
+      <p class="small muted"><%= t('admin.backupText') %></p>
       <div class="copy-field"><input type="text" readonly value="<%= config.dbPath %>"></div>
-      <p class="hint mt-2">Nusxa olishdan oldin serverni to'xtatish tavsiya etiladi (yoki <code>.db</code>, <code>.db-wal</code>,
-        <code>.db-shm</code> fayllarini birga nusxalang).</p>
+      <p class="hint mt-2"><%- t('admin.backupHint') %></p>
     </div>
     <div class="card">
-      <h4>Yuklangan fayllar</h4>
-      <p class="small muted mb-1">Pechat, imzo va logotiplar <code>data/uploads/</code> papkasida saqlanadi.
-        Zaxira olishda uni ham nusxalang.</p>
+      <h4><%= t('admin.uploadsTitle') %></h4>
+      <p class="small muted mb-1"><%- t('admin.uploadsText') %></p>
     </div>
   </div>
 </div>

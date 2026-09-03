@@ -205,6 +205,7 @@ src/
     format.js            sana, telefon, ism formatlari
     icons.js             SVG ikonkalar
     seed.js              admin, dori ma'lumotnomasi, demo ma'lumotlar
+  i18n/                  tarjimalar: uz.json · uz-Cyrl.json · ru.json · en.json
   routes/                auth · public · api · doctor · admin
   telegram/bot.js        Telegram bot (grammY)
 views/                   EJS shablonlari
@@ -235,7 +236,46 @@ Blanka xalqaro amaliyotga (WHO — *Guide to Good Prescribing*) mos tartibda tuz
 
 ---
 
-## 8. Brend va logotip
+## 8. Tillar
+
+Tizim to'rt tilda ishlaydi:
+
+| Til | Kod | Izoh |
+|---|---|---|
+| O'zbekcha (lotin) | `uz` | standart til |
+| Ўзбекча (кирилл) | `uz-Cyrl` | |
+| Русский | `ru` | |
+| English | `en` | tibbiy atamalar ICD-10, INN bo'yicha |
+
+Til **URL ni o'zgartirmaydi** — tanlov cookie da saqlanadi. Bu ataylab shunday qilingan:
+retsept havolalari (`/r/NR-XXXX`) QR kodlarga yozilib bemorlarga tarqatilgan, URL ga til
+prefiksi qo'shilsa ular ishlamay qolardi.
+
+Til qanday tanlanadi (tartib bo'yicha):
+
+1. `?lang=ru` so'rov parametri yoki `/lang/ru` havolasi (sayt sarlavhasidagi **UZ · ЎЗ · RU · EN** tugmalari)
+2. `nr_lang` cookie — bir marta tanlangach bir yil saqlanadi
+3. Brauzerning `Accept-Language` sarlavhasi
+4. Standart — o'zbekcha (lotin)
+
+Tarjima qamrovi:
+
+* **Sayt** — barcha sahifalar, shifokor kabineti, admin paneli, xato xabarlari
+* **Retsept blankasi va PDF** — sarlavhalar bemor tanlagan tilda chiqadi. `МКБ-10` inglizchada
+  `ICD-10` bo'ladi, sana formati ham tilga moslashadi
+* **Telegram bot** — Telegram profilidagi tilni avtomatik aniqlaydi, `🌐 Til` tugmasi yoki
+  `/lang` buyrug'i bilan o'zgartiriladi
+* **Retsept muharriri** — yuborish yo'li, qabul chastotasi, davomiyligi kabi tayyor variantlar
+  ham tarjima qilingan (farmatsevtik lotin qisqartmalari — `tab.`, `caps.`, `D.t.d.` — o'zgarmaydi)
+
+> Shifokor kiritgan **tibbiy mazmun** (tashxis, dori nomi, ko'rsatmalar) tarjima qilinmaydi —
+> u qaysi tilda yozilgan bo'lsa, blankada ham shundayligicha qoladi. Bu ataylab: retsept
+> huquqiy hujjat, uning mazmuni avtomatik o'zgartirilmasligi kerak.
+
+Tarjimalar `src/i18n/<til>.json` fayllarida. Yangi matn qo'shish uchun to'rtala faylga ham
+bir xil kalitni qo'shing — kalit topilmasa tizim o'zbekchaga qaytadi.
+
+## 9. Brend va logotip
 
 Logotip — **N** harfi va QR skaner belgisidan iborat: harf brend nomini, QR belgisi esa
 tizimning asosiy g'oyasini (retseptni skanerlab olish) bildiradi.
@@ -263,7 +303,7 @@ belgisi turadi, yuklagan bo'lsa — o'ziniki (`Admin → Retsept blankasi → Lo
 
 Telegram bot rasmini o'rnatish: @BotFather → `/setuserpic` → botni tanlang → `telegram-bot.png` ni yuboring.
 
-## 9. Xavfsizlik
+## 10. Xavfsizlik
 
 * Parollar `bcrypt` bilan xeshlanadi, sessiyalar bazada saqlanadi (server qayta ishga tushsa yo'qolmaydi).
 * Retsept ID si tasodifiy 8 belgidan iborat (30 ta belgili alifbo ≈ 6·10¹¹ variant), chalkash

@@ -17,7 +17,7 @@
 
   async function start() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      return window.toast('Bu brauzer kamerani qo\'llab-quvvatlamaydi. ID ni qo\'lda kiriting.', 'error');
+      return window.toast(window.T('scanUnsupported'), 'error');
     }
     startBtn.classList.add('loading');
     try {
@@ -36,9 +36,7 @@
       done = false;
       tick();
     } catch (e) {
-      const msg = e && e.name === 'NotAllowedError'
-        ? 'Kameraga ruxsat berilmadi. Brauzer sozlamalaridan ruxsat bering.'
-        : 'Kamerani ochib bo\'lmadi. ID ni qo\'lda kiriting.';
+      const msg = window.T(e && e.name === 'NotAllowedError' ? 'scanDenied' : 'scanOpen');
       window.toast(msg, 'error');
     } finally { startBtn.classList.remove('loading'); }
   }
@@ -75,7 +73,7 @@
 
   function handle(text) {
     done = true;
-    hint.textContent = 'QR kod topildi, ochilmoqda…';
+    hint.textContent = window.T('scanFound');
     if (navigator.vibrate) navigator.vibrate(80);
     let target = null;
     try {
@@ -90,7 +88,7 @@
     if (target) location.href = target;
     else {
       done = false;
-      window.toast('Bu QR kod NodiRetsept retsepti emas', 'error');
+      window.toast(window.T('scanNotOurs'), 'error');
       setTimeout(start, 600);
     }
   }

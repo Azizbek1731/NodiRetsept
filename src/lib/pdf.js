@@ -6,6 +6,7 @@ const config = require('../config');
 const fmt = require('./format');
 const qr = require('./qr');
 const { rxLines } = require('./prescriptions');
+const i18n = require('./i18n');
 
 const FONTS = path.join(config.root, 'assets', 'fonts');
 const F = {
@@ -40,8 +41,10 @@ function defaultLogo() { return fs.existsSync(DEFAULT_LOGO) ? DEFAULT_LOGO : nul
  * Retsept PDF hujjatini yaratadi va Buffer qaytaradi.
  * Blanka xalqaro retsept qoidalariga muvofiq: Rp. — Inscriptio — D.t.d. — Signatura.
  */
-async function buildPrescriptionPdf(rx) {
+async function buildPrescriptionPdf(rx, locale = i18n.DEFAULT_LOCALE) {
   const t = rx.template || {};
+  const L = (key, params) => i18n.t(locale, key, params);   // tarjima
+  const U = (key) => L(key).toUpperCase();                   // bo'lim sarlavhalari
   const accent = hex(t.accent_color);
   const qrFile = truthy(t.show_qr)
     ? await qr.toBuffer(qr.prescriptionUrl(rx.public_id), { width: 320 }).catch(() => null)
@@ -56,9 +59,9 @@ async function buildPrescriptionPdf(rx) {
     margins: { top: M, bottom: 64, left: M, right: M },
     bufferPages: true,
     info: {
-      Title: `Retsept ${rx.pretty_id}`,
+      Title: `${L('rx.title')} ${rx.pretty_id}`,
       Author: rx.doctor.full_name || 'NodiRetsept',
-      Subject: 'Tibbiy retsept / Medical prescription',
+      Subject: 'Medical prescription',
       Creator: 'NodiRetsept',
     },
   });
@@ -75,30 +78,30 @@ async function buildPrescriptionPdf(rx) {
   doc.on('pageAdded', () => {
     doc.rect(0, 0, PAGE.w, 4).fill(accent);
     doc.font('bold').fontSize(9).fillColor(MUTED)
-      .text(`${t.clinic_name || ''} — Retsept ${rx.pretty_id} (davomi)`, M, 18, { width: CW });
+      .text(`${t.clinic_name || ''} — ${L('rx.title')} ${rx.pretty_id} …`, M, 18, { width: CW });
     doc.moveTo(M, 34).lineTo(PAGE.w - M, 34).lineWidth(0.5).stroke(LINE);
     doc.y = 46;
     doc.fillColor(INK);
   });
 
-  drawHeader(doc, rx, { accent, logo, qrFile });
-  drawTitleBar(doc, rx, accent);
-  drawPatient(doc, rx, accent);
+  drawHeader(doc, rx, { accent, logo, qrFile, L });
+  drawTitleBar(doc, rx, accent, L);
+  drawPatient(doc, rx, accent, L, U);
   if (truthy(t.show_complaints) && rx.complaints) {
-    block(doc, 'SHIKOYATLAR', rx.complaints, accent);
+    block(doc, U('rx.complaints'), rx.complaints, accent);
   }
-  drawDiagnosis(doc, rx, accent);
-  drawRx(doc, rx, accent);
+  drawDiagnosis(doc, rx, accent, L, U);
+  drawRx(doc, rx, accent, L);
   if (truthy(t.show_physio) && rx.physiotherapy) {
-    block(doc, 'FIZIOTERAPIYA VA MUOLAJALAR', rx.physiotherapy, accent);
+    block(doc, U('rx.physio'), rx.physiotherapy, accent);
   }
   if (truthy(t.show_recommendations) && (rx.recommendations || rx.next_visit)) {
-    const text = [rx.recommendations, rx.next_visit ? `Keyingi qabul sanasi: ${fmt.dmy(rx.next_visit)}` : '']
+    const text = [rx.recommendations, rx.next_visit ? `${L('rx.nextVisit')}: ${fmt.dmy(rx.next_visit)}` : '']
       .filter(Boolean).join('\n');
-    block(doc, 'TAVSIYALAR', text, accent);
+    block(doc, U('rx.recommendations'), text, accent);
   }
-  drawDoctor(doc, rx, { accent, stamp, sign });
-  drawFooters(doc, rx, accent);
+  drawDoctor(doc, rx, { accent, stamp, sign, L, U });
+  drawFooters(doc, rx, accent, L);
 
   doc.end();
   return done;
@@ -106,7 +109,7 @@ async function buildPrescriptionPdf(rx) {
 
 /* ── Bo'limlar ──────────────────────────────────────────── */
 
-function drawHeader(doc, rx, { accent, logo, qrFile }) {
+function drawHeader(doc, rx, { accent, logo, qrFile, L }) {
   const t = rx.template;
   doc.rect(0, 0, PAGE.w, 6).fill(accent);
 
@@ -135,21 +138,25 @@ function drawHeader(doc, rx, { accent, logo, qrFile }) {
     doc.font('bold').fontSize(7.5).fillColor(INK)
       .text(rx.pretty_id, qx - 12, top + 72, { width: 98, align: 'center' });
     doc.font('body').fontSize(6).fillColor(MUTED)
-      .text('QR ni skanerlang', qx - 12, doc.y, { width: 98, align: 'center' });
+      .text(L('rx.scanMe'), qx - 12, doc.y, { width: 98, align: 'center' });
   }
   doc.y = Math.max(doc.y, top + 78);
   doc.moveTo(M, doc.y + 6).lineTo(PAGE.w - M, doc.y + 6).lineWidth(1).stroke(accent);
   doc.y += 16;
 }
 
-function drawTitleBar(doc, rx, accent) {
+function drawTitleBar(doc, rx, accent, L) {
   const y = doc.y;
   const hgt = 34;
   doc.roundedRect(M, y, CW, hgt, 6).fill(SOFT);
-  doc.fillColor(accent).font('serif').fontSize(14).text('RETSEPT', M + 14, y + 9);
-  doc.font('body').fontSize(8).fillColor(MUTED).text('Rx / Prescription', M + 100, y + 13);
+  const title = L('rx.title');
+  doc.fillColor(accent).font('serif').fontSize(14);
+  const titleW = doc.widthOfString(title);          // kenglikni shrift almashishidan oldin o'lchaymiz
+  doc.text(title, M + 14, y + 9);
+  doc.font('body').fontSize(8).fillColor(MUTED)
+    .text(L('rx.subtitle'), M + 24 + titleW, y + 13, { width: 160 });
 
-  const dateStr = `Sana: ${fmt.dmy(rx.visit_date)}`;
+  const dateStr = `${L('common.date')}: ${fmt.dmy(rx.visit_date)}`;
   doc.font('bold').fontSize(10).fillColor(INK)
     .text(dateStr, PAGE.w - M - 220, y + 8, { width: 206, align: 'right' });
   doc.font('body').fontSize(7.5).fillColor(MUTED)
@@ -157,24 +164,24 @@ function drawTitleBar(doc, rx, accent) {
   doc.y = y + hgt + 12;
 }
 
-function drawPatient(doc, rx, accent) {
+function drawPatient(doc, rx, accent, L, U) {
   const p = rx.patient || {};
   const yrs = fmt.age(p.birth_year);
   // F.I.Sh. — butun kenglikda (uzun ismlar qisqarmasligi uchun), qolganlari 2 ustunda
-  const full = [['F.I.Sh.', p.full_name || '—']];
+  const full = [[L('rx.fio'), p.full_name || '—']];
   const pairs = [
-    ['Tug\'ilgan yili', p.birth_year ? `${p.birth_year}${yrs != null ? ` (${yrs} yosh)` : ''}` : '—'],
-    ['Jinsi', p.gender || '—'],
-    ['Telefon', fmt.phoneFmt(p.phone) || '—'],
-    ['Bemor kodi', p.code || '—'],
+    [L('rx.birthYear'), p.birth_year ? `${p.birth_year}${yrs != null ? ` (${yrs} ${L('rx.age')})` : ''}` : '—'],
+    [L('rx.gender'), p.gender || '—'],
+    [L('common.phone'), fmt.phoneFmt(p.phone) || '—'],
+    [L('rx.patientCode'), p.code || '—'],
   ];
-  if (p.address) full.push(['Manzil', p.address]);
+  if (p.address) full.push([L('common.address'), p.address]);
 
   const rowH = 17;
   const h = 22 + rowH * (1 + Math.ceil(pairs.length / 2)) + (p.address ? rowH : 0) + 5;
   const y = doc.y;
   doc.roundedRect(M, y, CW, h, 6).lineWidth(0.8).stroke(LINE);
-  doc.font('bold').fontSize(7.5).fillColor(accent).text('BEMOR MA\'LUMOTLARI', M + 12, y + 8);
+  doc.font('bold').fontSize(7.5).fillColor(accent).text(U('rx.patientBlock'), M + 12, y + 8);
 
   const colW = (CW - 24) / 2;
   let ry = y + 22;
@@ -185,7 +192,7 @@ function drawPatient(doc, rx, accent) {
     if (pairs[i + 1]) pair(doc, M + 12 + colW, ry, colW - 8, pairs[i + 1][0], pairs[i + 1][1]);
     ry += rowH;
   }
-  if (p.address) pair(doc, M + 12, ry, CW - 24, 'Manzil', p.address);
+  if (p.address) pair(doc, M + 12, ry, CW - 24, L('common.address'), p.address);
 
   doc.y = y + h + 10;
 }
@@ -196,21 +203,21 @@ function pair(doc, x, y, w, label, value) {
     .text(String(value), x + 76, y, { width: w - 76, ellipsis: true, height: 14 });
 }
 
-function drawDiagnosis(doc, rx, accent) {
+function drawDiagnosis(doc, rx, accent, L, U) {
   if (!rx.diagnosis && !rx.icd10) return;
   const t = rx.template;
   const showIcd = truthy(t.show_icd) && rx.icd10;
   const text = rx.diagnosis || '—';
-  doc.font('bold').fontSize(7.5).fillColor(accent).text('DASTLABKI TASHXIS', M, doc.y);
+  doc.font('bold').fontSize(7.5).fillColor(accent).text(U('rx.diagnosis'), M, doc.y);
   doc.moveDown(0.25);
   const y = doc.y;
   const w = showIcd ? CW - 96 : CW;
   doc.font('bold').fontSize(10.5).fillColor(INK).text(text, M, y, { width: w, lineGap: 2 });
   if (showIcd) {
-    const cw = 88;
+    const cw = 92;
     doc.roundedRect(PAGE.w - M - cw, y - 2, cw, 18, 9).fill(SOFT);
     doc.font('bold').fontSize(8).fillColor(accent)
-      .text(`МКБ-10: ${rx.icd10}`, PAGE.w - M - cw, y + 3, { width: cw, align: 'center' });
+      .text(`${L('rx.icd')}: ${rx.icd10}`, PAGE.w - M - cw, y + 3, { width: cw, align: 'center' });
   }
   doc.y = Math.max(doc.y, y + 16) + 10;
   doc.fillColor(INK);
@@ -224,18 +231,18 @@ function block(doc, title, text, accent) {
   doc.y += 10;
 }
 
-function drawRx(doc, rx, accent) {
+function drawRx(doc, rx, accent, L) {
   ensure(doc, 80);
   const y = doc.y;
   doc.font('serif').fontSize(22).fillColor(accent).text('Rp.', M, y);
   doc.font('body').fontSize(7.5).fillColor(MUTED)
-    .text('Dori vositalari — xalqaro nomlanish (INN)', M + 46, y + 11);
+    .text(L('rx.drugsNote'), M + 46, y + 11, { width: CW - 46 });
   doc.moveTo(M, y + 26).lineTo(PAGE.w - M, y + 26).lineWidth(0.8).stroke(LINE);
   doc.y = y + 34;
 
   if (!rx.items || !rx.items.length) {
     doc.font('italic').fontSize(9.5).fillColor(MUTED)
-      .text('Dori vositasi tayinlanmagan.', M + 8, doc.y, { width: CW - 8 });
+      .text(L('rx.noDrugs'), M + 8, doc.y, { width: CW - 8 });
     doc.y += 14;
     doc.fillColor(INK);
     return;
@@ -270,7 +277,7 @@ function drawRx(doc, rx, accent) {
   doc.fillColor(INK);
 }
 
-function drawDoctor(doc, rx, { accent, stamp, sign }) {
+function drawDoctor(doc, rx, { accent, stamp, sign, L, U }) {
   ensure(doc, 130);
   const d = rx.doctor || {};
   // Imzo-muhr bloki blankaning pastki qismida turishi kerak — joy yetsa pastga tushiramiz.
@@ -279,13 +286,13 @@ function drawDoctor(doc, rx, { accent, stamp, sign }) {
   doc.moveTo(M, y).lineTo(PAGE.w - M, y).lineWidth(0.8).stroke(LINE);
 
   const leftW = CW * 0.52;
-  doc.font('bold').fontSize(7.5).fillColor(accent).text('SHIFOKOR', M, y + 12);
+  doc.font('bold').fontSize(7.5).fillColor(accent).text(U('rx.doctor'), M, y + 12);
   doc.font('bold').fontSize(11).fillColor(INK).text(d.full_name || '—', M, y + 24, { width: leftW });
   let ly = doc.y + 2;
   if (d.specialty) { doc.font('body').fontSize(9).fillColor(MUTED).text(d.specialty, M, ly, { width: leftW }); ly = doc.y + 1; }
-  if (d.phone) { doc.font('body').fontSize(9).fillColor(INK).text(`Tel: ${fmt.phoneFmt(d.phone)}`, M, ly, { width: leftW }); ly = doc.y + 1; }
+  if (d.phone) { doc.font('body').fontSize(9).fillColor(INK).text(`${L('rx.tel')}: ${fmt.phoneFmt(d.phone)}`, M, ly, { width: leftW }); ly = doc.y + 1; }
   if (d.license_number) {
-    doc.font('body').fontSize(8).fillColor(MUTED).text(`Litsenziya / diplom: ${d.license_number}`, M, ly, { width: leftW });
+    doc.font('body').fontSize(8).fillColor(MUTED).text(`${L('rx.license')}: ${d.license_number}`, M, ly, { width: leftW });
     ly = doc.y;
   }
 
@@ -296,7 +303,7 @@ function drawDoctor(doc, rx, { accent, stamp, sign }) {
     try { doc.image(sign, rx0, y + 20, { fit: [rw * 0.55, 40], align: 'center' }); } catch { /* — */ }
   }
   doc.moveTo(rx0, y + 66).lineTo(rx0 + rw * 0.55, y + 66).lineWidth(0.6).stroke(LINE);
-  doc.font('body').fontSize(7.5).fillColor(MUTED).text('Imzo', rx0, y + 69, { width: rw * 0.55, align: 'center' });
+  doc.font('body').fontSize(7.5).fillColor(MUTED).text(L('rx.signature'), rx0, y + 69, { width: rw * 0.55, align: 'center' });
 
   const sx = rx0 + rw * 0.58;
   const sw = rw - (rw * 0.58);
@@ -307,13 +314,13 @@ function drawDoctor(doc, rx, { accent, stamp, sign }) {
     doc.circle(sx + Math.min(sw, 86) / 2, y + 50, 34).lineWidth(0.8).dash(3, { space: 2 }).stroke(LINE);
     doc.undash();
     doc.font('body').fontSize(8).fillColor(LINE)
-      .text('M.O\'.', sx, y + 46, { width: Math.min(sw, 86), align: 'center' });
+      .text(L('rx.stamp'), sx, y + 46, { width: Math.min(sw, 86), align: 'center' });
   }
   doc.y = Math.max(ly, y + 88) + 6;
   doc.fillColor(INK);
 }
 
-function drawFooters(doc, rx, accent) {
+function drawFooters(doc, rx, accent, L) {
   const range = doc.bufferedPageRange();
   const note = rx.template.footer_note || '';
   const url = qr.prescriptionUrl(rx.public_id);
@@ -327,7 +334,7 @@ function drawFooters(doc, rx, accent) {
     doc.font('body').fontSize(6.8).fillColor(MUTED)
       .text(note, M, y + 6, { width: CW - 110 });
     doc.font('body').fontSize(6.8).fillColor(MUTED)
-      .text(`Tekshirish: ${url}`, M, y + 16, { width: CW - 110 });
+      .text(`${L('rx.verifyAt')}: ${url}`, M, y + 16, { width: CW - 110 });
     doc.font('body').fontSize(6.8).fillColor(MUTED).text(
       `${fmt.dateTime(new Date().toISOString())}  ·  ${i + 1}/${range.count}`,
       PAGE.w - M - 110, y + 6, { width: 110, align: 'right' }
@@ -344,7 +351,7 @@ function ensure(doc, needed) {
 }
 
 function fileName(rx) {
-  const name = String(rx.patient?.full_name || 'bemor').replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40);
+  const name = String(rx.patient?.full_name || 'patient').replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40);
   return `Retsept_${rx.pretty_id}_${name}.pdf`;
 }
 

@@ -1,8 +1,22 @@
 'use strict';
 
-const MONTHS_UZ = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
-  'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
-const WEEKDAYS_UZ = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+const MONTHS = {
+  uz: ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
+       'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'],
+  'uz-Cyrl': ['январ', 'феврал', 'март', 'апрел', 'май', 'июн',
+              'июл', 'август', 'сентябр', 'октябр', 'ноябр', 'декабр'],
+  ru: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+       'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+  en: ['January', 'February', 'March', 'April', 'May', 'June',
+       'July', 'August', 'September', 'October', 'November', 'December'],
+};
+const MONTHS_SHORT = {
+  uz: MONTHS.uz.map((m) => m.slice(0, 3)),
+  'uz-Cyrl': ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+  ru: ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
+const MONTHS_UZ = MONTHS.uz;
 
 /** Mahalliy (server) vaqt bo'yicha YYYY-MM-DD */
 function toISODate(d = new Date()) {
@@ -27,11 +41,22 @@ function dmy(s) {
   return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`;
 }
 
-/** 2026-09-03 -> 3-sentabr, 2026-yil */
-function longDate(s) {
+/** Tilga mos to'liq sana: 3-sentabr, 2026-yil · 3 сентября 2026 г. · 3 September 2026 */
+function longDate(s, locale = 'uz') {
   const d = parseISODate(s) || (s ? new Date(s) : null);
   if (!d || Number.isNaN(d.getTime())) return '';
-  return `${d.getDate()}-${MONTHS_UZ[d.getMonth()]}, ${d.getFullYear()}-yil`;
+  const loc = MONTHS[locale] ? locale : 'uz';
+  const m = MONTHS[loc][d.getMonth()];
+  if (loc === 'ru') return `${d.getDate()} ${m} ${d.getFullYear()} г.`;
+  if (loc === 'en') return `${d.getDate()} ${m} ${d.getFullYear()}`;
+  if (loc === 'uz-Cyrl') return `${d.getDate()}-${m}, ${d.getFullYear()}-йил`;
+  return `${d.getDate()}-${m}, ${d.getFullYear()}-yil`;
+}
+
+/** Grafiklardagi qisqa oy nomi */
+function monthShort(index, locale = 'uz') {
+  const loc = MONTHS_SHORT[locale] ? locale : 'uz';
+  return MONTHS_SHORT[loc][index];
 }
 
 /** ISO timestamp -> 03.09.2026 14:25 */
@@ -82,7 +107,17 @@ function phoneFmt(p) {
 
 function plural(n, one, many) { return `${n} ${n === 1 ? one : many}`; }
 
+/** Ko'rinishlar uchun tilga bog'langan nusxa: fmt.longDate(sana) o'z-o'zidan to'g'ri tilda chiqadi */
+function forLocale(locale) {
+  return {
+    ...module.exports,
+    locale,
+    longDate: (s) => longDate(s, locale),
+    monthShort: (i) => monthShort(i, locale),
+  };
+}
+
 module.exports = {
-  MONTHS_UZ, WEEKDAYS_UZ, toISODate, parseISODate, dmy, longDate, dateTime,
-  addDays, age, initials, shortName, phoneFmt, plural,
+  MONTHS, MONTHS_SHORT, MONTHS_UZ, toISODate, parseISODate, dmy, longDate, dateTime,
+  addDays, age, initials, shortName, phoneFmt, plural, monthShort, forLocale,
 };

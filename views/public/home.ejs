@@ -1,45 +1,44 @@
 <%- include('../partials/pub-head') %>
 
 <section class="hero">
-  <h1>Retseptingizni onlayn oling</h1>
-  <p class="lead">Shifokor bergan <strong>ID raqamni</strong> kiriting yoki <strong>QR kodni</strong> skanerlang —
-     retseptingiz darhol ochiladi va PDF ko'rinishida yuklab olinadi.</p>
+  <h1><%= t('home.heroTitle') %></h1>
+  <p class="lead"><%- t('home.heroLead') %></p>
 
   <div class="search-card">
     <% if (notFound) { %>
       <div class="flash error"><%- icon('alert',{size:18}) %>
-        <span><strong><%= notFound %></strong> bo'yicha retsept topilmadi. ID ni tekshirib qayta urinib ko'ring.</span></div>
+        <span><%- t('home.notFound', { id: notFound }) %></span></div>
     <% } %>
     <form class="search-form" method="get" action="/search">
-      <input type="text" name="id" data-rx-id-input placeholder="NR-XXXX-XXXX" aria-label="Retsept ID si"
+      <input type="text" name="id" data-rx-id-input placeholder="NR-XXXX-XXXX" aria-label="<%= t('home.idLabel') %>"
              value="<%= notFound || '' %>" autocomplete="off" required>
-      <button class="btn btn-primary btn-lg"><%- icon('search',{size:18}) %> Topish</button>
+      <button class="btn btn-primary btn-lg"><%- icon('search',{size:18}) %> <%= t('home.find') %></button>
     </form>
-    <div class="or-line">yoki</div>
+    <div class="or-line"><%= t('home.or') %></div>
     <div class="row gap-2" style="justify-content:center;flex-wrap:wrap">
-      <a class="btn btn-lg" href="/scan"><%- icon('qr',{size:18}) %> QR kodni skanerlash</a>
+      <a class="btn btn-lg" href="/scan"><%- icon('qr',{size:18}) %> <%= t('home.scanQr') %></a>
       <a class="btn btn-lg" href="https://t.me/<%= botUsername || 'NodiRetsept_bot' %>" target="_blank" rel="noopener">
-        <%- icon('send',{size:18}) %> Telegram bot</a>
+        <%- icon('send',{size:18}) %> <%= t('home.telegramBot') %></a>
     </div>
   </div>
 </section>
 
 <section class="steps">
   <div class="step">
-    <div class="n">1</div><h3>Shifokor retsept yozadi</h3>
-    <p>Qabuldan so'ng shifokor tizimda retsept rasmiylashtiradi va sizga ID hamda QR kod beradi.</p>
+    <div class="n">1</div><h3><%= t('home.step1t') %></h3>
+    <p><%= t('home.step1d') %></p>
   </div>
   <div class="step">
-    <div class="n">2</div><h3>QR yoki ID kiritasiz</h3>
-    <p>Telefon kamerasi bilan QR kodni skanerlang yoki yuqoridagi maydonga ID ni kiriting.</p>
+    <div class="n">2</div><h3><%= t('home.step2t') %></h3>
+    <p><%= t('home.step2d') %></p>
   </div>
   <div class="step">
-    <div class="n">3</div><h3>PDF ni yuklab olasiz</h3>
-    <p>Retsept ekranda ochiladi — uni PDF sifatida saqlash yoki chop etish mumkin.</p>
+    <div class="n">3</div><h3><%= t('home.step3t') %></h3>
+    <p><%= t('home.step3d') %></p>
   </div>
   <div class="step">
-    <div class="n">4</div><h3>Telegram orqali ham</h3>
-    <p>Botga ID ni yuboring — retsept PDF fayli darhol jo'natiladi.</p>
+    <div class="n">4</div><h3><%= t('home.step4t') %></h3>
+    <p><%= t('home.step4d') %></p>
   </div>
 </section>
 

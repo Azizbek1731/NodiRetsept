@@ -1,40 +1,40 @@
-<%- include('../partials/app-head', { pageTitle: 'Administrator paneli', pageSub: fmt.longDate(fmt.toISODate()) }) %>
+<%- include('../partials/app-head', { pageTitle: t('admin.title'), pageSub: fmt.longDate(fmt.toISODate()) }) %>
 
 <div class="grid c4 mb-3">
   <div class="card stat accent">
     <div class="stat-icon"><%- icon('file',{size:19}) %></div>
-    <div class="stat-label">Bugungi retseptlar</div>
+    <div class="stat-label"><%= t('dash.daily') %></div>
     <div class="stat-value"><%= stats.daily %></div>
     <div class="stat-foot">
       <span class="delta <%= stats.dailyDiff > 0 ? 'up' : stats.dailyDiff < 0 ? 'down' : 'flat' %>"><%= stats.dailyDiff %>%</span>
-      <span>kecha: <%= stats.dailyPrev %></span>
+      <span><%= t('dash.yesterday') %>: <%= stats.dailyPrev %></span>
     </div>
   </div>
   <div class="card stat">
     <div class="stat-icon"><%- icon('chart',{size:19}) %></div>
-    <div class="stat-label">Bu oy</div>
+    <div class="stat-label"><%= t('dash.monthly') %></div>
     <div class="stat-value"><%= stats.monthly %></div>
-    <div class="stat-foot"><span>o'tgan oy: <%= stats.monthlyPrev %></span></div>
+    <div class="stat-foot"><span><%= t('dash.lastMonth') %>: <%= stats.monthlyPrev %></span></div>
   </div>
   <div class="card stat">
     <div class="stat-icon"><%- icon('users',{size:19}) %></div>
-    <div class="stat-label">Bemorlar</div>
+    <div class="stat-label"><%= t('dash.patients') %></div>
     <div class="stat-value"><%= stats.totalPatients %></div>
-    <div class="stat-foot"><span>bu oyda +<%= stats.newPatientsMonth %></span></div>
+    <div class="stat-foot"><span><%= t('dash.thisMonthNew') %> +<%= stats.newPatientsMonth %></span></div>
   </div>
   <div class="card stat">
     <div class="stat-icon"><%- icon('eye',{size:19}) %></div>
-    <div class="stat-label">Retsept ochilishi</div>
+    <div class="stat-label"><%= t('dash.rxViews') %></div>
     <div class="stat-value"><%= stats.views %></div>
-    <div class="stat-foot"><span>bemorlar tomonidan</span></div>
+    <div class="stat-foot"><span><%= t('dash.byPatients') %></span></div>
   </div>
 </div>
 
 <div class="grid sidebar-right">
   <div class="col gap-3">
     <div class="card">
-      <div class="row between mb-2"><h3 class="mb-0">So'nggi 14 kun</h3>
-        <span class="badge brand">Jami: <%= stats.series.reduce((a,b)=>a+b.value,0) %></span></div>
+      <div class="row between mb-2"><h3 class="mb-0"><%= t('dash.last14') %></h3>
+        <span class="badge brand"><%= t('common.total') %>: <%= stats.series.reduce((a,b)=>a+b.value,0) %></span></div>
       <% const max = Math.max(1, ...stats.series.map(s=>s.value)); %>
       <div class="chart">
         <% stats.series.forEach(function (s, i) { %>
@@ -48,13 +48,13 @@
     </div>
 
     <div class="card flush">
-      <div class="card-head"><h3>Shifokorlar faoliyati</h3>
-        <a class="btn btn-sm btn-ghost" href="/admin/doctors">Boshqarish <%- icon('chevronRight',{size:14}) %></a></div>
+      <div class="card-head"><h3><%= t('dash.doctorsActivity') %></h3>
+        <a class="btn btn-sm btn-ghost" href="/admin/doctors"><%= t('dash.manage') %> <%- icon('chevronRight',{size:14}) %></a></div>
       <% if (doctors.length) { %>
         <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>Shifokor</th><th class="hide-sm">Mutaxassislik</th><th class="num">Bugun</th>
-              <th class="num">Jami</th><th>Pechat</th><th>Holat</th><th></th></tr></thead>
+            <thead><tr><th><%= t('table.doctor') %></th><th class="hide-sm"><%= t('table.specialty') %></th><th class="num"><%= t('table.today') %></th>
+              <th class="num"><%= t('common.total') %></th><th><%= t('table.stamp') %></th><th><%= t('common.status') %></th><th></th></tr></thead>
             <tbody>
               <% doctors.forEach(function (d) { %>
                 <tr>
@@ -63,8 +63,8 @@
                   <td class="hide-sm small"><%= d.specialty || '—' %></td>
                   <td class="num"><%= d.rx_today %></td>
                   <td class="num strong"><%= d.rx_total %></td>
-                  <td><span class="badge <%= d.stamp_path ? 'ok' : 'warn' %>"><%= d.stamp_path ? 'bor' : 'yo\'q' %></span></td>
-                  <td><span class="badge <%= d.is_active ? 'ok' : 'danger' %>"><%= d.is_active ? 'faol' : 'faolsiz' %></span></td>
+                  <td><span class="badge <%= d.stamp_path ? 'ok' : 'warn' %>"><%= d.stamp_path ? t('common.yes') : t('common.no') %></span></td>
+                  <td><span class="badge <%= d.is_active ? 'ok' : 'danger' %>"><%= d.is_active ? t('common.active') : t('common.inactive') %></span></td>
                   <td class="right"><a class="btn btn-sm btn-ghost" href="/admin/doctors/<%= d.id %>"><%- icon('chevronRight',{size:15}) %></a></td>
                 </tr>
               <% }) %>
@@ -72,18 +72,18 @@
           </table>
         </div>
       <% } else { %>
-        <div class="empty"><%- icon('users',{size:46}) %><h3>Shifokorlar yo'q</h3>
-          <p>Tizimga birinchi shifokorni qo'shing.</p>
-          <a class="btn btn-primary mt-2" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> Shifokor qo'shish</a></div>
+        <div class="empty"><%- icon('users',{size:46}) %><h3><%= t('admin.noDoctors') %></h3>
+          <p><%= t('admin.noDoctorsText') %></p>
+          <a class="btn btn-primary mt-2" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> <%= t('admin.addDoctor') %></a></div>
       <% } %>
     </div>
 
     <div class="card flush">
-      <div class="card-head"><h3>So'nggi retseptlar</h3>
-        <a class="btn btn-sm btn-ghost" href="/admin/prescriptions">Barchasi <%- icon('chevronRight',{size:14}) %></a></div>
+      <div class="card-head"><h3><%= t('dash.recentRx') %></h3>
+        <a class="btn btn-sm btn-ghost" href="/admin/prescriptions"><%= t('common.all') %> <%- icon('chevronRight',{size:14}) %></a></div>
       <div class="table-wrap">
         <table class="table">
-          <thead><tr><th>ID</th><th>Bemor</th><th class="hide-sm">Shifokor</th><th>Sana</th><th></th></tr></thead>
+          <thead><tr><th><%= t('table.id') %></th><th><%= t('table.patient') %></th><th class="hide-sm"><%= t('table.doctor') %></th><th><%= t('table.date') %></th><th></th></tr></thead>
           <tbody>
             <% recent.forEach(function (r) { %>
               <tr>
@@ -102,30 +102,30 @@
 
   <div class="col gap-3">
     <div class="card">
-      <h4>Tezkor amallar</h4>
+      <h4><%= t('dash.quickActions') %></h4>
       <div class="col gap-1">
-        <a class="btn btn-primary btn-block" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> Shifokor qo'shish</a>
-        <a class="btn btn-block" href="/admin/blank"><%- icon('edit',{size:16}) %> Blankani tahrirlash</a>
-        <a class="btn btn-block" href="/admin/prescriptions"><%- icon('file',{size:16}) %> Retseptlar</a>
-        <a class="btn btn-block" href="/admin/telegram"><%- icon('send',{size:16}) %> Telegram bot</a>
+        <a class="btn btn-primary btn-block" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> <%= t('admin.addDoctor') %></a>
+        <a class="btn btn-block" href="/admin/blank"><%- icon('edit',{size:16}) %> <%= t('nav.blank') %></a>
+        <a class="btn btn-block" href="/admin/prescriptions"><%- icon('file',{size:16}) %> <%= t('nav.prescriptions') %></a>
+        <a class="btn btn-block" href="/admin/telegram"><%- icon('send',{size:16}) %> <%= t('nav.telegram') %></a>
       </div>
     </div>
 
     <div class="card">
-      <div class="row between mb-1"><h4 class="mb-0">Telegram bot</h4>
-        <span class="badge <%= tg.enabled ? 'ok' : 'warn' %>"><%= tg.enabled ? 'yoqilgan' : 'o\'chirilgan' %></span></div>
+      <div class="row between mb-1"><h4 class="mb-0"><%= t('nav.telegram') %></h4>
+        <span class="badge <%= tg.enabled ? 'ok' : 'warn' %>"><%= tg.enabled ? t('dash.enabled') : t('dash.disabled') %></span></div>
       <div class="stat-value" style="font-size:1.6rem"><%= tg.users %></div>
-      <div class="small muted">ro'yxatdan o'tgan foydalanuvchi</div>
-      <a class="btn btn-sm mt-2 btn-block" href="/admin/telegram">Batafsil</a>
+      <div class="small muted"><%= t('dash.registeredUsers') %></div>
+      <a class="btn btn-sm mt-2 btn-block" href="/admin/telegram"><%= t('common.more') %></a>
     </div>
 
     <div class="card">
-      <h4>So'nggi harakatlar</h4>
+      <h4><%= t('dash.recentActions') %></h4>
       <div class="list" style="margin:0 -20px -20px">
         <% audits.forEach(function (a) { %>
           <div class="list-item" style="padding:9px 20px">
             <div class="grow" style="min-width:0">
-              <div class="small truncate"><strong><%= a.full_name || 'Tizim' %></strong> — <%= a.action %></div>
+              <div class="small truncate"><strong><%= a.full_name || t('dash.system') %></strong> — <%= a.action %></div>
               <div class="tiny muted"><%= fmt.dateTime(a.created_at) %></div>
             </div>
           </div>

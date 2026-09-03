@@ -9,25 +9,28 @@ const upload = require('../lib/upload');
 
 const router = express.Router();
 
-/** Retsept yozish oynasi uchun umumiy ma'lumotlar */
-function editorData(user) {
+/** Retsept yozish oynasi uchun umumiy ma'lumotlar (tanlov ro'yxatlari tilga bog'liq) */
+function editorData(user, t) {
+  const list = (key) => {
+    const v = t(`editorOpts.${key}`);
+    return Array.isArray(v) ? v : [];
+  };
   return {
     today: fmt.toISODate(),
-    forms: ['tab.', 'caps.', 'sir.', 'sol. pro inj.', 'sol. pro inf.', 'pulv. pro inj.', 'gran.',
-      'ung.', 'crem.', 'gel.', 'supp.', 'guttae', 'aerosol.', 'spray nasal.', 'susp.', 'past.'],
-    routes: ['ichga', 'mushak orasiga', 'venaga', 'teri ostiga', 'tashqi', 'rektal', 'inhalyatsion',
-      'til ostiga', 'burunga', 'ko\'zga', 'quloqqa'],
-    frequencies: ['kuniga 1 mahal', 'kuniga 2 mahal', 'kuniga 3 mahal', 'kuniga 4 mahal',
-      'har 6 soatda', 'har 8 soatda', 'har 12 soatda', 'kunora', 'zarurat bo\'lganda'],
-    durations: ['3 kun', '5 kun', '7 kun', '10 kun', '14 kun', '1 oy', '2 oy', '3 oy', 'doimiy'],
-    instructions: ['ovqatdan oldin', 'ovqat paytida', 'ovqatdan keyin', 'ertalab och qoringa',
-      'kechqurun', 'ko\'p suv bilan'],
+    forms: list('forms'),
+    routes: list('routes'),
+    frequencies: list('frequencies'),
+    durations: list('durations'),
+    instructions: list('instructions'),
+    physioSuggest: list('physioSuggest'),
+    genders: [t('editorOpts.genderMale'), t('editorOpts.genderFemale')],
     canPickDoctor: user.role === 'admin',
     doctors: user.role === 'admin'
       ? h.all("SELECT id, full_name, specialty FROM users WHERE role='doctor' AND is_active=1 ORDER BY full_name")
       : [],
   };
 }
+
 /* ── Dashboard ────────────────────────────────────────────── */
 
 router.get('/dashboard', auth.requireDoctor, (req, res) => {
@@ -37,10 +40,10 @@ router.get('/dashboard', auth.requireDoctor, (req, res) => {
     doctorId: req.user.id, from: stats.periods.today, to: stats.periods.today, limit: 50,
   }).rows;
   res.render('doctor/dashboard', {
-    title: 'Boshqaruv paneli',
+    title: req.t('nav.dashboard'),
     bodyClass: 'app-page',
     stats, recent, todays,
-    editor: editorData(req.user),
+    editor: editorData(req.user, req.t),
   });
 });
 
@@ -72,9 +75,9 @@ router.get('/patients', auth.requireDoctor, (req, res) => {
   const total = h.get(`SELECT COUNT(*) AS n FROM patients p WHERE ${where}`, ...params).n;
 
   res.render('doctor/patients', {
-    title: 'Bemorlar', bodyClass: 'app-page',
+    title: req.t('nav.patients'), bodyClass: 'app-page',
     patients: rows, total, page, perPage, q, scope,
-    editor: editorData(req.user),
+    editor: editorData(req.user, req.t),
   });
 });
 
@@ -84,7 +87,7 @@ router.get('/patients/:id', auth.requireDoctor, (req, res, next) => {
   const history = rxLib.list({ patientId: patient.id, limit: 100 }).rows;
   res.render('doctor/patient', {
     title: patient.full_name, bodyClass: 'app-page',
-    patient, history, editor: editorData(req.user),
+    patient, history, editor: editorData(req.user, req.t),
   });
 });
 
@@ -100,9 +103,9 @@ router.get('/prescriptions', auth.requireDoctor, (req, res) => {
     doctorId: req.user.id, q, from, to, limit: perPage, offset: (page - 1) * perPage,
   });
   res.render('doctor/prescriptions', {
-    title: 'Retseptlar', bodyClass: 'app-page',
+    title: req.t('nav.prescriptions'), bodyClass: 'app-page',
     prescriptions: rows, total, page, perPage, q, from, to,
-    editor: editorData(req.user),
+    editor: editorData(req.user, req.t),
   });
 });
 
@@ -111,11 +114,11 @@ router.get('/prescriptions', auth.requireDoctor, (req, res) => {
 router.get('/profile', auth.requireRole('doctor', 'admin'), (req, res) => {
   const stats = req.user.role === 'doctor' ? rxLib.stats(req.user.id) : rxLib.stats();
   res.render('doctor/profile', {
-    title: 'Profil', bodyClass: 'app-page',
+    title: req.t('profile.title'), bodyClass: 'app-page',
     doctor: h.get('SELECT * FROM users WHERE id = ?', req.user.id),
     template: rxLib.effectiveTemplate(req.user.role === 'doctor' ? req.user.id : null),
     stats,
-    editor: editorData(req.user),
+    editor: editorData(req.user, req.t),
   });
 });
 
@@ -125,22 +128,22 @@ router.post('/profile', auth.requireRole('doctor', 'admin'), (req, res) => {
   h.run(`UPDATE users SET full_name=?, phone=?, specialty=?, license_number=?, room=? WHERE id=?`,
     s(b.full_name) || req.user.full_name, s(b.phone), s(b.specialty), s(b.license_number), s(b.room), req.user.id);
   h.audit(req.user.id, 'profile.update', 'user', req.user.id, null);
-  req.session.flash = { type: 'success', text: 'Profil ma\'lumotlari saqlandi.' };
+  req.session.flash = { type: 'success', text: req.t('profile.savedOk') };
   res.redirect('/profile');
 });
 
 router.post('/profile/password', auth.requireRole('doctor', 'admin'), (req, res) => {
   const { current = '', password = '', confirm = '' } = req.body || {};
   if (!auth.verifyPassword(current, req.user.password_hash)) {
-    req.session.flash = { type: 'error', text: 'Joriy parol noto\'g\'ri.' };
+    req.session.flash = { type: 'error', text: req.t('profile.pwdWrong') };
   } else if (String(password).length < 6) {
-    req.session.flash = { type: 'error', text: 'Yangi parol kamida 6 belgidan iborat bo\'lsin.' };
+    req.session.flash = { type: 'error', text: req.t('profile.pwdShort') };
   } else if (password !== confirm) {
-    req.session.flash = { type: 'error', text: 'Yangi parollar mos kelmadi.' };
+    req.session.flash = { type: 'error', text: req.t('profile.pwdMismatch') };
   } else {
     h.run('UPDATE users SET password_hash = ? WHERE id = ?', auth.hashPassword(password), req.user.id);
     h.audit(req.user.id, 'password.change', 'user', req.user.id, null);
-    req.session.flash = { type: 'success', text: 'Parol yangilandi.' };
+    req.session.flash = { type: 'success', text: req.t('profile.pwdOk') };
   }
   res.redirect('/profile');
 });
@@ -158,7 +161,7 @@ router.post('/profile/media', auth.requireRole('doctor', 'admin'),
       upload.remove(me.signature_path);
       h.run('UPDATE users SET signature_path = ? WHERE id = ?', upload.relPath(files.signature[0]), req.user.id);
     }
-    req.session.flash = { type: 'success', text: 'Rasm(lar) yuklandi.' };
+    req.session.flash = { type: 'success', text: req.t('profile.mediaOk') };
     res.redirect('/profile');
   });
 

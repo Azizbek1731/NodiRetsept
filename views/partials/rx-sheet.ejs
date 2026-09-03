@@ -1,5 +1,6 @@
 <%
-  const t = rx.template || {};
+  const tr = locals.t;            // tarjima funksiyasi
+  const t = rx.template || {};    // blanka sozlamalari
   const p = rx.patient || {};
   const d = rx.doctor || {};
   const accent = /^#[0-9a-fA-F]{6}$/.test(t.accent_color || '') ? t.accent_color : '#0e7c86';
@@ -12,11 +13,11 @@
     <div class="clinic">
       <div class="clinic-head">
         <% if (t.show_logo) { %>
-          <img class="logo-img" alt="Logotip"
+          <img class="logo-img" alt="<%= tr('admin.logo') %>"
                src="<%= t.logo_path ? '/' + t.logo_path : '/static/img/logo-mark.svg' %>">
         <% } %>
         <div class="grow" style="min-width:0">
-          <h2><%= t.clinic_name || 'Klinika' %></h2>
+          <h2><%= t.clinic_name || tr('rx.clinic') %></h2>
           <% if (t.clinic_subtitle) { %><div class="sub"><%= t.clinic_subtitle %></div><% } %>
         </div>
       </div>
@@ -27,45 +28,45 @@
       <div class="qr">
         <img src="<%= rx.qrDataUrl || ('/r/' + rx.public_id + '/qr.png?size=320') %>" alt="QR kod" loading="lazy">
         <div class="idtxt"><%= rx.pretty_id %></div>
-        <div class="tiny muted">QR ni skanerlang</div>
+        <div class="tiny muted"><%= tr('rx.scanMe') %></div>
       </div>
     <% } %>
   </header>
 
   <div class="rx-titlebar">
-    <div class="t">RETSEPT <small>Rx / Prescription</small></div>
+    <div class="t"><%= tr('rx.title') %> <small><%= tr('rx.subtitle') %></small></div>
     <div class="right">
-      <div class="strong">Sana: <%= fmt.dmy(rx.visit_date) %></div>
+      <div class="strong"><%= tr('common.date') %>: <%= fmt.dmy(rx.visit_date) %></div>
       <div class="tiny muted">ID: <%= rx.pretty_id %></div>
     </div>
   </div>
 
   <div class="rx-body">
     <section class="rx-section">
-      <div class="lbl">Bemor ma'lumotlari</div>
+      <div class="lbl"><%= tr('rx.patientBlock') %></div>
       <div class="rx-patient rx-kv">
-        <div><span class="k">F.I.Sh.</span><span class="v"><%= p.full_name || '—' %></span></div>
-        <div><span class="k">Tug'ilgan yili</span><span class="v"><%= p.birth_year ? p.birth_year + (yrs != null ? ` (${yrs} yosh)` : '') : '—' %></span></div>
-        <div><span class="k">Jinsi</span><span class="v"><%= p.gender || '—' %></span></div>
-        <div><span class="k">Telefon</span><span class="v"><%= fmt.phoneFmt(p.phone) || '—' %></span></div>
-        <div><span class="k">Bemor kodi</span><span class="v"><%= p.code || '—' %></span></div>
-        <% if (p.address) { %><div><span class="k">Manzil</span><span class="v"><%= p.address %></span></div><% } %>
+        <div><span class="k"><%= tr('rx.fio') %></span><span class="v"><%= p.full_name || '—' %></span></div>
+        <div><span class="k"><%= tr('rx.birthYear') %></span><span class="v"><%= p.birth_year ? p.birth_year + (yrs != null ? ` (${yrs} ${tr('rx.age')})` : '') : '—' %></span></div>
+        <div><span class="k"><%= tr('rx.gender') %></span><span class="v"><%= p.gender || '—' %></span></div>
+        <div><span class="k"><%= tr('common.phone') %></span><span class="v"><%= fmt.phoneFmt(p.phone) || '—' %></span></div>
+        <div><span class="k"><%= tr('rx.patientCode') %></span><span class="v"><%= p.code || '—' %></span></div>
+        <% if (p.address) { %><div><span class="k"><%= tr('common.address') %></span><span class="v"><%= p.address %></span></div><% } %>
       </div>
     </section>
 
     <% if (t.show_complaints && rx.complaints) { %>
       <section class="rx-section">
-        <div class="lbl">Shikoyatlar</div>
+        <div class="lbl"><%= tr('rx.complaints') %></div>
         <div><%= rx.complaints %></div>
       </section>
     <% } %>
 
     <% if (rx.diagnosis || rx.icd10) { %>
       <section class="rx-section">
-        <div class="lbl">Dastlabki tashxis</div>
+        <div class="lbl"><%= tr('rx.diagnosis') %></div>
         <div class="row between wrap gap-2">
           <div class="rx-dx grow"><%= rx.diagnosis || '—' %></div>
-          <% if (t.show_icd && rx.icd10) { %><span class="badge brand">МКБ-10: <%= rx.icd10 %></span><% } %>
+          <% if (t.show_icd && rx.icd10) { %><span class="badge brand"><%= tr('rx.icd') %>: <%= rx.icd10 %></span><% } %>
         </div>
       </section>
     <% } %>
@@ -73,7 +74,7 @@
     <section class="rx-section">
       <div class="rp-head">
         <span class="rp">Rp.</span>
-        <span class="tiny muted">Dori vositalari — xalqaro nomlanish (INN)</span>
+        <span class="tiny muted"><%= tr('rx.drugsNote') %></span>
       </div>
       <% if (rx.items && rx.items.length) { %>
         <% rx.items.forEach(function (item, i) { const l = rxLines(item); %>
@@ -87,38 +88,38 @@
           </div>
         <% }) %>
       <% } else { %>
-        <div class="muted small">Dori vositasi tayinlanmagan.</div>
+        <div class="muted small"><%= tr('rx.noDrugs') %></div>
       <% } %>
     </section>
 
     <% if (t.show_physio && rx.physiotherapy) { %>
       <section class="rx-section">
-        <div class="lbl">Fizioterapiya va muolajalar</div>
+        <div class="lbl"><%= tr('rx.physio') %></div>
         <div><%= rx.physiotherapy %></div>
       </section>
     <% } %>
 
     <% if (t.show_recommendations && (rx.recommendations || rx.next_visit)) { %>
       <section class="rx-section">
-        <div class="lbl">Tavsiyalar</div>
+        <div class="lbl"><%= tr('rx.recommendations') %></div>
         <% if (rx.recommendations) { %><div><%= rx.recommendations %></div><% } %>
-        <% if (rx.next_visit) { %><div class="mt-1"><strong>Keyingi qabul sanasi:</strong> <%= fmt.dmy(rx.next_visit) %></div><% } %>
+        <% if (rx.next_visit) { %><div class="mt-1"><strong><%= tr('rx.nextVisit') %>:</strong> <%= fmt.dmy(rx.next_visit) %></div><% } %>
       </section>
     <% } %>
 
     <div class="rx-doctor">
       <div>
-        <div class="lbl" style="color:<%= accent %>;font-size:.71rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em">Shifokor</div>
+        <div class="lbl" style="color:<%= accent %>;font-size:.71rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em"><%= tr('rx.doctor') %></div>
         <div class="strong" style="font-size:1.04rem"><%= d.full_name || '—' %></div>
         <% if (d.specialty) { %><div class="small muted"><%= d.specialty %></div><% } %>
-        <% if (d.phone) { %><div class="small">Tel: <%= fmt.phoneFmt(d.phone) %></div><% } %>
-        <% if (d.license_number) { %><div class="tiny muted">Litsenziya / diplom: <%= d.license_number %></div><% } %>
+        <% if (d.phone) { %><div class="small"><%= tr('rx.tel') %>: <%= fmt.phoneFmt(d.phone) %></div><% } %>
+        <% if (d.license_number) { %><div class="tiny muted"><%= tr('rx.license') %>: <%= d.license_number %></div><% } %>
       </div>
       <div class="sign-area">
         <% if (t.show_signature) { %>
           <div class="sign">
             <% if (d.signature_path) { %><img src="/<%= d.signature_path %>" alt="Imzo"><% } else { %><div style="height:46px"></div><% } %>
-            <div class="line"></div><div class="tiny muted">Imzo</div>
+            <div class="line"></div><div class="tiny muted"><%= tr('rx.signature') %></div>
           </div>
         <% } %>
         <% if (t.show_stamp) { %>
@@ -126,7 +127,7 @@
             <% if (d.stamp_path) { %>
               <img src="/<%= d.stamp_path %>" alt="Shifokor pechati">
             <% } else { %>
-              <div class="placeholder">M.O'.</div>
+              <div class="placeholder"><%= tr('rx.stamp') %></div>
             <% } %>
           </div>
         <% } %>
@@ -136,6 +137,6 @@
 
   <footer class="rx-footer">
     <div><%= t.footer_note || '' %></div>
-    <div class="nowrap">Tekshirish: <%= publicUrl %>/r/<%= rx.public_id %></div>
+    <div class="nowrap"><%= tr('rx.verifyAt') %>: <%= publicUrl %>/r/<%= rx.public_id %></div>
   </footer>
 </article>

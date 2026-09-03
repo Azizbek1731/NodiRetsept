@@ -3,29 +3,29 @@
 <% if (rx.status === 'cancelled') { %>
   <div class="verify-banner cancelled no-print">
     <%- icon('alert',{size:19}) %>
-    <span>Diqqat! Ushbu retsept shifokor tomonidan <strong>bekor qilingan</strong>. Iltimos, shifokoringizga murojaat qiling.</span>
+    <span><%- t('rx.cancelled') %></span>
   </div>
 <% } else { %>
   <div class="verify-banner no-print">
     <%- icon('shield',{size:19}) %>
-    <span>Haqiqiy retsept — <%= fmt.dateTime(rx.created_at) %> da <%= rx.doctor.full_name %> tomonidan rasmiylashtirilgan</span>
+    <span><%- t('rx.genuine', { date: fmt.dateTime(rx.created_at), doctor: rx.doctor.full_name }) %></span>
   </div>
 <% } %>
 
 <%- include('../partials/rx-sheet', { rx }) %>
 
 <div class="rx-actions no-print">
-  <a class="btn btn-primary btn-lg" href="/r/<%= rx.public_id %>/pdf"><%- icon('download',{size:18}) %> PDF yuklab olish</a>
-  <button class="btn btn-lg" onclick="window.print()"><%- icon('print',{size:18}) %> Chop etish</button>
-  <button class="btn btn-lg" data-copy="<%= rx.url %>"><%- icon('link',{size:18}) %> Havoladan nusxa</button>
+  <a class="btn btn-primary btn-lg" href="/r/<%= rx.public_id %>/pdf"><%- icon('download',{size:18}) %> <%= t('rx.downloadPdf') %></a>
+  <button class="btn btn-lg" onclick="window.print()"><%- icon('print',{size:18}) %> <%= t('common.print') %></button>
+  <button class="btn btn-lg" data-copy="<%= rx.url %>"><%- icon('link',{size:18}) %> <%= t('rx.copyLink') %></button>
   <% if (isStaff) { %>
     <a class="btn btn-lg" href="<%= currentUser.role === 'admin' ? '/admin/prescriptions' : '/prescriptions' %>">
-      <%- icon('chevronLeft',{size:18}) %> Ro'yxatga qaytish</a>
+      <%- icon('chevronLeft',{size:18}) %> <%= t('rx.backList') %></a>
   <% } %>
 </div>
 
 <div class="center small muted no-print mt-2">
-  Ko'rilishlar soni: <%= rx.view_count %> · Retsept ID: <span class="mono strong"><%= rx.pretty_id %></span>
+  <%= t('rx.views') %>: <%= rx.view_count %> · <%= t('rx.rxId') %>: <span class="mono strong"><%= rx.pretty_id %></span>
 </div>
 
 <script>

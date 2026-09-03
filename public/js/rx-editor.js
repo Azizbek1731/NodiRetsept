@@ -5,6 +5,11 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const modal = $('#rxModal');
   if (!modal) return;
+  const T = window.T;
+  const TITLES = {
+    newTitle: $('#rxModalTitle').textContent.trim(),
+    subtitle: $('#rxModalSub').textContent.trim(),
+  };
 
   const form = $('#rxForm');
   const drugList = $('#drugList');
@@ -33,8 +38,8 @@
     $('#rxSave').classList.remove('hide');
     $('#rxAgain').classList.add('hide');
     $('#rxFootHint').classList.remove('hide');
-    $('#rxModalTitle').textContent = 'Retsept yozish';
-    $('#rxModalSub').textContent = 'Bemorni tanlang va tayinlovlarni kiriting';
+    $('#rxModalTitle').textContent = TITLES.newTitle;
+    $('#rxModalSub').textContent = TITLES.subtitle;
   }
 
   async function open(opts = {}) {
@@ -73,15 +78,15 @@
       item.innerHTML =
         `<span class="avatar sm">${initials(p.full_name)}</span>
          <span class="grow"><span class="nm">${esc(p.full_name)}</span><br>
-         <span class="meta">${p.birth_year ? p.birth_year + '-yil' : 'yil ko\'rsatilmagan'}${p.age != null ? ' · ' + p.age + ' yosh' : ''}${p.code ? ' · ' + p.code : ''}${p.rx_count ? ' · ' + p.rx_count + ' ta retsept' : ''}</span></span>`;
+         <span class="meta">${p.birth_year ? p.birth_year + ' ' + T('yearShort') : T('notSpecified')}${p.age != null ? ' · ' + p.age + ' ' + T('yearsOld') : ''}${p.code ? ' · ' + p.code : ''}${p.rx_count ? ' · ' + p.rx_count + ' ' + T('rxCount') : ''}</span></span>`;
       item.addEventListener('click', () => pickPatient(p));
       results.appendChild(item);
     });
     const add = document.createElement('div');
     add.className = 'picker-item add';
     add.innerHTML = `<span class="avatar sm" style="background:var(--brand);color:#fff">+</span>
-      <span class="grow"><span class="nm">Yangi bemor qo'shish</span><br>
-      <span class="meta">${q ? '«' + esc(q) + '»' : 'Ro\'yxatda topilmadi'} — yangi karta yaratish</span></span>`;
+      <span class="grow"><span class="nm">${esc(T('newPatient'))}</span><br>
+      <span class="meta">${q ? '«' + esc(q) + '»' : esc(T('notFoundInList'))} — ${esc(T('createNewCard'))}</span></span>`;
     add.addEventListener('click', () => showNewPatient(q));
     results.appendChild(add);
     results.classList.add('open');
@@ -123,7 +128,7 @@
     $('#ppAvatar').textContent = initials(p.full_name);
     $('#ppName').textContent = p.full_name;
     const bits = [];
-    if (p.birth_year) bits.push(p.birth_year + '-yil' + (p.age != null ? ` (${p.age} yosh)` : ''));
+    if (p.birth_year) bits.push(p.birth_year + ' ' + T('yearShort') + (p.age != null ? ` (${p.age} ${T('yearsOld')})` : ''));
     if (p.gender) bits.push(p.gender);
     if (p.code) bits.push(p.code);
     if (p.phone_fmt || p.phone) bits.push(p.phone_fmt || p.phone);
@@ -159,18 +164,18 @@
       phone: $('#npPhone').value.trim(),
       address: $('#npAddress').value.trim(),
     };
-    if (body.full_name.length < 3) return window.toast('Bemorning to\'liq ismini kiriting', 'error');
-    if (!body.birth_year) return window.toast('Tug\'ilgan yilini kiriting', 'error');
+    if (body.full_name.length < 3) return window.toast(T('enterName'), 'error');
+    if (!body.birth_year) return window.toast(T('enterYear'), 'error');
     btn.classList.add('loading');
     try {
       const data = await window.api('/api/patients', { method: 'POST', body });
-      window.toast('Yangi bemor qo\'shildi', 'success');
+      window.toast(T('patientAdded'), 'success');
       $('#newPatientBox').classList.add('hide');
       ['#npName', '#npYear', '#npPhone', '#npAddress'].forEach((s) => { $(s).value = ''; });
       pickPatient(data.patient);
     } catch (err) {
       if (err.data && err.data.duplicate) {
-        if (confirm(err.message + '\n\nMavjud bemorni tanlaymizmi?')) {
+        if (confirm(err.message + '\n\n' + T('selectExisting'))) {
           const d = await window.api('/api/patients/search?q=' + encodeURIComponent(body.full_name));
           const found = d.patients.find((x) => x.id === err.data.patient_id);
           if (found) { $('#newPatientBox').classList.add('hide'); pickPatient(found); }
@@ -263,7 +268,7 @@
       const { prescription: p } = await window.api('/api/prescriptions/' + id);
       editingId = p.id;
       $('#rxId').value = p.id;
-      $('#rxModalTitle').textContent = 'Retseptni tahrirlash';
+      $('#rxModalTitle').textContent = T('editTitle');
       $('#rxModalSub').textContent = p.pretty_id;
       pickPatient(Object.assign({}, p.patient, { age: p.patient.birth_year ? new Date().getFullYear() - p.patient.birth_year : null }));
       $('#rxDate').value = p.visit_date || '';
@@ -275,7 +280,7 @@
       $('#rxNext').value = p.next_visit || '';
       drugList.innerHTML = '';
       (p.items.length ? p.items : [null]).forEach((it) => addDrugRow(it));
-      $('#rxSave').innerHTML = '<span>Saqlash</span>';
+      $('#rxSave').innerHTML = '<span>' + T('submitEdit') + '</span>';
     } catch (e) { window.toast(e.message, 'error'); }
   }
 
@@ -300,10 +305,10 @@
     const doctorSel = $('#rxDoctor');
     if (doctorSel) body.doctor_id = doctorSel.value;
 
-    if (!body.patient_id) return fail('Avval bemorni tanlang.');
-    if (!body.visit_date) return fail('Kelgan sanasini kiriting.');
-    if (!body.diagnosis) return fail('Dastlabki tashxisni kiriting.');
-    if (!items.length && !body.physiotherapy) return fail('Kamida bitta dori yoki fizioterapiya kiriting.');
+    if (!body.patient_id) return fail(T('selectPatientFirst'));
+    if (!body.visit_date) return fail(T('enterVisitDate'));
+    if (!body.diagnosis) return fail(T('enterDiagnosis'));
+    if (!items.length && !body.physiotherapy) return fail(T('needDrugOrPhysio'));
 
     btn.classList.add('loading');
     try {
@@ -333,9 +338,9 @@
     $('#okView').href = data.view_path;
     $('#okPdf').href = data.pdf_path;
     $('#okPrint').href = data.view_path + '?print=1';
-    $('#rxModalTitle').textContent = editingId ? 'Retsept yangilandi' : 'Retsept tayyor';
-    $('#rxModalSub').textContent = 'Bemorga QR kod yoki ID ni bering';
-    window.toast('Retsept saqlandi: ' + data.pretty_id, 'success');
+    $('#rxModalTitle').textContent = editingId ? T('updatedTitle') : T('readyTitle');
+    $('#rxModalSub').textContent = T('readySub');
+    window.toast(T('rxSaved', { id: data.pretty_id }), 'success');
     if (typeof window.onRxSaved === 'function') window.onRxSaved(data);
   }
 

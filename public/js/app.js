@@ -2,6 +2,14 @@
 (function () {
   'use strict';
 
+  /* ── Tarjima ─────────────────────────────────────────── */
+  const DICT = (window.I18N && window.I18N.js) || {};
+  window.T = function (key, params) {
+    let v = DICT[key] || key;
+    if (params) v = v.replace(/\{(\w+)\}/g, (m, k) => (params[k] === undefined ? m : params[k]));
+    return v;
+  };
+
   /* ── Toast xabarlari ─────────────────────────────────── */
   const toastBox = () => document.getElementById('toasts');
   window.toast = function (text, type) {
@@ -31,7 +39,7 @@
     let data = {};
     try { data = await res.json(); } catch (e) { /* bo'sh javob */ }
     if (!res.ok || data.ok === false) {
-      const err = new Error(data.error || `Xatolik (${res.status})`);
+      const err = new Error(data.error || `Error ${res.status}`);
       err.data = data; err.status = res.status;
       throw err;
     }
@@ -91,8 +99,8 @@
         ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
         document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
       }
-      window.toast('Nusxa olindi', 'success');
-    } catch (e) { window.toast('Nusxa olishning iloji bo\'lmadi', 'error'); }
+      window.toast(window.T('copied'), 'success');
+    } catch (e) { window.toast(window.T('copyFailed'), 'error'); }
   };
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-copy]');
@@ -124,16 +132,14 @@
     e.preventDefault();
     const cancel = btn.hasAttribute('data-rx-cancel');
     const id = btn.getAttribute(cancel ? 'data-rx-cancel' : 'data-rx-restore');
-    const msg = cancel
-      ? 'Retsept bekor qilinsinmi? Bemor uni ochganda «bekor qilingan» degan ogohlantirish ko\'radi.'
-      : 'Retsept qayta faollashtirilsinmi?';
+    const msg = window.T(cancel ? 'cancelConfirm' : 'restoreConfirm');
     if (!window.confirm(msg)) return;
     btn.classList.add('loading');
     try {
       await window.api('/api/prescriptions/' + id + '/status', {
         method: 'POST', body: { status: cancel ? 'cancelled' : 'active' },
       });
-      window.toast(cancel ? 'Retsept bekor qilindi' : 'Retsept faollashtirildi', 'success');
+      window.toast(window.T(cancel ? 'cancelled' : 'restored'), 'success');
       setTimeout(() => location.reload(), 700);
     } catch (err) {
       window.toast(err.message, 'error');

@@ -45,18 +45,18 @@ router.get('/patients/search', (req, res) => {
 router.post('/patients', (req, res) => {
   const b = req.body || {};
   const full_name = str(b.full_name);
-  if (full_name.length < 3) return bad(res, 'Bemorning to\'liq ismini kiriting (kamida 3 belgi).');
+  if (full_name.length < 3) return bad(res, req.t('err.patientName'));
   const year = b.birth_year ? Number(b.birth_year) : null;
   const cy = new Date().getFullYear();
   if (year !== null && (!Number.isInteger(year) || year < 1900 || year > cy)) {
-    return bad(res, `Tug'ilgan yili 1900 va ${cy} orasida bo'lishi kerak.`);
+    return bad(res, req.t('err.birthYear', { year: cy }));
   }
   const dup = h.get('SELECT id FROM patients WHERE full_name = ? COLLATE NOCASE AND IFNULL(birth_year,0) = IFNULL(?,0)',
     full_name, year);
   if (dup && !b.force) {
     return res.status(409).json({
       ok: false, duplicate: true, patient_id: dup.id,
-      error: 'Shu ism va tug\'ilgan yil bilan bemor allaqachon mavjud.',
+      error: req.t('err.patientDuplicate'),
     });
   }
   const now = new Date().toISOString();
@@ -75,7 +75,7 @@ router.post('/patients', (req, res) => {
 router.put('/patients/:id', (req, res) => {
   const id = Number(req.params.id);
   const p = h.get('SELECT * FROM patients WHERE id = ?', id);
-  if (!p) return bad(res, 'Bemor topilmadi', 404);
+  if (!p) return bad(res, req.t('err.patientNotFound'), 404);
   const b = req.body || {};
   const full_name = str(b.full_name) || p.full_name;
   const year = b.birth_year === '' ? null : (b.birth_year != null ? Number(b.birth_year) : p.birth_year);
@@ -125,23 +125,21 @@ function readPayload(body, user) {
   };
 }
 
-function validate(data) {
-  if (!data.patient_id) return 'Bemorni tanlang.';
-  if (!h.get('SELECT 1 FROM patients WHERE id = ?', data.patient_id)) return 'Bemor topilmadi.';
-  if (!data.diagnosis) return 'Dastlabki tashxisni kiriting.';
-  if (!data.items.length && !data.physiotherapy) {
-    return 'Kamida bitta dori vositasi yoki fizioterapiya tayinlanishi kerak.';
-  }
+function validate(data, t) {
+  if (!data.patient_id) return t('err.selectPatient');
+  if (!h.get('SELECT 1 FROM patients WHERE id = ?', data.patient_id)) return t('err.patientNotFound');
+  if (!data.diagnosis) return t('err.enterDiagnosis');
+  if (!data.items.length && !data.physiotherapy) return t('err.needDrugOrPhysio');
   const cy = new Date().getFullYear();
   const y = Number(data.visit_date.slice(0, 4));
-  if (y < cy - 5 || y > cy + 1) return 'Sana noto\'g\'ri.';
+  if (y < cy - 5 || y > cy + 1) return t('err.badDate');
   return null;
 }
 
 router.post('/prescriptions', auth.requireStaff, async (req, res, next) => {
   try {
     const data = readPayload(req.body, req.user);
-    const err = validate(data);
+    const err = validate(data, req.t);
     if (err) return bad(res, err);
     const created = rxLib.create(data);
     h.audit(req.user.id, 'rx.create', 'prescription', created.public_id, { patient_id: data.patient_id });
@@ -160,8 +158,8 @@ router.post('/prescriptions', auth.requireStaff, async (req, res, next) => {
 
 router.get('/prescriptions/:id', auth.requireStaff, (req, res) => {
   const rx = rxLib.getById(Number(req.params.id));
-  if (!rx) return bad(res, 'Retsept topilmadi', 404);
-  if (!canTouch(req.user, rx)) return bad(res, 'Ruxsat yo\'q', 403);
+  if (!rx) return bad(res, req.t('err.rxNotFound'), 404);
+  if (!canTouch(req.user, rx)) return bad(res, req.t('err.noAccess'), 403);
   ok(res, {
     prescription: {
       id: rx.id, public_id: rx.public_id, pretty_id: rx.pretty_id, patient_id: rx.patient_id,
@@ -178,10 +176,10 @@ router.put('/prescriptions/:id', auth.requireStaff, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     const existing = rxLib.getById(id);
-    if (!existing) return bad(res, 'Retsept topilmadi', 404);
-    if (!canTouch(req.user, existing)) return bad(res, 'Ruxsat yo\'q', 403);
+    if (!existing) return bad(res, req.t('err.rxNotFound'), 404);
+    if (!canTouch(req.user, existing)) return bad(res, req.t('err.noAccess'), 403);
     const data = readPayload(req.body, req.user);
-    const err = validate(data);
+    const err = validate(data, req.t);
     if (err) return bad(res, err);
     rxLib.update(id, data);
     h.audit(req.user.id, 'rx.update', 'prescription', existing.public_id, null);
@@ -197,8 +195,8 @@ router.put('/prescriptions/:id', auth.requireStaff, async (req, res, next) => {
 router.post('/prescriptions/:id/status', auth.requireStaff, (req, res) => {
   const id = Number(req.params.id);
   const rx = rxLib.getById(id);
-  if (!rx) return bad(res, 'Retsept topilmadi', 404);
-  if (!canTouch(req.user, rx)) return bad(res, 'Ruxsat yo\'q', 403);
+  if (!rx) return bad(res, req.t('err.rxNotFound'), 404);
+  if (!canTouch(req.user, rx)) return bad(res, req.t('err.noAccess'), 403);
   const status = req.body && req.body.status === 'active' ? 'active' : 'cancelled';
   h.run('UPDATE prescriptions SET status = ?, updated_at = ? WHERE id = ?', status, new Date().toISOString(), id);
   h.audit(req.user.id, 'rx.status', 'prescription', rx.public_id, { status });

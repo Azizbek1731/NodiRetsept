@@ -1,8 +1,9 @@
 <%
-  // t — joriy qiymatlar (bo'lishi shart emas), ph — o'rnini bosuvchi (global blanka)
-  const v = (k) => (t && t[k] != null ? t[k] : '');
+  // tpl — blankaning joriy qiymatlari (bo'lishi shart emas), ph — o'rnini bosuvchi (global blanka).
+  // ⚠️ Bu yerda `t` deb nomlamaymiz: `t` — tarjima funksiyasi.
+  const v = (k) => (tpl && tpl[k] != null ? tpl[k] : '');
   const p = (k) => (ph && ph[k] ? ph[k] : '');
-  const on = (k) => (t && t[k] != null ? !!Number(t[k]) : (ph && ph[k] != null ? !!Number(ph[k]) : true));
+  const on = (k) => (tpl && tpl[k] != null ? !!Number(tpl[k]) : (ph && ph[k] != null ? !!Number(ph[k]) : true));
 %>
 <fieldset>
   <legend><%= t('tpl.clinicInfo') %></legend>

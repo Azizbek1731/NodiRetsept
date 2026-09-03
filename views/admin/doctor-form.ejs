@@ -91,7 +91,7 @@
         </div>
         <p class="small muted"><%= t('admin.blankFallback') %></p>
         <form method="post" action="/admin/doctors/<%= doctor.id %>/blank">
-          <%- include('../partials/template-fields', { t: template, ph: globalTemplate }) %>
+          <%- include('../partials/template-fields', { tpl: template, ph: globalTemplate }) %>
           <div class="row gap-2">
             <button class="btn btn-primary"><%- icon('check',{size:16}) %> <%= t('admin.saveBlank') %></button>
             <% if (template) { %>

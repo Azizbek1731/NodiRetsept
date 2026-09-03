@@ -13,13 +13,13 @@
     <div class="grow" style="min-width:200px">
       <input type="search" name="q" value="<%= q %>" placeholder="<%= t('patients.searchPlaceholder') %>">
     </div>
-    <input type="hidden" name="scope" value="<%= scope %>">
+    <input type="hidden" name="scope" value="<%= listScope %>">
     <button class="btn btn-primary"><%- icon('search',{size:16}) %> <%= t('common.search') %></button>
-    <% if (q) { %><a class="btn btn-ghost" href="/patients?scope=<%= scope %>"><%= t('common.clear') %></a><% } %>
+    <% if (q) { %><a class="btn btn-ghost" href="/patients?scope=<%= listScope %>"><%= t('common.clear') %></a><% } %>
   </form>
   <div class="row gap-1 mt-2">
-    <a class="chip <%= scope === 'mine' ? 'active' : '' %>" href="/patients?scope=mine<%= q ? '&q='+encodeURIComponent(q) : '' %>"><%= t('patients.mine') %></a>
-    <a class="chip <%= scope === 'all' ? 'active' : '' %>" href="/patients?scope=all<%= q ? '&q='+encodeURIComponent(q) : '' %>"><%= t('patients.all') %></a>
+    <a class="chip <%= listScope === 'mine' ? 'active' : '' %>" href="/patients?scope=mine<%= q ? '&q='+encodeURIComponent(q) : '' %>"><%= t('patients.mine') %></a>
+    <a class="chip <%= listScope === 'all' ? 'active' : '' %>" href="/patients?scope=all<%= q ? '&q='+encodeURIComponent(q) : '' %>"><%= t('patients.all') %></a>
   </div>
 </div>
 
@@ -58,7 +58,7 @@
         </tbody>
       </table>
     </div>
-    <%- include('../partials/pager', { total, page, perPage, query: { q, scope } }) %>
+    <%- include('../partials/pager', { total, page, perPage, query: { q, scope: listScope } }) %>
   <% } else { %>
     <div class="empty">
       <%- icon('users',{size:46}) %>

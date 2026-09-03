@@ -11,7 +11,7 @@
 <div class="grid sidebar-right">
   <div class="card">
     <form method="post" action="/admin/blank">
-      <%- include('../partials/template-fields', { t: template, ph: null }) %>
+      <%- include('../partials/template-fields', { tpl: template, ph: null }) %>
       <button class="btn btn-primary btn-lg"><%- icon('check',{size:17}) %> <%= t('admin.saveBlank') %></button>
     </form>
   </div>

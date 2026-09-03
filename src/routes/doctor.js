@@ -76,7 +76,7 @@ router.get('/patients', auth.requireDoctor, (req, res) => {
 
   res.render('doctor/patients', {
     title: req.t('nav.patients'), bodyClass: 'app-page',
-    patients: rows, total, page, perPage, q, scope,
+    patients: rows, total, page, perPage, q, listScope: scope,
     editor: editorData(req.user, req.t),
   });
 });

@@ -254,9 +254,9 @@ Tayyor fayllar `public/img/` papkasida:
 | `logo-square.svg` | vektor | to'liq to'ldirilgan kvadrat (profil rasmlari) |
 | `icon-16/32/48/180/192/512.png` | px | favicon, telefon ekraniga qo'shish |
 | `telegram-bot.png` | 512×512 | Telegram bot profil rasmi |
-| `social-profile.png` | 1080×1080 | Instagram / Facebook / Telegram kanal avatari |
-| `og-image.png` | 1200×630 | havola ulashilganda ko'rinadigan rasm |
-| `social-cover.png` | 1500×500 | X (Twitter) / Facebook muqovasi |
+| `social-profile.jpg` | 1080×1080 | Instagram / Facebook / Telegram kanal avatari |
+| `og-image.jpg` | 1200×630 | havola ulashilganda ko'rinadigan rasm |
+| `social-cover.jpg` | 1500×500 | X (Twitter) / Facebook muqovasi |
 
 Blankada logotip **avtomatik chiqadi**: klinika o'z logotipini yuklamagan bo'lsa NodiRetsept
 belgisi turadi, yuklagan bo'lsa — o'ziniki (`Admin → Retsept blankasi → Logotip`).

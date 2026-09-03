@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="NodiRetsept">
+  <title>NodiRetsept</title>
+  <defs><linearGradient id="nr-sq" x1="0.08" y1="0" x2="0.92" y2="1">
+    <stop offset="0" stop-color="#1cb0bd"/><stop offset="0.55" stop-color="#0e7c86"/><stop offset="1" stop-color="#075158"/>
+  </linearGradient></defs>
+  <rect width="512" height="512" fill="url(#nr-sq)"/>
+  <!-- Doira qilib kesilganda ham qulay turishi uchun kichraytirilgan -->
+  <g transform="translate(256,256) scale(0.78) translate(-256,-256)">
+    <g transform="translate(-16,10)" fill="#fff">
+      <path transform="translate(98,184) scale(0.90)" d="M0 0 L56 0 L216 168 L216 0 L272 0 L272 248 L216 248 L56 80 L56 248 L0 248 Z"/>
+      <path d="M356 86 h90 v90 h-90 Z M376 106 v50 h50 v-50 Z" fill-rule="evenodd"/>
+      <rect x="391" y="121" width="20" height="20" rx="4"/>
+    </g>
+  </g>
+</svg>

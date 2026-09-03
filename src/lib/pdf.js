@@ -33,6 +33,9 @@ function imgPath(p) {
 }
 function truthy(v) { return v === 1 || v === '1' || v === true; }
 
+const DEFAULT_LOGO = path.join(config.paths.public, 'img', 'blank-logo.png');
+function defaultLogo() { return fs.existsSync(DEFAULT_LOGO) ? DEFAULT_LOGO : null; }
+
 /**
  * Retsept PDF hujjatini yaratadi va Buffer qaytaradi.
  * Blanka xalqaro retsept qoidalariga muvofiq: Rp. — Inscriptio — D.t.d. — Signatura.
@@ -43,7 +46,8 @@ async function buildPrescriptionPdf(rx) {
   const qrFile = truthy(t.show_qr)
     ? await qr.toBuffer(qr.prescriptionUrl(rx.public_id), { width: 320 }).catch(() => null)
     : null;
-  const logo = truthy(t.show_logo) ? imgPath(t.logo_path) : null;
+  // Klinika o'z logotipini yuklamagan bo'lsa — NodiRetsept belgisi qo'yiladi
+  const logo = truthy(t.show_logo) ? (imgPath(t.logo_path) || defaultLogo()) : null;
   const stamp = truthy(t.show_stamp) ? imgPath(rx.doctor.stamp_path) : null;
   const sign = truthy(t.show_signature) ? imgPath(rx.doctor.signature_path) : null;
 

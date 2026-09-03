@@ -235,7 +235,35 @@ Blanka xalqaro amaliyotga (WHO — *Guide to Good Prescribing*) mos tartibda tuz
 
 ---
 
-## 8. Xavfsizlik
+## 8. Brend va logotip
+
+Logotip — **N** harfi va QR skaner belgisidan iborat: harf brend nomini, QR belgisi esa
+tizimning asosiy g'oyasini (retseptni skanerlab olish) bildiradi.
+
+| Rang | Kod | Qayerda |
+|---|---|---|
+| Asosiy | `#0e7c86` | tugmalar, sarlavhalar, «Rp.» |
+| Yorug' | `#1cb0bd` | gradient boshlanishi |
+| To'q | `#075158` | gradient tugashi, yon panel |
+
+Tayyor fayllar `public/img/` papkasida:
+
+| Fayl | O'lchami | Ishlatilishi |
+|---|---|---|
+| `logo-mark.svg` | vektor | sayt sarlavhasi, blanka, favicon |
+| `logo-square.svg` | vektor | to'liq to'ldirilgan kvadrat (profil rasmlari) |
+| `icon-16/32/48/180/192/512.png` | px | favicon, telefon ekraniga qo'shish |
+| `telegram-bot.png` | 512×512 | Telegram bot profil rasmi |
+| `social-profile.png` | 1080×1080 | Instagram / Facebook / Telegram kanal avatari |
+| `og-image.png` | 1200×630 | havola ulashilganda ko'rinadigan rasm |
+| `social-cover.png` | 1500×500 | X (Twitter) / Facebook muqovasi |
+
+Blankada logotip **avtomatik chiqadi**: klinika o'z logotipini yuklamagan bo'lsa NodiRetsept
+belgisi turadi, yuklagan bo'lsa — o'ziniki (`Admin → Retsept blankasi → Logotip`).
+
+Telegram bot rasmini o'rnatish: @BotFather → `/setuserpic` → botni tanlang → `telegram-bot.png` ni yuboring.
+
+## 9. Xavfsizlik
 
 * Parollar `bcrypt` bilan xeshlanadi, sessiyalar bazada saqlanadi (server qayta ishga tushsa yo'qolmaydi).
 * Retsept ID si tasodifiy 8 belgidan iborat (30 ta belgili alifbo ≈ 6·10¹¹ variant), chalkash

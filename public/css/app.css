@@ -232,11 +232,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
   display: flex; align-items: center; gap: 10px; padding: 20px 20px 18px; color: #fff;
   font-weight: 800; font-size: 1.06rem; letter-spacing: -.02em;
 }
-.sidebar .brand .logo {
-  width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--brand-light), var(--brand));
-  display: grid; place-items: center; flex: none;
-}
-.sidebar .brand .logo svg { width: 19px; height: 19px; color: #fff; }
+.sidebar .brand .logo { width: 34px; height: 34px; border-radius: 9px; display: block; flex: none; }
 .sidebar .brand small { display: block; font-size: .68rem; font-weight: 500; color: #7fa8ad; letter-spacing: .02em; }
 .nav { padding: 6px 12px; flex: 1; }
 .nav-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: #6b939a;
@@ -367,9 +363,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
   padding: 16px 24px; max-width: 1100px; margin: 0 auto;
 }
 .pub-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; color: var(--ink); }
-.pub-brand .logo { width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--brand-light), var(--brand)); display: grid; place-items: center; }
-.pub-brand .logo svg { width: 20px; height: 20px; color: #fff; }
+.pub-brand .logo { width: 36px; height: 36px; border-radius: 10px; display: block; flex: none; }
 .pub-brand small { display: block; font-size: .68rem; font-weight: 500; color: var(--muted); }
 .pub-main { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; }
 .hero { text-align: center; padding: 30px 0 34px; }
@@ -404,13 +398,14 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .rx-top { height: 6px; background: var(--rx-accent, var(--brand)); }
 .rx-header { display: flex; gap: 20px; padding: 24px 28px 18px; border-bottom: 2px solid var(--rx-accent, var(--brand)); }
 .rx-header .clinic { flex: 1; min-width: 0; }
+.rx-header .clinic-head { display: flex; align-items: center; gap: 13px; }
 .rx-header .clinic h2 { font-size: 1.24rem; margin-bottom: 2px; }
 .rx-header .clinic .sub { color: var(--muted); font-size: .84rem; }
 .rx-header .clinic .contacts { color: var(--muted); font-size: .76rem; margin-top: 5px; }
 .rx-header .qr { text-align: center; flex: none; }
 .rx-header .qr img { width: 92px; height: 92px; display: block; border-radius: 6px; }
 .rx-header .qr .idtxt { font-size: .74rem; font-weight: 700; margin-top: 5px; letter-spacing: .04em; }
-.rx-header .logo-img { max-height: 56px; max-width: 90px; object-fit: contain; }
+.rx-header .logo-img { width: 52px; height: 52px; max-width: 92px; object-fit: contain; flex: none; }
 .rx-titlebar {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   background: var(--brand-50); padding: 12px 28px; flex-wrap: wrap;
@@ -543,9 +538,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .auth-card { background: #fff; border-radius: var(--r-xl); box-shadow: 0 24px 70px rgba(4,26,32,.35);
   width: 100%; max-width: 420px; padding: 34px 32px; }
 .auth-card .brandline { display: flex; align-items: center; gap: 11px; margin-bottom: 22px; }
-.auth-card .brandline .logo { width: 42px; height: 42px; border-radius: 12px;
-  background: linear-gradient(135deg, var(--brand-light), var(--brand)); display: grid; place-items: center; }
-.auth-card .brandline .logo svg { width: 23px; height: 23px; color: #fff; }
+.auth-card .brandline .logo { width: 42px; height: 42px; border-radius: 12px; display: block; flex: none; }
 .auth-card .brandline .nm { font-size: 1.16rem; font-weight: 800; letter-spacing: -.02em; }
 .auth-card .brandline small { display: block; color: var(--muted); font-size: .72rem; font-weight: 500; }
 .auth-hint { text-align: center; margin-top: 18px; font-size: .82rem; color: var(--muted); }

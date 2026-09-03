@@ -10,11 +10,16 @@
 
   <header class="rx-header">
     <div class="clinic">
-      <% if (t.show_logo && t.logo_path) { %>
-        <img class="logo-img mb-1" src="/<%= t.logo_path %>" alt="Logotip">
-      <% } %>
-      <h2><%= t.clinic_name || 'Klinika' %></h2>
-      <% if (t.clinic_subtitle) { %><div class="sub"><%= t.clinic_subtitle %></div><% } %>
+      <div class="clinic-head">
+        <% if (t.show_logo) { %>
+          <img class="logo-img" alt="Logotip"
+               src="<%= t.logo_path ? '/' + t.logo_path : '/static/img/logo-mark.svg' %>">
+        <% } %>
+        <div class="grow" style="min-width:0">
+          <h2><%= t.clinic_name || 'Klinika' %></h2>
+          <% if (t.clinic_subtitle) { %><div class="sub"><%= t.clinic_subtitle %></div><% } %>
+        </div>
+      </div>
       <% const contacts = [t.address, fmt.phoneFmt(t.phone), t.email, t.website].filter(Boolean); %>
       <% if (contacts.length) { %><div class="contacts"><%= contacts.join('  ·  ') %></div><% } %>
     </div>

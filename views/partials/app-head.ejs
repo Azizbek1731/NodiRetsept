@@ -3,7 +3,7 @@
 <div class="shell">
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>">
-      <span class="logo"><%- icon('rx', { size: 19 }) %></span>
+      <img class="logo" src="/static/img/logo-mark.svg" alt="NodiRetsept" width="34" height="34">
       <span>NodiRetsept<small><%= currentUser.role === 'admin' ? 'Administrator paneli' : 'Shifokor kabineti' %></small></span>
     </a>
     <nav class="nav">

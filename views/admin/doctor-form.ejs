@@ -1,0 +1,214 @@
+<%- include('../partials/app-head', { pageTitle: doctor && doctor.id ? doctor.full_name : 'Yangi shifokor',
+      pageSub: doctor && doctor.id ? '@' + doctor.username : 'Hisob yaratish' }) %>
+
+<div class="page-head">
+  <a class="btn btn-ghost btn-sm" href="/admin/doctors"><%- icon('chevronLeft',{size:15}) %> Shifokorlar</a>
+  <% if (doctor && doctor.id) { %>
+    <div class="row gap-1">
+      <span class="badge <%= doctor.is_active ? 'ok' : 'danger' %>"><%= doctor.is_active ? 'Faol' : 'Faolsiz' %></span>
+      <span class="badge brand"><%= (typeof stats !== 'undefined' && stats) ? stats.totalRx : 0 %> ta retsept</span>
+    </div>
+  <% } %>
+</div>
+
+<% if (errors && errors.length) { %>
+  <div class="flash error"><%- icon('alert',{size:18}) %>
+    <span><% errors.forEach(function(e,i){ %><%= (i?' · ':'') + e %><% }) %></span></div>
+<% } %>
+
+<% if (!doctor || !doctor.id) { %>
+  <!-- ══ Yangi shifokor ══ -->
+  <div class="card" style="max-width:760px">
+    <h3>Shifokor hisobini yaratish</h3>
+    <p class="small muted">Shifokor shu login va parol bilan tizimga kiradi.</p>
+    <form method="post" action="/admin/doctors">
+      <div class="form-grid">
+        <div class="field"><label>Ism, familiya, sharifi <span class="req">*</span></label>
+          <input type="text" name="full_name" value="<%= doctor ? (doctor.full_name || '') : '' %>" required placeholder="Karimova Nodira Baxtiyorovna"></div>
+        <div class="field"><label>Mutaxassisligi</label>
+          <input type="text" name="specialty" value="<%= doctor ? (doctor.specialty || '') : '' %>" placeholder="Nevropatolog"></div>
+        <div class="field"><label>Login <span class="req">*</span></label>
+          <input type="text" name="username" value="<%= doctor ? (doctor.username || '') : '' %>" required
+                 pattern="[a-zA-Z0-9._-]{3,32}" autocapitalize="none" placeholder="nodira"></div>
+        <div class="field"><label>Parol <span class="req">*</span></label>
+          <input type="text" name="password" required minlength="6" placeholder="kamida 6 belgi"></div>
+        <div class="field"><label>Telefon raqami</label>
+          <input type="tel" name="phone" value="<%= doctor ? (doctor.phone || '') : '' %>" placeholder="+998 90 123 45 67"></div>
+        <div class="field"><label>Litsenziya / diplom raqami</label>
+          <input type="text" name="license_number" value="<%= doctor ? (doctor.license_number || '') : '' %>"></div>
+        <div class="field"><label>Klinika</label>
+          <input type="text" name="clinic_name" value="<%= (doctor && doctor.clinic_name) || globalTemplate.clinic_name || '' %>"></div>
+        <div class="field"><label>Qabul xonasi</label>
+          <input type="text" name="room" value="<%= doctor ? (doctor.room || '') : '' %>" placeholder="204-xona"></div>
+      </div>
+      <button class="btn btn-primary btn-lg"><%- icon('plus',{size:17}) %> Shifokorni qo'shish</button>
+      <p class="hint mt-2">Hisob yaratilgach pechat, imzo va shaxsiy blankani sozlash imkoni ochiladi.</p>
+    </form>
+  </div>
+<% } else { %>
+  <!-- ══ Mavjud shifokor ══ -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="info"><%- icon('user',{size:15}) %> Ma'lumotlar</button>
+    <button class="tab-btn" data-tab="blank"><%- icon('edit',{size:15}) %> Blanka</button>
+    <button class="tab-btn" data-tab="media"><%- icon('stamp',{size:15}) %> Pechat va imzo</button>
+    <button class="tab-btn" data-tab="security"><%- icon('key',{size:15}) %> Xavfsizlik</button>
+  </div>
+
+  <!-- Ma'lumotlar -->
+  <section data-pane="info">
+    <div class="card" style="max-width:820px">
+      <h3>Shifokor ma'lumotlari</h3>
+      <p class="small muted">Bu maydonlar retsept blankasining «Shifokor» qismida chiqadi.</p>
+      <form method="post" action="/admin/doctors/<%= doctor.id %>">
+        <div class="form-grid">
+          <div class="field"><label>Ism, familiya, sharifi</label>
+            <input type="text" name="full_name" value="<%= doctor.full_name %>" required></div>
+          <div class="field"><label>Mutaxassisligi</label>
+            <input type="text" name="specialty" value="<%= doctor.specialty || '' %>"></div>
+          <div class="field"><label>Telefon raqami</label>
+            <input type="tel" name="phone" value="<%= fmt.phoneFmt(doctor.phone) %>"></div>
+          <div class="field"><label>Litsenziya / diplom raqami</label>
+            <input type="text" name="license_number" value="<%= doctor.license_number || '' %>"></div>
+          <div class="field"><label>Klinika</label>
+            <input type="text" name="clinic_name" value="<%= doctor.clinic_name || '' %>"></div>
+          <div class="field"><label>Qabul xonasi</label>
+            <input type="text" name="room" value="<%= doctor.room || '' %>"></div>
+        </div>
+        <label class="check mb-2"><input type="checkbox" name="is_active" <%= doctor.is_active ? 'checked' : '' %>>
+          Hisob faol (belgilanmasa shifokor tizimga kira olmaydi)</label>
+        <button class="btn btn-primary"><%- icon('check',{size:16}) %> Saqlash</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Blanka -->
+  <section data-pane="blank" class="hide" id="blank">
+    <div class="grid sidebar-right">
+      <div class="card">
+        <div class="row between mb-1">
+          <h3 class="mb-0">Shaxsiy blanka</h3>
+          <span class="badge <%= template ? 'brand' : '' %>"><%= template ? 'shaxsiy sozlangan' : 'umumiy blanka' %></span>
+        </div>
+        <p class="small muted">Bo'sh qoldirilgan maydonlar uchun umumiy blanka qiymatlari ishlatiladi.</p>
+        <form method="post" action="/admin/doctors/<%= doctor.id %>/blank">
+          <%- include('../partials/template-fields', { t: template, ph: globalTemplate }) %>
+          <div class="row gap-2">
+            <button class="btn btn-primary"><%- icon('check',{size:16}) %> Blankani saqlash</button>
+            <% if (template) { %>
+              <button class="btn btn-danger" formaction="/admin/doctors/<%= doctor.id %>/blank/reset"
+                      formnovalidate data-confirm-btn>Shaxsiy blankani o'chirish</button>
+            <% } %>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h4>Joriy ko'rinish</h4>
+        <div class="rx-kv">
+          <div><span class="k">Klinika</span><span class="v"><%= effective.clinic_name || '—' %></span></div>
+          <div><span class="k">Sarlavha</span><span class="v"><%= effective.clinic_subtitle || '—' %></span></div>
+          <div><span class="k">Manzil</span><span class="v"><%= effective.address || '—' %></span></div>
+          <div><span class="k">Telefon</span><span class="v"><%= effective.phone || '—' %></span></div>
+          <div><span class="k">Rang</span><span class="v">
+            <span style="display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;background:<%= effective.accent_color %>"></span>
+            <%= effective.accent_color %></span></div>
+        </div>
+        <hr>
+        <p class="small muted mb-1">Blankani to'liq ko'rish uchun shu shifokorning istalgan retseptini oching.</p>
+        <a class="btn btn-sm btn-block" href="/admin/prescriptions?doctor=<%= doctor.id %>">Retseptlarini ko'rish</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pechat -->
+  <section data-pane="media" class="hide">
+    <div class="grid c2" style="align-items:start">
+      <div class="card">
+        <h3>Vrach pechati</h3>
+        <p class="small muted">Blankada va PDF faylida chiqadi. Shaffof fonli PNG tavsiya etiladi (max 3 MB).</p>
+        <div class="center card mb-2" style="background:#fbfdfd">
+          <% if (doctor.stamp_path) { %>
+            <img src="/<%= doctor.stamp_path %>" alt="Pechat" style="max-height:150px">
+          <% } else { %>
+            <div class="empty" style="padding:26px"><%- icon('stamp',{size:42}) %><div class="small">Pechat yuklanmagan</div></div>
+          <% } %>
+        </div>
+        <form method="post" action="/admin/doctors/<%= doctor.id %>/media" enctype="multipart/form-data">
+          <div class="field"><input type="file" name="stamp" accept="image/png,image/jpeg" required></div>
+          <button class="btn btn-primary"><%- icon('image',{size:16}) %> Pechatni yuklash</button>
+        </form>
+        <% if (doctor.stamp_path) { %>
+          <form method="post" action="/admin/doctors/<%= doctor.id %>/media/delete" class="mt-2"
+                data-confirm="Pechat rasmini o'chirasizmi?">
+            <input type="hidden" name="kind" value="stamp">
+            <button class="btn btn-danger btn-sm"><%- icon('trash',{size:14}) %> O'chirish</button>
+          </form>
+        <% } %>
+      </div>
+
+      <div class="card">
+        <h3>Imzo</h3>
+        <p class="small muted">Imzo blankaning pastki qismida, imzo chizig'i ustida chiqadi.</p>
+        <div class="center card mb-2" style="background:#fbfdfd">
+          <% if (doctor.signature_path) { %>
+            <img src="/<%= doctor.signature_path %>" alt="Imzo" style="max-height:100px">
+          <% } else { %>
+            <div class="empty" style="padding:26px"><%- icon('edit',{size:42}) %><div class="small">Imzo yuklanmagan</div></div>
+          <% } %>
+        </div>
+        <form method="post" action="/admin/doctors/<%= doctor.id %>/media" enctype="multipart/form-data">
+          <div class="field"><input type="file" name="signature" accept="image/png,image/jpeg" required></div>
+          <button class="btn btn-primary"><%- icon('image',{size:16}) %> Imzoni yuklash</button>
+        </form>
+        <% if (doctor.signature_path) { %>
+          <form method="post" action="/admin/doctors/<%= doctor.id %>/media/delete" class="mt-2"
+                data-confirm="Imzo rasmini o'chirasizmi?">
+            <input type="hidden" name="kind" value="signature">
+            <button class="btn btn-danger btn-sm"><%- icon('trash',{size:14}) %> O'chirish</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Xavfsizlik -->
+  <section data-pane="security" class="hide">
+    <div class="card" style="max-width:560px">
+      <h3>Parolni almashtirish</h3>
+      <p class="small muted">Yangi parolni shifokorga xavfsiz yo'l bilan yetkazing.</p>
+      <form method="post" action="/admin/doctors/<%= doctor.id %>/password"
+            data-confirm="Shifokor uchun yangi parol o'rnatilsinmi?">
+        <div class="field"><label>Yangi parol</label>
+          <input type="text" name="password" required minlength="6" placeholder="kamida 6 belgi"></div>
+        <button class="btn btn-dark"><%- icon('key',{size:16}) %> Parolni o'rnatish</button>
+      </form>
+      <hr>
+      <div class="rx-kv">
+        <div><span class="k">Login</span><span class="v mono"><%= doctor.username %></span></div>
+        <div><span class="k">Yaratilgan</span><span class="v"><%= fmt.dmy(doctor.created_at) %></span></div>
+        <div><span class="k">Oxirgi kirish</span><span class="v"><%= doctor.last_login_at ? fmt.dateTime(doctor.last_login_at) : 'hali kirmagan' %></span></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.tab-btn');
+      var panes = document.querySelectorAll('[data-pane]');
+      function show(name) {
+        btns.forEach(function (b) { b.classList.toggle('active', b.dataset.tab === name); });
+        panes.forEach(function (p) { p.classList.toggle('hide', p.dataset.pane !== name); });
+        history.replaceState(null, '', '#' + name);
+      }
+      btns.forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.tab); }); });
+      var h = location.hash.replace('#', '');
+      if (h && document.querySelector('[data-pane="' + h + '"]')) show(h);
+      document.querySelectorAll('[data-confirm-btn]').forEach(function (b) {
+        b.addEventListener('click', function (e) {
+          if (!confirm('Shaxsiy blanka o\'chirilib, umumiy blanka ishlatiladi. Davom etamizmi?')) e.preventDefault();
+        });
+      });
+    })();
+  </script>
+<% } %>
+
+<%- include('../partials/app-foot') %>

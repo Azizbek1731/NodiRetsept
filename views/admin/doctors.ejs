@@ -1,0 +1,49 @@
+<%- include('../partials/app-head', { pageTitle: 'Shifokorlar', pageSub: doctors.length + ' ta' }) %>
+
+<div class="page-head">
+  <div><h2 class="mb-0">Shifokorlar</h2>
+    <p class="muted small mb-0">Hisob yaratish, blanka va pechatni boshqarish</p></div>
+  <a class="btn btn-primary" href="/admin/doctors/new"><%- icon('plus',{size:17}) %> Shifokor qo'shish</a>
+</div>
+
+<div class="card mb-3">
+  <form method="get" class="row wrap gap-2">
+    <div class="grow" style="min-width:200px">
+      <input type="search" name="q" value="<%= q %>" placeholder="F.I.Sh., login yoki mutaxassislik…">
+    </div>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Qidirish</button>
+    <% if (q) { %><a class="btn btn-ghost" href="/admin/doctors">Tozalash</a><% } %>
+  </form>
+</div>
+
+<div class="card flush">
+  <% if (doctors.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Shifokor</th><th>Login</th><th class="hide-sm">Telefon</th><th class="num">Retsept</th>
+          <th>Pechat</th><th>Blanka</th><th>Holat</th><th></th></tr></thead>
+        <tbody>
+          <% doctors.forEach(function (d) { %>
+            <tr>
+              <td><div class="row gap-2"><span class="avatar sm"><%= fmt.initials(d.full_name) %></span>
+                <span><a class="rowlink" href="/admin/doctors/<%= d.id %>"><%= d.full_name %></a>
+                <div class="tiny muted"><%= d.specialty || '—' %></div></span></div></td>
+              <td class="mono small"><%= d.username %></td>
+              <td class="hide-sm small nowrap"><%= fmt.phoneFmt(d.phone) || '—' %></td>
+              <td class="num strong"><%= d.rx_total %></td>
+              <td><span class="badge <%= d.stamp_path ? 'ok' : 'warn' %>"><%= d.stamp_path ? 'bor' : 'yo\'q' %></span></td>
+              <td><span class="badge <%= d.has_template ? 'brand' : '' %>"><%= d.has_template ? 'shaxsiy' : 'umumiy' %></span></td>
+              <td><span class="badge <%= d.is_active ? 'ok' : 'danger' %>"><%= d.is_active ? 'faol' : 'faolsiz' %></span></td>
+              <td class="right"><a class="btn btn-sm btn-soft" href="/admin/doctors/<%= d.id %>"><%- icon('edit',{size:14}) %> Sozlash</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty"><%- icon('users',{size:46}) %><h3>Shifokor topilmadi</h3>
+      <a class="btn btn-primary mt-2" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> Shifokor qo'shish</a></div>
+  <% } %>
+</div>
+
+<%- include('../partials/app-foot') %>

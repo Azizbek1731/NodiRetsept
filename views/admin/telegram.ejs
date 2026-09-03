@@ -1,0 +1,100 @@
+<%- include('../partials/app-head', { pageTitle: 'Telegram bot', pageSub: total + ' ta foydalanuvchi' }) %>
+
+<div class="grid sidebar-right">
+  <div class="col gap-3">
+    <div class="card">
+      <div class="row between wrap gap-2 mb-2">
+        <h3 class="mb-0">Bot holati</h3>
+        <span class="badge <%= botInfo.running ? 'ok' : (enabled ? 'warn' : 'danger') %>">
+          <%= botInfo.running ? 'ishlayapti' : (enabled ? 'ulanmoqda…' : 'o\'chirilgan') %>
+        </span>
+      </div>
+      <div class="rx-kv">
+        <div><span class="k">Bot manzili</span><span class="v">
+          <% if (botInfo.username) { %>
+            <a href="https://t.me/<%= botInfo.username %>" target="_blank" rel="noopener">@<%= botInfo.username %></a>
+          <% } else { %>—<% } %></span></div>
+        <div><span class="k">Token</span><span class="v mono"><%= tokenTail || 'kiritilmagan' %></span></div>
+        <div><span class="k">Ishga tushgan</span><span class="v"><%= botInfo.startedAt ? fmt.dateTime(botInfo.startedAt) : '—' %></span></div>
+        <div><span class="k">Xatolik</span><span class="v"><%= botInfo.error || 'yo\'q' %></span></div>
+      </div>
+      <% if (!enabled) { %>
+        <div class="flash error mt-2"><%- icon('alert',{size:18}) %>
+          <span><code>.env</code> faylida <code>TELEGRAM_BOT_TOKEN</code> va <code>TELEGRAM_ENABLED=true</code> ni tekshiring, so'ng serverni qayta ishga tushiring.</span></div>
+      <% } %>
+    </div>
+
+    <div class="card flush">
+      <div class="card-head"><h3>Bot foydalanuvchilari</h3><span class="badge"><%= total %></span></div>
+      <% if (users.length) { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Foydalanuvchi</th><th>Telefon</th><th class="hide-sm">Chat ID</th>
+              <th class="hide-sm">Ro'yxatdan o'tgan</th><th class="hide-sm">Oxirgi faollik</th></tr></thead>
+            <tbody>
+              <% users.forEach(function (u) { %>
+                <tr>
+                  <td><div class="row gap-2"><span class="avatar sm"><%= fmt.initials(u.first_name || 'TG') %></span>
+                    <span><span class="strong"><%= u.first_name || '—' %></span>
+                    <% if (u.username) { %><div class="tiny muted">@<%= u.username %></div><% } %></span></div></td>
+                  <td class="small nowrap"><%= u.phone ? fmt.phoneFmt(u.phone) : '—' %></td>
+                  <td class="hide-sm mono tiny"><%= u.chat_id %></td>
+                  <td class="hide-sm small nowrap"><%= fmt.dmy(u.created_at) %></td>
+                  <td class="hide-sm small nowrap"><%= u.last_seen_at ? fmt.dateTime(u.last_seen_at) : '—' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty"><%- icon('send',{size:46}) %><h3>Hali foydalanuvchi yo'q</h3>
+          <p>Bemorlar botga <code>/start</code> yozgach shu yerda ko'rinadi.</p></div>
+      <% } %>
+    </div>
+
+    <div class="card flush">
+      <div class="card-head"><h3>Bot orqali yuborilgan retseptlar</h3></div>
+      <% if (sends.length) { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Retsept</th><th>Vaqt</th><th class="hide-sm">Chat</th></tr></thead>
+            <tbody>
+              <% sends.forEach(function (s) { %>
+                <tr>
+                  <td class="mono small"><%= s.public_id ? ids.prettyId(s.public_id) : '—' %></td>
+                  <td class="small nowrap"><%= fmt.dateTime(s.created_at) %></td>
+                  <td class="hide-sm tiny muted"><%= (JSON.parse(s.meta || '{}').chat_id) || '—' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %><div class="empty" style="padding:26px"><div class="small">Hali yuborilmagan</div></div><% } %>
+    </div>
+  </div>
+
+  <div class="col gap-3">
+    <div class="card">
+      <h4>Bot qanday ishlaydi</h4>
+      <ol class="small" style="padding-left:18px;line-height:1.9;margin:0;color:var(--ink-2)">
+        <li>Bemor botga <code>/start</code> bosadi</li>
+        <li>Telefon raqamini yuboradi</li>
+        <li><strong>🔍 Retseptni izlash</strong> tugmasini bosadi</li>
+        <li>Retsept ID sini kiritadi</li>
+        <li>Bot PDF faylni yuboradi</li>
+      </ol>
+      <hr>
+      <p class="small muted mb-1"><strong>🧾 Mening retseptlarim</strong> tugmasi bemorning telefon raqami
+        bo'yicha unga tegishli retseptlarni topadi — buning uchun bemor kartasida telefon to'ldirilgan bo'lishi kerak.</p>
+    </div>
+    <div class="card">
+      <h4>QR chuqur havolasi</h4>
+      <p class="small muted">Botga to'g'ridan-to'g'ri retsept ochadigan havola:</p>
+      <div class="copy-field">
+        <input type="text" readonly value="https://t.me/<%= botInfo.username || 'bot' %>?start=NR-XXXXXXXX">
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/app-foot') %>

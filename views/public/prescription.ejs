@@ -1,0 +1,36 @@
+<%- include('../partials/pub-head') %>
+
+<% if (rx.status === 'cancelled') { %>
+  <div class="verify-banner cancelled no-print">
+    <%- icon('alert',{size:19}) %>
+    <span>Diqqat! Ushbu retsept shifokor tomonidan <strong>bekor qilingan</strong>. Iltimos, shifokoringizga murojaat qiling.</span>
+  </div>
+<% } else { %>
+  <div class="verify-banner no-print">
+    <%- icon('shield',{size:19}) %>
+    <span>Haqiqiy retsept — <%= fmt.dateTime(rx.created_at) %> da <%= rx.doctor.full_name %> tomonidan rasmiylashtirilgan</span>
+  </div>
+<% } %>
+
+<%- include('../partials/rx-sheet', { rx }) %>
+
+<div class="rx-actions no-print">
+  <a class="btn btn-primary btn-lg" href="/r/<%= rx.public_id %>/pdf"><%- icon('download',{size:18}) %> PDF yuklab olish</a>
+  <button class="btn btn-lg" onclick="window.print()"><%- icon('print',{size:18}) %> Chop etish</button>
+  <button class="btn btn-lg" data-copy="<%= rx.url %>"><%- icon('link',{size:18}) %> Havoladan nusxa</button>
+  <% if (isStaff) { %>
+    <a class="btn btn-lg" href="<%= currentUser.role === 'admin' ? '/admin/prescriptions' : '/prescriptions' %>">
+      <%- icon('chevronLeft',{size:18}) %> Ro'yxatga qaytish</a>
+  <% } %>
+</div>
+
+<div class="center small muted no-print mt-2">
+  Ko'rilishlar soni: <%= rx.view_count %> · Retsept ID: <span class="mono strong"><%= rx.pretty_id %></span>
+</div>
+
+<script>
+  if (new URLSearchParams(location.search).get('print') === '1') {
+    window.addEventListener('load', () => setTimeout(() => window.print(), 400));
+  }
+</script>
+<%- include('../partials/pub-foot') %>

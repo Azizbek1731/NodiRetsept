@@ -1,0 +1,32 @@
+{
+  "name": "nodiretsept",
+  "version": "1.0.0",
+  "description": "NodiRetsept — shifokor retseptlarini onlayn boshqarish va bemorlarga QR/ID orqali yetkazish tizimi",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/lib/seed.js",
+    "bot": "node src/telegram/standalone.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "express-session": "^1.19.0",
+    "grammy": "^1.46.0",
+    "jsqr": "^1.4.0",
+    "multer": "^2.3.0",
+    "pdfkit": "^0.20.2",
+    "qrcode": "^1.5.4"
+  }
+}

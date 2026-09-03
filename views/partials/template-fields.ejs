@@ -1,0 +1,71 @@
+<%
+  // t — joriy qiymatlar (bo'lishi shart emas), ph — o'rnini bosuvchi (global blanka)
+  const v = (k) => (t && t[k] != null ? t[k] : '');
+  const p = (k) => (ph && ph[k] ? ph[k] : '');
+  const on = (k) => (t && t[k] != null ? !!Number(t[k]) : (ph && ph[k] != null ? !!Number(ph[k]) : true));
+%>
+<fieldset>
+  <legend>Klinika ma'lumotlari</legend>
+  <div class="form-grid">
+    <div class="field">
+      <label>Klinika nomi</label>
+      <input type="text" name="clinic_name" value="<%= v('clinic_name') %>" placeholder="<%= p('clinic_name') || 'Klinika nomi' %>">
+    </div>
+    <div class="field">
+      <label>Qo'shimcha sarlavha</label>
+      <input type="text" name="clinic_subtitle" value="<%= v('clinic_subtitle') %>" placeholder="<%= p('clinic_subtitle') || 'Ko\'p tarmoqli tibbiyot markazi' %>">
+    </div>
+    <div class="field">
+      <label>Manzil</label>
+      <input type="text" name="address" value="<%= v('address') %>" placeholder="<%= p('address') || 'Toshkent sh., ...' %>">
+    </div>
+    <div class="field">
+      <label>Telefon</label>
+      <input type="text" name="phone" value="<%= v('phone') %>" placeholder="<%= p('phone') || '+998 71 200 00 00' %>">
+    </div>
+    <div class="field">
+      <label>E-pochta</label>
+      <input type="text" name="email" value="<%= v('email') %>" placeholder="<%= p('email') || 'info@klinika.uz' %>">
+    </div>
+    <div class="field">
+      <label>Veb-sayt</label>
+      <input type="text" name="website" value="<%= v('website') %>" placeholder="<%= p('website') || 'klinika.uz' %>">
+    </div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Ko'rinish</legend>
+  <div class="form-grid">
+    <div class="field">
+      <label>Asosiy rang</label>
+      <div class="row gap-1">
+        <input type="color" name="accent_color" value="<%= v('accent_color') || p('accent_color') || '#0e7c86' %>" style="max-width:70px">
+        <span class="small muted">Blanka chizig'i, sarlavha va «Rp.» belgisi rangi</span>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <label>Sarlavha ostidagi izoh</label>
+    <input type="text" name="header_note" value="<%= v('header_note') %>" placeholder="ixtiyoriy">
+  </div>
+  <div class="field">
+    <label>Blanka pastidagi izoh</label>
+    <input type="text" name="footer_note" value="<%= v('footer_note') %>"
+           placeholder="<%= p('footer_note') || 'Ushbu retsept elektron shaklda rasmiylashtirilgan…' %>">
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Blankada ko'rinadigan bo'limlar</legend>
+  <div class="form-grid">
+    <label class="check"><input type="checkbox" name="show_logo" <%= on('show_logo') ? 'checked' : '' %>> Logotip</label>
+    <label class="check"><input type="checkbox" name="show_qr" <%= on('show_qr') ? 'checked' : '' %>> QR kod</label>
+    <label class="check"><input type="checkbox" name="show_complaints" <%= on('show_complaints') ? 'checked' : '' %>> Shikoyatlar</label>
+    <label class="check"><input type="checkbox" name="show_icd" <%= on('show_icd') ? 'checked' : '' %>> МКБ-10 kodi</label>
+    <label class="check"><input type="checkbox" name="show_physio" <%= on('show_physio') ? 'checked' : '' %>> Fizioterapiya</label>
+    <label class="check"><input type="checkbox" name="show_recommendations" <%= on('show_recommendations') ? 'checked' : '' %>> Tavsiyalar</label>
+    <label class="check"><input type="checkbox" name="show_signature" <%= on('show_signature') ? 'checked' : '' %>> Imzo</label>
+    <label class="check"><input type="checkbox" name="show_stamp" <%= on('show_stamp') ? 'checked' : '' %>> Vrach pechati</label>
+  </div>
+</fieldset>

@@ -1,0 +1,180 @@
+<%- include('../partials/app-head', { pageTitle: 'Boshqaruv paneli', pageSub: fmt.longDate(fmt.toISODate()) }) %>
+
+<!-- Asosiy amal -->
+<div class="card mb-3" style="background:linear-gradient(120deg,#0d2b33,#0e7c86);border:none;color:#fff">
+  <div class="row between wrap gap-3">
+    <div class="grow" style="min-width:240px">
+      <h2 style="color:#fff;margin-bottom:4px">Assalomu alaykum, <%= fmt.shortName(currentUser.full_name) %>!</h2>
+      <p style="color:rgba(255,255,255,.82);margin:0">
+        Bugun <strong><%= stats.daily %></strong> ta retsept yozdingiz.
+        Yangi retsept yozish uchun tugmani bosing — bemorni tanlab, blankani to'ldirasiz.
+      </p>
+    </div>
+    <button class="btn btn-lg" data-rx-new style="background:#fff;color:var(--brand-dark);border-color:#fff">
+      <%- icon('plus',{size:19}) %> Retsept yozish
+    </button>
+  </div>
+</div>
+
+<!-- Hisobotlar -->
+<div class="grid c4 mb-3">
+  <% const cards = [
+      { label: 'Kunlik', value: stats.daily, prev: stats.dailyPrev, diff: stats.dailyDiff, note: 'kecha: ' + stats.dailyPrev, ic: 'calendar', accent: true },
+      { label: 'Haftalik', value: stats.weekly, prev: stats.weeklyPrev, diff: stats.weeklyDiff, note: 'o\'tgan hafta: ' + stats.weeklyPrev, ic: 'chart' },
+      { label: 'Oylik', value: stats.monthly, prev: stats.monthlyPrev, diff: stats.monthlyDiff, note: 'o\'tgan oy: ' + stats.monthlyPrev, ic: 'activity' },
+      { label: 'Bemorlar', value: stats.totalPatients, diff: null, note: 'bu oyda +' + stats.newPatientsMonth, ic: 'users' }
+     ]; %>
+  <% cards.forEach(function (c) { %>
+    <div class="card stat <%= c.accent ? 'accent' : '' %>">
+      <div class="stat-icon"><%- icon(c.ic,{size:19}) %></div>
+      <div class="stat-label"><%= c.label %></div>
+      <div class="stat-value"><%= c.value %></div>
+      <div class="stat-foot">
+        <% if (c.diff !== null && c.diff !== undefined) { %>
+          <span class="delta <%= c.diff > 0 ? 'up' : c.diff < 0 ? 'down' : 'flat' %>">
+            <%- c.diff > 0 ? icon('arrowUp',{size:12}) : c.diff < 0 ? icon('arrowDown',{size:12}) : '' %><%= Math.abs(c.diff) %>%
+          </span>
+        <% } %>
+        <span><%= c.note %></span>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<div class="grid sidebar-right">
+  <div class="col gap-3">
+    <!-- Grafik -->
+    <div class="card">
+      <div class="row between mb-2">
+        <h3 class="mb-0">So'nggi 14 kun</h3>
+        <span class="badge brand">Jami: <%= stats.series.reduce((a,b)=>a+b.value,0) %></span>
+      </div>
+      <% const max = Math.max(1, ...stats.series.map(s=>s.value)); %>
+      <div class="chart">
+        <% stats.series.forEach(function (s, i) { %>
+          <div class="bar <%= i === stats.series.length-1 ? 'today' : '' %>" title="<%= fmt.dmy(s.date) %>: <%= s.value %> ta">
+            <span class="v"><%= s.value || '' %></span>
+            <span class="fill" style="height:<%= Math.round((s.value / max) * 100) %>%"></span>
+            <span class="l"><%= s.label %></span>
+          </div>
+        <% }) %>
+      </div>
+      <hr>
+      <div class="row between mb-2"><h3 class="mb-0">Oylik dinamika</h3></div>
+      <% const maxM = Math.max(1, ...stats.months.map(s=>s.value)); %>
+      <div class="chart" style="height:98px">
+        <% stats.months.forEach(function (s, i) { %>
+          <div class="bar <%= i === stats.months.length-1 ? 'today' : '' %>" title="<%= s.label %>: <%= s.value %> ta">
+            <span class="v"><%= s.value || '' %></span>
+            <span class="fill" style="height:<%= Math.round((s.value / maxM) * 100) %>%"></span>
+            <span class="l"><%= s.label %></span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- So'nggi retseptlar -->
+    <div class="card flush">
+      <div class="card-head">
+        <h3>So'nggi retseptlar</h3>
+        <a class="btn btn-sm btn-ghost" href="/prescriptions">Barchasi <%- icon('chevronRight',{size:14}) %></a>
+      </div>
+      <% if (recent.length) { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>ID</th><th>Bemor</th><th>Tashxis</th><th>Sana</th><th class="num">Dori</th><th></th></tr></thead>
+            <tbody>
+              <% recent.forEach(function (r) { %>
+                <tr>
+                  <td class="mono small nowrap"><%= r.pretty_id %></td>
+                  <td><a class="rowlink" href="/patients/<%= r.patient_id %>"><%= r.patient_name %></a>
+                      <div class="tiny muted"><%= r.birth_year || '' %></div></td>
+                  <td class="truncate" style="max-width:220px"><%= r.diagnosis || '—' %></td>
+                  <td class="nowrap small"><%= fmt.dmy(r.visit_date) %></td>
+                  <td class="num"><%= r.item_count %></td>
+                  <td class="right nowrap">
+                    <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>" title="Ko'rish"><%- icon('eye',{size:15}) %></a>
+                    <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>/pdf" title="PDF"><%- icon('download',{size:15}) %></a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty"><%- icon('file',{size:46}) %><h3>Hozircha retsept yo'q</h3>
+          <p>Birinchi retseptni yozish uchun yuqoridagi tugmani bosing.</p></div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Yon ustun -->
+  <div class="col gap-3">
+    <div class="card flush">
+      <div class="card-head"><h3>Bugungi qabul</h3><span class="badge"><%= todays.length %></span></div>
+      <% if (todays.length) { %>
+        <div class="list">
+          <% todays.slice(0,7).forEach(function (r) { %>
+            <a class="list-item" href="/r/<%= r.public_id %>">
+              <span class="avatar sm"><%= fmt.initials(r.patient_name) %></span>
+              <span class="grow" style="min-width:0">
+                <span class="ttl truncate"><%= r.patient_name %></span>
+                <span class="sub truncate"><%= r.diagnosis || 'Tashxis ko\'rsatilmagan' %></span>
+              </span>
+              <%- icon('chevronRight',{size:16}) %>
+            </a>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty" style="padding:26px 16px"><%- icon('clock',{size:38}) %>
+          <div class="small">Bugun hali retsept yozilmagan</div></div>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <h3>Ko'p uchragan tashxislar</h3>
+      <p class="tiny muted mt-0">joriy oy</p>
+      <% if (stats.topDiagnoses.length) { %>
+        <div class="rank-list">
+          <% const mx = Math.max(...stats.topDiagnoses.map(d=>d.n)); %>
+          <% stats.topDiagnoses.forEach(function (d, i) { %>
+            <div class="rank-item">
+              <span class="rk"><%= i+1 %></span>
+              <span class="grow truncate" title="<%= d.diagnosis %>"><%= d.diagnosis %></span>
+              <span class="bar-bg" style="max-width:60px"><i style="width:<%= Math.round(d.n/mx*100) %>%"></i></span>
+              <span class="strong small"><%= d.n %></span>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %><p class="small muted mb-0">Ma'lumot yetarli emas</p><% } %>
+    </div>
+
+    <div class="card">
+      <h3>Ko'p tayinlangan dorilar</h3>
+      <p class="tiny muted mt-0">joriy oy</p>
+      <% if (stats.topDrugs.length) { %>
+        <div class="rank-list">
+          <% const mx2 = Math.max(...stats.topDrugs.map(d=>d.n)); %>
+          <% stats.topDrugs.forEach(function (d, i) { %>
+            <div class="rank-item">
+              <span class="rk"><%= i+1 %></span>
+              <span class="grow truncate" title="<%= d.drug_name %>"><%= d.drug_name %></span>
+              <span class="bar-bg" style="max-width:60px"><i style="width:<%= Math.round(d.n/mx2*100) %>%"></i></span>
+              <span class="strong small"><%= d.n %></span>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %><p class="small muted mb-0">Ma'lumot yetarli emas</p><% } %>
+    </div>
+
+    <div class="card center">
+      <div class="avatar lg" style="margin:0 auto 10px"><%- icon('qr',{size:24}) %></div>
+      <h4>Bemorlar qanday oladi?</h4>
+      <p class="small muted">Har bir retseptga QR kod va <span class="mono">NR-XXXX-XXXX</span> ID beriladi.
+        Bemor QR ni skanerlaydi, ID ni saytga kiritadi yoki Telegram botga yuboradi.</p>
+      <a class="btn btn-sm" href="/" target="_blank"><%- icon('external',{size:14}) %> Bemor sahifasini ko'rish</a>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/app-foot') %>

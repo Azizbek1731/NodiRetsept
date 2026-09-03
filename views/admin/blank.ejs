@@ -1,0 +1,65 @@
+<%- include('../partials/app-head', { pageTitle: 'Retsept blankasi', pageSub: 'Umumiy (barcha shifokorlar uchun)' }) %>
+
+<div class="page-head">
+  <div><h2 class="mb-0">Umumiy retsept blankasi</h2>
+    <p class="muted small mb-0">Bu sozlamalar shaxsiy blankasi yo'q barcha shifokorlarga qo'llaniladi</p></div>
+  <% if (sample) { %>
+    <a class="btn" href="/r/<%= sample.public_id %>" target="_blank"><%- icon('eye',{size:16}) %> Namunani ko'rish</a>
+  <% } %>
+</div>
+
+<div class="grid sidebar-right">
+  <div class="card">
+    <form method="post" action="/admin/blank">
+      <%- include('../partials/template-fields', { t: template, ph: null }) %>
+      <button class="btn btn-primary btn-lg"><%- icon('check',{size:17}) %> Blankani saqlash</button>
+    </form>
+  </div>
+
+  <div class="col gap-3">
+    <div class="card">
+      <h4>Logotip</h4>
+      <div class="center card mb-2" style="background:#fbfdfd">
+        <% if (template.logo_path) { %>
+          <img src="/<%= template.logo_path %>" alt="Logotip" style="max-height:90px">
+        <% } else { %>
+          <div class="empty" style="padding:22px"><%- icon('image',{size:38}) %><div class="small">Yuklanmagan</div></div>
+        <% } %>
+      </div>
+      <form method="post" action="/admin/blank/logo" enctype="multipart/form-data">
+        <div class="field"><input type="file" name="logo" accept="image/png,image/jpeg" required></div>
+        <button class="btn btn-primary btn-sm btn-block"><%- icon('image',{size:15}) %> Logotipni yuklash</button>
+      </form>
+      <% if (template.logo_path) { %>
+        <form method="post" action="/admin/blank/logo" class="mt-1" data-confirm="Logotip o'chirilsinmi?">
+          <input type="hidden" name="remove" value="1">
+          <button class="btn btn-danger btn-sm btn-block"><%- icon('trash',{size:14}) %> O'chirish</button>
+        </form>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <h4>Blanka tuzilishi</h4>
+      <ol class="small muted" style="padding-left:18px;line-height:1.9;margin:0">
+        <li>Klinika sarlavhasi va QR kod</li>
+        <li>Sana va retsept ID si</li>
+        <li>Bemor ma'lumotlari</li>
+        <li>Shikoyatlar (ixtiyoriy)</li>
+        <li>Dastlabki tashxis + МКБ-10</li>
+        <li><strong>Rp.</strong> — dorilar (INN, D.t.d., Signatura)</li>
+        <li>Fizioterapiya va muolajalar</li>
+        <li>Tavsiyalar, keyingi qabul</li>
+        <li>Shifokor, imzo va pechat</li>
+      </ol>
+      <p class="hint mt-2">Tartib xalqaro retsept qoidalariga (WHO Good Prescribing) mos ravishda belgilangan.</p>
+    </div>
+
+    <div class="card">
+      <h4>Shaxsiy blankalar</h4>
+      <p class="small muted">Har bir shifokor uchun alohida blanka sozlash mumkin — klinika nomi, rang, ko'rinadigan bo'limlar.</p>
+      <a class="btn btn-sm btn-block" href="/admin/doctors">Shifokorlar ro'yxati</a>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/app-foot') %>

@@ -1,0 +1,72 @@
+<%- include('../partials/app-head', { pageTitle: 'Bemorlar', pageSub: total + ' ta bemor' }) %>
+
+<div class="page-head">
+  <div>
+    <h2 class="mb-0">Bemorlar</h2>
+    <p class="muted small mb-0">Bemorni tanlab, to'g'ridan-to'g'ri retsept yozishingiz mumkin</p>
+  </div>
+  <button class="btn btn-primary" data-rx-new><%- icon('plus',{size:17}) %> Retsept yozish</button>
+</div>
+
+<div class="card mb-3">
+  <form method="get" class="row wrap gap-2">
+    <div class="grow" style="min-width:200px">
+      <input type="search" name="q" value="<%= q %>" placeholder="F.I.Sh., telefon yoki bemor kodi bo'yicha qidirish…">
+    </div>
+    <input type="hidden" name="scope" value="<%= scope %>">
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Qidirish</button>
+    <% if (q) { %><a class="btn btn-ghost" href="/patients?scope=<%= scope %>">Tozalash</a><% } %>
+  </form>
+  <div class="row gap-1 mt-2">
+    <a class="chip <%= scope === 'mine' ? 'active' : '' %>" href="/patients?scope=mine<%= q ? '&q='+encodeURIComponent(q) : '' %>">Mening bemorlarim</a>
+    <a class="chip <%= scope === 'all' ? 'active' : '' %>" href="/patients?scope=all<%= q ? '&q='+encodeURIComponent(q) : '' %>">Barcha bemorlar</a>
+  </div>
+</div>
+
+<div class="card flush">
+  <% if (patients.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Bemor</th><th>Kod</th><th class="hide-sm">Tug'ilgan yili</th><th class="hide-sm">Telefon</th>
+              <th class="num">Retsept</th><th class="hide-sm">Oxirgi tashrif</th><th></th></tr>
+        </thead>
+        <tbody>
+          <% patients.forEach(function (p) { %>
+            <tr>
+              <td>
+                <div class="row gap-2">
+                  <span class="avatar sm"><%= fmt.initials(p.full_name) %></span>
+                  <a class="rowlink" href="/patients/<%= p.id %>"><%= p.full_name %></a>
+                </div>
+              </td>
+              <td class="mono small nowrap"><%= p.code || '—' %></td>
+              <td class="hide-sm small"><%= p.birth_year || '—' %><% if (fmt.age(p.birth_year)) { %>
+                  <span class="muted">(<%= fmt.age(p.birth_year) %>)</span><% } %></td>
+              <td class="hide-sm small nowrap"><%= fmt.phoneFmt(p.phone) || '—' %></td>
+              <td class="num"><span class="badge <%= p.rx_count ? 'brand' : '' %>"><%= p.rx_count %></span></td>
+              <td class="hide-sm small nowrap"><%= p.last_visit ? fmt.dmy(p.last_visit) : '—' %></td>
+              <td class="right nowrap">
+                <button class="btn btn-sm btn-soft" data-rx-new
+                  data-patient='<%- JSON.stringify({ id: p.id, full_name: p.full_name, birth_year: p.birth_year, gender: p.gender, phone: p.phone, code: p.code, age: fmt.age(p.birth_year) }) %>'>
+                  <%- icon('rx',{size:14}) %> <span class="hide-sm">Retsept</span>
+                </button>
+                <a class="btn btn-sm btn-ghost" href="/patients/<%= p.id %>"><%- icon('chevronRight',{size:15}) %></a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <%- include('../partials/pager', { total, page, perPage, query: { q, scope } }) %>
+  <% } else { %>
+    <div class="empty">
+      <%- icon('users',{size:46}) %>
+      <h3><%= q ? 'Hech narsa topilmadi' : 'Bemorlar ro\'yxati bo\'sh' %></h3>
+      <p><%= q ? 'Boshqa so\'rov bilan urinib ko\'ring yoki yangi bemor qo\'shing.' : 'Retsept yozish oynasida yangi bemor qo\'shishingiz mumkin.' %></p>
+      <button class="btn btn-primary mt-2" data-rx-new><%- icon('plus',{size:16}) %> Retsept yozish</button>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/app-foot') %>

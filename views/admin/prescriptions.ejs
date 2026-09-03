@@ -1,0 +1,54 @@
+<%- include('../partials/app-head', { pageTitle: 'Retseptlar', pageSub: total + ' ta retsept' }) %>
+
+<div class="card mb-3">
+  <form method="get" class="row wrap gap-2">
+    <div class="grow" style="min-width:170px">
+      <input type="search" name="q" value="<%= q %>" placeholder="NR-XXXX-XXXX, bemor yoki tashxis…"></div>
+    <div>
+      <select name="doctor">
+        <option value="">Barcha shifokorlar</option>
+        <% doctors.forEach(function (d) { %>
+          <option value="<%= d.id %>" <%= String(doctorId) === String(d.id) ? 'selected' : '' %>><%= d.full_name %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div><input type="date" name="from" value="<%= from || '' %>"></div>
+    <div><input type="date" name="to" value="<%= to || '' %>"></div>
+    <button class="btn btn-primary"><%- icon('search',{size:16}) %> Filtr</button>
+    <% if (q || from || to || doctorId) { %><a class="btn btn-ghost" href="/admin/prescriptions">Tozalash</a><% } %>
+  </form>
+</div>
+
+<div class="card flush">
+  <% if (prescriptions.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>ID</th><th>Bemor</th><th class="hide-sm">Shifokor</th><th>Tashxis</th>
+          <th class="hide-sm">Sana</th><th class="num hide-sm">Ko'rilgan</th><th></th></tr></thead>
+        <tbody>
+          <% prescriptions.forEach(function (r) { %>
+            <tr>
+              <td class="mono small nowrap"><%= r.pretty_id %>
+                <% if (r.status === 'cancelled') { %><br><span class="badge danger">bekor</span><% } %></td>
+              <td class="truncate" style="max-width:190px"><%= r.patient_name %>
+                <div class="tiny muted"><%= r.birth_year || '' %></div></td>
+              <td class="hide-sm small"><%= fmt.shortName(r.doctor_name) %></td>
+              <td class="truncate" style="max-width:220px"><%= r.diagnosis || '—' %></td>
+              <td class="hide-sm small nowrap"><%= fmt.dmy(r.visit_date) %></td>
+              <td class="num hide-sm small"><%= r.view_count %></td>
+              <td class="right nowrap">
+                <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>"><%- icon('eye',{size:15}) %></a>
+                <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>/pdf"><%- icon('download',{size:15}) %></a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <%- include('../partials/pager', { total, page, perPage, query: { q, from, to, doctor: doctorId } }) %>
+  <% } else { %>
+    <div class="empty"><%- icon('file',{size:46}) %><h3>Retsept topilmadi</h3></div>
+  <% } %>
+</div>
+
+<%- include('../partials/app-foot') %>

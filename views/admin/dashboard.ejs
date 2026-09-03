@@ -1,0 +1,138 @@
+<%- include('../partials/app-head', { pageTitle: 'Administrator paneli', pageSub: fmt.longDate(fmt.toISODate()) }) %>
+
+<div class="grid c4 mb-3">
+  <div class="card stat accent">
+    <div class="stat-icon"><%- icon('file',{size:19}) %></div>
+    <div class="stat-label">Bugungi retseptlar</div>
+    <div class="stat-value"><%= stats.daily %></div>
+    <div class="stat-foot">
+      <span class="delta <%= stats.dailyDiff > 0 ? 'up' : stats.dailyDiff < 0 ? 'down' : 'flat' %>"><%= stats.dailyDiff %>%</span>
+      <span>kecha: <%= stats.dailyPrev %></span>
+    </div>
+  </div>
+  <div class="card stat">
+    <div class="stat-icon"><%- icon('chart',{size:19}) %></div>
+    <div class="stat-label">Bu oy</div>
+    <div class="stat-value"><%= stats.monthly %></div>
+    <div class="stat-foot"><span>o'tgan oy: <%= stats.monthlyPrev %></span></div>
+  </div>
+  <div class="card stat">
+    <div class="stat-icon"><%- icon('users',{size:19}) %></div>
+    <div class="stat-label">Bemorlar</div>
+    <div class="stat-value"><%= stats.totalPatients %></div>
+    <div class="stat-foot"><span>bu oyda +<%= stats.newPatientsMonth %></span></div>
+  </div>
+  <div class="card stat">
+    <div class="stat-icon"><%- icon('eye',{size:19}) %></div>
+    <div class="stat-label">Retsept ochilishi</div>
+    <div class="stat-value"><%= stats.views %></div>
+    <div class="stat-foot"><span>bemorlar tomonidan</span></div>
+  </div>
+</div>
+
+<div class="grid sidebar-right">
+  <div class="col gap-3">
+    <div class="card">
+      <div class="row between mb-2"><h3 class="mb-0">So'nggi 14 kun</h3>
+        <span class="badge brand">Jami: <%= stats.series.reduce((a,b)=>a+b.value,0) %></span></div>
+      <% const max = Math.max(1, ...stats.series.map(s=>s.value)); %>
+      <div class="chart">
+        <% stats.series.forEach(function (s, i) { %>
+          <div class="bar <%= i === stats.series.length-1 ? 'today' : '' %>" title="<%= fmt.dmy(s.date) %>: <%= s.value %>">
+            <span class="v"><%= s.value || '' %></span>
+            <span class="fill" style="height:<%= Math.round((s.value/max)*100) %>%"></span>
+            <span class="l"><%= s.label %></span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="card flush">
+      <div class="card-head"><h3>Shifokorlar faoliyati</h3>
+        <a class="btn btn-sm btn-ghost" href="/admin/doctors">Boshqarish <%- icon('chevronRight',{size:14}) %></a></div>
+      <% if (doctors.length) { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Shifokor</th><th class="hide-sm">Mutaxassislik</th><th class="num">Bugun</th>
+              <th class="num">Jami</th><th>Pechat</th><th>Holat</th><th></th></tr></thead>
+            <tbody>
+              <% doctors.forEach(function (d) { %>
+                <tr>
+                  <td><div class="row gap-2"><span class="avatar sm"><%= fmt.initials(d.full_name) %></span>
+                    <a class="rowlink" href="/admin/doctors/<%= d.id %>"><%= d.full_name %></a></div></td>
+                  <td class="hide-sm small"><%= d.specialty || '—' %></td>
+                  <td class="num"><%= d.rx_today %></td>
+                  <td class="num strong"><%= d.rx_total %></td>
+                  <td><span class="badge <%= d.stamp_path ? 'ok' : 'warn' %>"><%= d.stamp_path ? 'bor' : 'yo\'q' %></span></td>
+                  <td><span class="badge <%= d.is_active ? 'ok' : 'danger' %>"><%= d.is_active ? 'faol' : 'faolsiz' %></span></td>
+                  <td class="right"><a class="btn btn-sm btn-ghost" href="/admin/doctors/<%= d.id %>"><%- icon('chevronRight',{size:15}) %></a></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty"><%- icon('users',{size:46}) %><h3>Shifokorlar yo'q</h3>
+          <p>Tizimga birinchi shifokorni qo'shing.</p>
+          <a class="btn btn-primary mt-2" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> Shifokor qo'shish</a></div>
+      <% } %>
+    </div>
+
+    <div class="card flush">
+      <div class="card-head"><h3>So'nggi retseptlar</h3>
+        <a class="btn btn-sm btn-ghost" href="/admin/prescriptions">Barchasi <%- icon('chevronRight',{size:14}) %></a></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>ID</th><th>Bemor</th><th class="hide-sm">Shifokor</th><th>Sana</th><th></th></tr></thead>
+          <tbody>
+            <% recent.forEach(function (r) { %>
+              <tr>
+                <td class="mono small nowrap"><%= r.pretty_id %></td>
+                <td class="truncate" style="max-width:180px"><%= r.patient_name %></td>
+                <td class="hide-sm small"><%= fmt.shortName(r.doctor_name) %></td>
+                <td class="small nowrap"><%= fmt.dmy(r.visit_date) %></td>
+                <td class="right"><a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>"><%- icon('eye',{size:15}) %></a></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col gap-3">
+    <div class="card">
+      <h4>Tezkor amallar</h4>
+      <div class="col gap-1">
+        <a class="btn btn-primary btn-block" href="/admin/doctors/new"><%- icon('plus',{size:16}) %> Shifokor qo'shish</a>
+        <a class="btn btn-block" href="/admin/blank"><%- icon('edit',{size:16}) %> Blankani tahrirlash</a>
+        <a class="btn btn-block" href="/admin/prescriptions"><%- icon('file',{size:16}) %> Retseptlar</a>
+        <a class="btn btn-block" href="/admin/telegram"><%- icon('send',{size:16}) %> Telegram bot</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row between mb-1"><h4 class="mb-0">Telegram bot</h4>
+        <span class="badge <%= tg.enabled ? 'ok' : 'warn' %>"><%= tg.enabled ? 'yoqilgan' : 'o\'chirilgan' %></span></div>
+      <div class="stat-value" style="font-size:1.6rem"><%= tg.users %></div>
+      <div class="small muted">ro'yxatdan o'tgan foydalanuvchi</div>
+      <a class="btn btn-sm mt-2 btn-block" href="/admin/telegram">Batafsil</a>
+    </div>
+
+    <div class="card">
+      <h4>So'nggi harakatlar</h4>
+      <div class="list" style="margin:0 -20px -20px">
+        <% audits.forEach(function (a) { %>
+          <div class="list-item" style="padding:9px 20px">
+            <div class="grow" style="min-width:0">
+              <div class="small truncate"><strong><%= a.full_name || 'Tizim' %></strong> — <%= a.action %></div>
+              <div class="tiny muted"><%= fmt.dateTime(a.created_at) %></div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/app-foot') %>

@@ -1,0 +1,58 @@
+<%- include('head') %>
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>">
+      <span class="logo"><%- icon('rx', { size: 19 }) %></span>
+      <span>NodiRetsept<small><%= currentUser.role === 'admin' ? 'Administrator paneli' : 'Shifokor kabineti' %></small></span>
+    </a>
+    <nav class="nav">
+      <% if (currentUser.role === 'doctor') { %>
+        <div class="nav-label">Asosiy</div>
+        <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'active' : '' %>"><%- icon('dashboard', {size:18}) %> Boshqaruv paneli</a>
+        <a href="/patients" class="<%= currentPath.startsWith('/patients') ? 'active' : '' %>"><%- icon('users', {size:18}) %> Bemorlar</a>
+        <a href="/prescriptions" class="<%= currentPath.startsWith('/prescriptions') ? 'active' : '' %>"><%- icon('file', {size:18}) %> Retseptlar</a>
+        <div class="nav-label">Hisob</div>
+        <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%- icon('user', {size:18}) %> Profil</a>
+      <% } else { %>
+        <div class="nav-label">Umumiy</div>
+        <a href="/admin" class="<%= currentPath === '/admin' || currentPath === '/' ? 'active' : '' %>"><%- icon('dashboard', {size:18}) %> Boshqaruv paneli</a>
+        <a href="/admin/doctors" class="<%= currentPath.startsWith('/admin/doctors') ? 'active' : '' %>"><%- icon('users', {size:18}) %> Shifokorlar</a>
+        <a href="/admin/patients" class="<%= currentPath.startsWith('/admin/patients') ? 'active' : '' %>"><%- icon('heart', {size:18}) %> Bemorlar</a>
+        <a href="/admin/prescriptions" class="<%= currentPath.startsWith('/admin/prescriptions') ? 'active' : '' %>"><%- icon('file', {size:18}) %> Retseptlar</a>
+        <div class="nav-label">Sozlash</div>
+        <a href="/admin/blank" class="<%= currentPath.startsWith('/admin/blank') ? 'active' : '' %>"><%- icon('edit', {size:18}) %> Retsept blankasi</a>
+        <a href="/admin/telegram" class="<%= currentPath.startsWith('/admin/telegram') ? 'active' : '' %>"><%- icon('send', {size:18}) %> Telegram bot</a>
+        <a href="/admin/settings" class="<%= currentPath.startsWith('/admin/settings') ? 'active' : '' %>"><%- icon('settings', {size:18}) %> Sozlamalar</a>
+        <div class="nav-label">Hisob</div>
+        <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%- icon('user', {size:18}) %> Profil</a>
+      <% } %>
+    </nav>
+    <div class="sidebar-foot">
+      <a class="sidebar-user" href="/profile">
+        <span class="avatar sm"><%= fmt.initials(currentUser.full_name) %></span>
+        <span class="grow truncate">
+          <span class="nm truncate"><%= fmt.shortName(currentUser.full_name) %></span>
+          <span class="rl"><%= currentUser.role === 'admin' ? 'Administrator' : (currentUser.specialty || 'Shifokor') %></span>
+        </span>
+      </a>
+      <form method="post" action="/logout" class="mt-1">
+        <button class="btn btn-ghost btn-sm btn-block" style="color:#9fc0c5"><%- icon('logout', {size:15}) %> Chiqish</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="btn btn-ghost btn-icon burger" id="burger" aria-label="Menyu"><%- icon('menu', {size:20}) %></button>
+      <div class="grow">
+        <h1><%= typeof pageTitle !== 'undefined' ? pageTitle : title %></h1>
+        <% if (typeof pageSub !== 'undefined' && pageSub) { %><div class="sub"><%= pageSub %></div><% } %>
+      </div>
+      <% if (currentUser.role === 'doctor') { %>
+        <button class="btn btn-primary hide-sm" data-rx-new><%- icon('plus', {size:17}) %> Retsept yozish</button>
+      <% } %>
+      <a href="/profile" class="avatar" title="<%= currentUser.full_name %>"><%= fmt.initials(currentUser.full_name) %></a>
+    </header>
+    <main class="content">
+      <%- include('flash') %>

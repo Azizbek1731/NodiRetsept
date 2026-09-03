@@ -1,0 +1,18 @@
+<%
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  const qs = (p) => {
+    const params = new URLSearchParams(Object.entries(query || {}).filter(([k,v]) => v && k !== 'page'));
+    params.set('page', p);
+    return '?' + params.toString();
+  };
+%>
+<% if (totalPages > 1) { %>
+<div class="pager">
+  <% if (page > 1) { %><a href="<%= qs(page-1) %>"><%- icon('chevronLeft', {size:15}) %></a><% } %>
+  <% for (let p = 1; p <= totalPages; p++) {
+       if (p === 1 || p === totalPages || Math.abs(p - page) <= 1) { %>
+         <% if (p === page) { %><span class="cur"><%= p %></span><% } else { %><a href="<%= qs(p) %>"><%= p %></a><% } %>
+  <%   } else if (Math.abs(p - page) === 2) { %><span class="dots">…</span><% } } %>
+  <% if (page < totalPages) { %><a href="<%= qs(page+1) %>"><%- icon('chevronRight', {size:15}) %></a><% } %>
+</div>
+<% } %>

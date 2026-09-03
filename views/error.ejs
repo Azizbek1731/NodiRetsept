@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<div style="min-height:100vh;display:grid;place-items:center;padding:24px">
+  <div class="card center" style="max-width:460px">
+    <div style="font-size:3.6rem;font-weight:800;color:var(--brand);line-height:1"><%= code %></div>
+    <h2 class="mt-2"><%= title %></h2>
+    <p class="muted"><%= message %></p>
+    <div class="row center gap-2" style="justify-content:center">
+      <a class="btn btn-primary" href="/">Bosh sahifa</a>
+      <% if (currentUser) { %>
+        <a class="btn" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>">Kabinetga qaytish</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+</body></html>

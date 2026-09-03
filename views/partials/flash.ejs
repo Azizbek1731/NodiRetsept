@@ -1,0 +1,6 @@
+<% if (typeof flash !== 'undefined' && flash) { %>
+  <div class="flash <%= flash.type === 'error' ? 'error' : flash.type === 'info' ? 'info' : 'success' %>">
+    <%- icon(flash.type === 'error' ? 'alert' : 'checkCircle', { size: 18 }) %>
+    <span><%= flash.text %></span>
+  </div>
+<% } %>

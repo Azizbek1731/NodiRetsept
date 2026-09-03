@@ -1,0 +1,16 @@
+<%- include('head') %>
+<header class="pub-header">
+  <a class="pub-brand" href="/">
+    <span class="logo"><%- icon('rx', { size: 20 }) %></span>
+    <span>NodiRetsept<small>Elektron retsept xizmati</small></span>
+  </a>
+  <div class="row gap-1">
+    <a class="btn btn-ghost btn-sm hide-sm" href="/scan"><%- icon('qr', {size:16}) %> QR skaner</a>
+    <% if (currentUser) { %>
+      <a class="btn btn-soft btn-sm" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>">Kabinet</a>
+    <% } else { %>
+      <a class="btn btn-soft btn-sm" href="/login"><%- icon('user', {size:16}) %> Shifokor kirishi</a>
+    <% } %>
+  </div>
+</header>
+<main class="pub-main">

@@ -1,0 +1,12 @@
+</main>
+<footer class="no-print" style="text-align:center;padding:26px 20px 40px;color:var(--muted);font-size:.8rem">
+  <div>© <%= new Date().getFullYear() %> NodiRetsept — elektron retsept tizimi</div>
+  <div class="mt-1">
+    <a href="/">Bosh sahifa</a> · <a href="/scan">QR skanerlash</a> · <a href="/login">Shifokor kirishi</a>
+  </div>
+</footer>
+<div id="toasts"></div>
+<script src="/static/js/app.js"></script>
+<% if (typeof pageScript !== 'undefined' && pageScript) { %><script src="/static/js/<%= pageScript %>"></script><% } %>
+</body>
+</html>

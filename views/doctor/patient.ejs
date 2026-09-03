@@ -1,0 +1,63 @@
+<%- include('../partials/app-head', { pageTitle: patient.full_name, pageSub: patient.code || '' }) %>
+
+<div class="page-head">
+  <a class="btn btn-ghost btn-sm" href="/patients"><%- icon('chevronLeft',{size:15}) %> Bemorlar</a>
+  <button class="btn btn-primary" data-rx-new
+    data-patient='<%- JSON.stringify({ id: patient.id, full_name: patient.full_name, birth_year: patient.birth_year, gender: patient.gender, phone: patient.phone, code: patient.code, age: fmt.age(patient.birth_year) }) %>'>
+    <%- icon('plus',{size:17}) %> Retsept yozish
+  </button>
+</div>
+
+<div class="grid sidebar-right">
+  <div class="card flush">
+    <div class="card-head"><h3>Retseptlar tarixi</h3><span class="badge"><%= history.length %></span></div>
+    <% if (history.length) { %>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>ID</th><th>Sana</th><th>Tashxis</th><th class="hide-sm">Shifokor</th><th class="num">Dori</th><th></th></tr></thead>
+          <tbody>
+            <% history.forEach(function (r) { %>
+              <tr>
+                <td class="mono small nowrap"><%= r.pretty_id %>
+                  <% if (r.status === 'cancelled') { %><span class="badge danger">bekor</span><% } %></td>
+                <td class="nowrap small"><%= fmt.dmy(r.visit_date) %></td>
+                <td class="truncate" style="max-width:240px"><%= r.diagnosis || '—' %></td>
+                <td class="hide-sm small"><%= fmt.shortName(r.doctor_name) %></td>
+                <td class="num"><%= r.item_count %></td>
+                <td class="right nowrap">
+                  <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>"><%- icon('eye',{size:15}) %></a>
+                  <a class="btn btn-sm btn-ghost" href="/r/<%= r.public_id %>/pdf"><%- icon('download',{size:15}) %></a>
+                  <% if (r.doctor_id === currentUser.id) { %>
+                    <button class="btn btn-sm btn-ghost" data-rx-edit="<%= r.id %>"><%- icon('edit',{size:15}) %></button>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty"><%- icon('file',{size:46}) %><h3>Retsept yo'q</h3>
+        <p>Bu bemorga hali retsept yozilmagan.</p></div>
+    <% } %>
+  </div>
+
+  <div class="col gap-3">
+    <div class="card center">
+      <div class="avatar lg" style="margin:0 auto 10px"><%= fmt.initials(patient.full_name) %></div>
+      <h3 class="mb-0"><%= patient.full_name %></h3>
+      <p class="small muted"><%= patient.code || '' %></p>
+      <div class="rx-kv" style="text-align:left">
+        <div><span class="k">Tug'ilgan yili</span><span class="v"><%= patient.birth_year || '—' %>
+          <% if (fmt.age(patient.birth_year)) { %><span class="muted">(<%= fmt.age(patient.birth_year) %> yosh)</span><% } %></span></div>
+        <div><span class="k">Jinsi</span><span class="v"><%= patient.gender || '—' %></span></div>
+        <div><span class="k">Telefon</span><span class="v"><%= fmt.phoneFmt(patient.phone) || '—' %></span></div>
+        <div><span class="k">Manzil</span><span class="v"><%= patient.address || '—' %></span></div>
+        <div><span class="k">Qo'shilgan</span><span class="v"><%= fmt.dmy(patient.created_at) %></span></div>
+      </div>
+      <% if (patient.note) { %><hr><p class="small"><%= patient.note %></p><% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/app-foot') %>

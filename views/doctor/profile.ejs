@@ -1,0 +1,122 @@
+<%- include('../partials/app-head', { pageTitle: 'Profil' }) %>
+
+<div class="grid sidebar-right">
+  <div class="col gap-3">
+    <!-- Shaxsiy ma'lumotlar -->
+    <div class="card">
+      <h3>Shaxsiy ma'lumotlar</h3>
+      <p class="small muted">Bu ma'lumotlar retsept blankasining «Shifokor» qismida chiqadi.</p>
+      <form method="post" action="/profile">
+        <div class="form-grid">
+          <div class="field">
+            <label for="full_name">Ism, familiya, sharifi <span class="req">*</span></label>
+            <input type="text" id="full_name" name="full_name" value="<%= doctor.full_name %>" required>
+          </div>
+          <div class="field">
+            <label for="phone">Telefon raqami</label>
+            <input type="tel" id="phone" name="phone" value="<%= fmt.phoneFmt(doctor.phone) %>" placeholder="+998 90 123 45 67">
+          </div>
+          <div class="field">
+            <label for="specialty">Mutaxassisligi</label>
+            <input type="text" id="specialty" name="specialty" value="<%= doctor.specialty || '' %>" placeholder="Nevropatolog">
+          </div>
+          <div class="field">
+            <label for="license_number">Litsenziya / diplom raqami</label>
+            <input type="text" id="license_number" name="license_number" value="<%= doctor.license_number || '' %>">
+          </div>
+          <div class="field">
+            <label for="room">Qabul xonasi</label>
+            <input type="text" id="room" name="room" value="<%= doctor.room || '' %>" placeholder="204-xona">
+          </div>
+        </div>
+        <button class="btn btn-primary"><%- icon('check',{size:16}) %> Saqlash</button>
+      </form>
+    </div>
+
+    <!-- Pechat va imzo -->
+    <div class="card">
+      <h3>Pechat va imzo</h3>
+      <p class="small muted">Shaffof fonli PNG tavsiya etiladi (maksimal 3 MB). Bu rasmlar retsept blankasi va PDF faylida chiqadi.</p>
+      <div class="grid c2 mb-2">
+        <div class="center card" style="background:#fbfdfd">
+          <div class="label mb-1">Vrach pechati</div>
+          <% if (doctor.stamp_path) { %>
+            <img src="/<%= doctor.stamp_path %>" alt="Pechat" style="max-height:110px">
+          <% } else { %>
+            <div class="empty" style="padding:20px"><%- icon('stamp',{size:38}) %><div class="small">Yuklanmagan</div></div>
+          <% } %>
+        </div>
+        <div class="center card" style="background:#fbfdfd">
+          <div class="label mb-1">Imzo</div>
+          <% if (doctor.signature_path) { %>
+            <img src="/<%= doctor.signature_path %>" alt="Imzo" style="max-height:70px">
+          <% } else { %>
+            <div class="empty" style="padding:20px"><%- icon('edit',{size:38}) %><div class="small">Yuklanmagan</div></div>
+          <% } %>
+        </div>
+      </div>
+      <form method="post" action="/profile/media" enctype="multipart/form-data">
+        <div class="form-grid">
+          <div class="field"><label for="stamp">Pechat rasmi</label><input type="file" id="stamp" name="stamp" accept="image/png,image/jpeg"></div>
+          <div class="field"><label for="signature">Imzo rasmi</label><input type="file" id="signature" name="signature" accept="image/png,image/jpeg"></div>
+        </div>
+        <button class="btn btn-primary"><%- icon('image',{size:16}) %> Yuklash</button>
+      </form>
+    </div>
+
+    <!-- Parol -->
+    <div class="card">
+      <h3>Parolni o'zgartirish</h3>
+      <form method="post" action="/profile/password">
+        <div class="form-grid">
+          <div class="field"><label for="current">Joriy parol</label>
+            <input type="password" id="current" name="current" required autocomplete="current-password"></div>
+          <div class="field"><label for="password">Yangi parol</label>
+            <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password"></div>
+          <div class="field"><label for="confirm">Yangi parolni takrorlang</label>
+            <input type="password" id="confirm" name="confirm" required minlength="6" autocomplete="new-password"></div>
+        </div>
+        <button class="btn btn-dark"><%- icon('key',{size:16}) %> Parolni yangilash</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col gap-3">
+    <div class="card center">
+      <div class="avatar lg" style="margin:0 auto 10px"><%= fmt.initials(doctor.full_name) %></div>
+      <h3 class="mb-0"><%= doctor.full_name %></h3>
+      <p class="small muted"><%= doctor.specialty || (doctor.role === 'admin' ? 'Administrator' : 'Shifokor') %></p>
+      <div class="row gap-1" style="justify-content:center"><span class="badge brand">@<%= doctor.username %></span>
+        <span class="badge <%= doctor.is_active ? 'ok' : 'danger' %>"><%= doctor.is_active ? 'Faol' : 'Faolsiz' %></span></div>
+      <hr>
+      <div class="grid c3 center">
+        <div><div class="strong" style="font-size:1.3rem"><%= stats.daily %></div><div class="tiny muted">bugun</div></div>
+        <div><div class="strong" style="font-size:1.3rem"><%= stats.monthly %></div><div class="tiny muted">bu oy</div></div>
+        <div><div class="strong" style="font-size:1.3rem"><%= stats.totalRx %></div><div class="tiny muted">jami</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Retsept blankasi</h4>
+      <p class="small muted">Sizning blankangiz:
+        <strong><%= template.is_custom ? 'shaxsiy' : 'umumiy (klinika)' %></strong></p>
+      <div class="rx-kv">
+        <div><span class="k">Klinika</span><span class="v"><%= template.clinic_name || '—' %></span></div>
+        <div><span class="k">Manzil</span><span class="v"><%= template.address || '—' %></span></div>
+        <div><span class="k">Telefon</span><span class="v"><%= fmt.phoneFmt(template.phone) || '—' %></span></div>
+      </div>
+      <p class="hint mt-2">Blanka ko'rinishini administrator sozlaydi. O'zgartirish kerak bo'lsa unga murojaat qiling.</p>
+    </div>
+
+    <div class="card">
+      <h4>Hisob</h4>
+      <div class="rx-kv">
+        <div><span class="k">Login</span><span class="v mono"><%= doctor.username %></span></div>
+        <div><span class="k">Yaratilgan</span><span class="v"><%= fmt.dmy(doctor.created_at) %></span></div>
+        <div><span class="k">Oxirgi kirish</span><span class="v"><%= doctor.last_login_at ? fmt.dateTime(doctor.last_login_at) : '—' %></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/app-foot') %>

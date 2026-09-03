@@ -5,7 +5,14 @@
     <span>NodiRetsept<small><%= t('brand.service') %></small></span>
   </a>
   <div class="row gap-1">
-    <%- include('lang') %>
+    <div class="settings-pop" id="settingsPop">
+      <button class="btn btn-ghost btn-sm" data-settings-toggle aria-expanded="false"
+              aria-label="<%= t('appearance.open') %>">
+        <%- icon('settings', { size: 15 }) %>
+        <span><%= (locales.find(function (l) { return l.code === locale; }) || {}).short %></span>
+      </button>
+      <div class="panel"><%- include('appearance', { compact: true }) %></div>
+    </div>
     <a class="btn btn-ghost btn-sm hide-sm" href="/scan"><%- icon('qr', {size:16}) %> <%= t('footer.scan') %></a>
     <% if (currentUser) { %>
       <a class="btn btn-soft btn-sm" href="<%= currentUser.role === 'admin' ? '/admin' : '/dashboard' %>"><%= t('nav.cabinet') %></a>

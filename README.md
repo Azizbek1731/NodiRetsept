@@ -14,6 +14,12 @@ npm run seed        # namunaviy ma'lumotlar (ixtiyoriy)
 npm start
 ```
 
+O'zgartirish kiritgandan so'ng tekshirish uchun:
+
+```bash
+npm test
+```
+
 So'ng brauzerda oching: **http://localhost:4000**
 
 ### Standart hisoblar
@@ -207,6 +213,9 @@ src/
     seed.js              admin, dori ma'lumotnomasi, demo ma'lumotlar
   i18n/                  tarjimalar: uz.json · uz-Cyrl.json · ru.json · en.json
   routes/                auth · public · api · doctor · admin
+tools/
+  smoke.js               har bir sahifani har bir tilda ochib tekshiradi (npm test)
+  sync-cyrl.js           uz.json dan kirillcha kalitlarni hosil qiladi
   telegram/bot.js        Telegram bot (grammY)
 views/                   EJS shablonlari
 public/css, public/js    dizayn tizimi va klient mantiq
@@ -253,7 +262,7 @@ prefiksi qo'shilsa ular ishlamay qolardi.
 
 Til qanday tanlanadi (tartib bo'yicha):
 
-1. `?lang=ru` so'rov parametri yoki `/lang/ru` havolasi (sayt sarlavhasidagi **UZ · ЎЗ · RU · EN** tugmalari)
+1. `?lang=ru` so'rov parametri yoki `/lang/ru` havolasi — sozlamalar panelidan
 2. `nr_lang` cookie — bir marta tanlangach bir yil saqlanadi
 3. Brauzerning `Accept-Language` sarlavhasi
 4. Standart — o'zbekcha (lotin)
@@ -272,10 +281,42 @@ Tarjima qamrovi:
 > u qaysi tilda yozilgan bo'lsa, blankada ham shundayligicha qoladi. Bu ataylab: retsept
 > huquqiy hujjat, uning mazmuni avtomatik o'zgartirilmasligi kerak.
 
-Tarjimalar `src/i18n/<til>.json` fayllarida. Yangi matn qo'shish uchun to'rtala faylga ham
-bir xil kalitni qo'shing — kalit topilmasa tizim o'zbekchaga qaytadi.
+Tarjimalar `src/i18n/<til>.json` fayllarida. Yangi matn qo'shish uchun uchala faylga
+(`uz`, `ru`, `en`) kalit qo'shing, so'ng kirillchasini avtomatik hosil qiling:
 
-## 9. Brend va logotip
+```bash
+node tools/sync-cyrl.js
+```
+
+Bu buyruq faqat **yangi** kalitlarni transliteratsiya qiladi — mavjud kirillcha matnlarga
+tegmaydi, ya'ni qo'lda kiritilgan tuzatishlar saqlanib qoladi.
+
+## 9. Ko'rinish sozlamalari
+
+Har bir foydalanuvchi o'zi uchun sozlaydi — tanlov **shu qurilmada** saqlanadi
+(`localStorage`), server tomonida hech narsa o'zgarmaydi.
+
+| Sozlama | Variantlar |
+|---|---|
+| **Mavzu** | Yorug' · Tungi · Avtomatik (qurilma sozlamasiga qarab) |
+| **Matn o'lchami** | Oddiy · Katta · Juda katta |
+| **Til** | O'zbekcha · Ўзбекча · Русский · English |
+
+Qayerda:
+
+* **Shifokor va admin** — `Profil → Ko'rinish va til` bo'limida
+* **Bemorlar** — sayt sarlavhasidagi ⚙ tugmasi ostida (ularda profil yo'q)
+* **Kirish sahifasi** — forma ostida
+
+**Kattalashtirilgan rejim** ko'rish qobiliyati past foydalanuvchilar uchun: matn 15–35 %
+kattalashadi, ochiq kulrang ranglar kuchaytiriladi, fokus ramkasi qalinlashadi va
+jadval kataklari kengayadi. Barcha o'lchamlar `rem` da bo'lgani uchun interfeys
+mutanosib kattalashadi — hech narsa buzilmaydi.
+
+**Retsept blankasi** tungi rejimda ham **oq qog'oz** bo'lib qoladi. Bu ataylab: pechat,
+imzo va logotip oq fon uchun tayyorlangan, PDF va chop etilgan nusxa ham shunday chiqadi.
+
+## 10. Brend va logotip
 
 Logotip — **N** harfi va QR skaner belgisidan iborat: harf brend nomini, QR belgisi esa
 tizimning asosiy g'oyasini (retseptni skanerlab olish) bildiradi.
@@ -303,7 +344,7 @@ belgisi turadi, yuklagan bo'lsa — o'ziniki (`Admin → Retsept blankasi → Lo
 
 Telegram bot rasmini o'rnatish: @BotFather → `/setuserpic` → botni tanlang → `telegram-bot.png` ni yuboring.
 
-## 10. Xavfsizlik
+## 11. Xavfsizlik
 
 * Parollar `bcrypt` bilan xeshlanadi, sessiyalar bazada saqlanadi (server qayta ishga tushsa yo'qolmaydi).
 * Retsept ID si tasodifiy 8 belgidan iborat (30 ta belgili alifbo ≈ 6·10¹¹ variant), chalkash

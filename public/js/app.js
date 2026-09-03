@@ -46,6 +46,63 @@
     return data;
   };
 
+  /* ── Ko'rinish: mavzu va matn o'lchami ───────────────── */
+  const PREF = { theme: 'nr_theme', size: 'nr_textsize' };
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* jim */ } },
+    del(k) { try { localStorage.removeItem(k); } catch (e) { /* jim */ } },
+  };
+
+  function applyTheme(value) {
+    const root = document.documentElement;
+    if (value === 'dark' || value === 'light') { root.setAttribute('data-theme', value); store.set(PREF.theme, value); }
+    else { root.removeAttribute('data-theme'); store.del(PREF.theme); }   // avtomatik
+    markActive('[data-theme-set]', 'themeSet', value || 'auto');
+  }
+
+  function applyTextSize(value) {
+    const root = document.documentElement;
+    if (value === 'large' || value === 'xlarge') { root.setAttribute('data-textsize', value); store.set(PREF.size, value); }
+    else { root.removeAttribute('data-textsize'); store.del(PREF.size); }
+    markActive('[data-textsize-set]', 'textsizeSet', value || 'normal');
+  }
+
+  function markActive(selector, dataKey, value) {
+    document.querySelectorAll(selector).forEach((b) => {
+      b.classList.toggle('active', b.dataset[dataKey] === value);
+    });
+  }
+
+  // Sahifa yuklanganda joriy tanlovni belgilab qo'yamiz
+  markActive('[data-theme-set]', 'themeSet', store.get(PREF.theme) || 'auto');
+  markActive('[data-textsize-set]', 'textsizeSet', store.get(PREF.size) || 'normal');
+
+  document.addEventListener('click', (e) => {
+    const th = e.target.closest('[data-theme-set]');
+    if (th) { e.preventDefault(); applyTheme(th.dataset.themeSet); return; }
+    const sz = e.target.closest('[data-textsize-set]');
+    if (sz) { e.preventDefault(); applyTextSize(sz.dataset.textsizeSet); }
+  });
+
+  /* Ko'rinish sozlamalari paneli (ommaviy sahifalarda) */
+  document.addEventListener('click', (e) => {
+    const pop = document.querySelector('.settings-pop');
+    if (!pop) return;
+    const toggle = e.target.closest('[data-settings-toggle]');
+    if (toggle) {
+      e.preventDefault();
+      const open = pop.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      return;
+    }
+    if (!e.target.closest('.settings-pop')) {
+      pop.classList.remove('open');
+      const btn = pop.querySelector('[data-settings-toggle]');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
   /* ── Yon panel (mobil) ───────────────────────────────── */
   const sidebar = document.getElementById('sidebar');
   const scrim = document.getElementById('sidebarScrim');
@@ -87,6 +144,7 @@
       const open = document.querySelector('.modal-backdrop.open');
       if (open) window.closeModal(open.id);
       closeSidebar();
+      document.querySelectorAll('.settings-pop.open').forEach((p) => p.classList.remove('open'));
     }
   });
 

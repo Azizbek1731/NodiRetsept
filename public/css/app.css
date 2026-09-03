@@ -25,10 +25,14 @@
   --info: #2563a8;
   --info-bg: #e8f0fa;
 
+  --soft: #fbfdfd;
+  --paper: #ffffff;
   --r-xs: 6px; --r-sm: 9px; --r: 13px; --r-lg: 18px; --r-xl: 24px;
   --sh-1: 0 1px 2px rgba(16,45,58,.06), 0 1px 3px rgba(16,45,58,.05);
   --sh-2: 0 2px 6px rgba(16,45,58,.06), 0 8px 24px rgba(16,45,58,.07);
   --sh-3: 0 12px 48px rgba(16,45,58,.16);
+  --topbar-bg: rgba(255,255,255,.86);
+  --pub-top: #eaf3f4;
   --sidebar-w: 250px;
   --topbar-h: 64px;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
@@ -37,9 +41,10 @@
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+html { font-size: 16px; }          /* matn o'lchami shu yerdan boshqariladi */
 body {
   margin: 0; overflow-x: hidden; font-family: var(--font); background: var(--bg); color: var(--ink);
-  font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  font-size: .9375rem; line-height: 1.55; -webkit-font-smoothing: antialiased;
 }
 a { color: var(--brand); text-decoration: none; }
 a:hover { color: var(--brand-dark); }
@@ -73,7 +78,7 @@ img { max-width: 100%; }
 
 /* ── Tugmalar ─────────────────────────────────────────── */
 .btn {
-  --btn-bg: #fff; --btn-fg: var(--ink); --btn-bd: var(--line);
+  --btn-bg: var(--card); --btn-fg: var(--ink); --btn-bd: var(--line);
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 10px 16px; border-radius: var(--r-sm); border: 1px solid var(--btn-bd);
   background: var(--btn-bg); color: var(--btn-fg); font: inherit; font-weight: 600; font-size: .9rem;
@@ -105,7 +110,7 @@ img { max-width: 100%; }
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
 select, textarea {
   width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-sm);
-  background: #fff; font: inherit; font-size: .92rem; color: var(--ink); transition: .15s;
+  background: var(--card); font: inherit; font-size: .92rem; color: var(--ink); transition: .15s;
   -webkit-appearance: none; appearance: none;
 }
 select, select.input {
@@ -123,7 +128,7 @@ input[type="color"] { padding: 3px; height: 40px; cursor: pointer; }
 input[type="file"] { padding: 7px; font-size: .85rem; background: var(--line-2); border-style: dashed; cursor: pointer; }
 input[type="file"]::file-selector-button {
   font: inherit; font-weight: 600; font-size: .8rem; padding: 6px 12px; margin-right: 10px;
-  border: 1px solid var(--line); border-radius: var(--r-xs); background: #fff; color: var(--ink-2); cursor: pointer;
+  border: 1px solid var(--line); border-radius: var(--r-xs); background: var(--card); color: var(--ink-2); cursor: pointer;
 }
 input[type="file"]::file-selector-button:hover { border-color: var(--brand); color: var(--brand-dark); }
 .check { display: flex; align-items: center; gap: 9px; cursor: pointer; font-size: .88rem; padding: 6px 0; }
@@ -147,7 +152,7 @@ legend { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-
 }
 .card-head h3, .card-head h2 { margin: 0; }
 .card-body { padding: 20px; }
-.card-foot { padding: 14px 20px; border-top: 1px solid var(--line-2); background: #fbfdfd; }
+.card-foot { padding: 14px 20px; border-top: 1px solid var(--line-2); background: var(--soft); }
 .grid { display: grid; gap: 16px; }
 .grid > *, .col > * { min-width: 0; }   /* grid/flex bolalari qisqara olsin */
 .col { min-width: 0; }
@@ -187,7 +192,7 @@ legend { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-
 .badge.brand { background: var(--brand-50); color: var(--brand-dark); }
 .chip {
   display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 100px;
-  background: #fff; border: 1px solid var(--line); font-size: .82rem; cursor: pointer; transition: .15s;
+  background: var(--card); border: 1px solid var(--line); font-size: .82rem; cursor: pointer; transition: .15s;
 }
 .chip:hover { border-color: var(--brand); color: var(--brand-dark); }
 .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
@@ -206,12 +211,12 @@ legend { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-
 table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .table th {
   text-align: left; font-size: .73rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
-  color: var(--muted); padding: 11px 14px; border-bottom: 1px solid var(--line); background: #fbfdfd;
+  color: var(--muted); padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--soft);
   white-space: nowrap; position: sticky; top: 0; z-index: 1;
 }
 .table td { padding: 12px 14px; border-bottom: 1px solid var(--line-2); vertical-align: middle; }
 .table tbody tr { transition: background .12s; }
-.table tbody tr:hover { background: #fafcfc; }
+.table tbody tr:hover { background: var(--soft); }
 .table tbody tr:last-child td { border-bottom: none; }
 .table .num { text-align: right; font-variant-numeric: tabular-nums; }
 .table a.rowlink { color: var(--ink); font-weight: 600; }
@@ -254,7 +259,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 
 .main { min-width: 0; display: flex; flex-direction: column; }
 .topbar {
-  height: var(--topbar-h); background: rgba(255,255,255,.86); backdrop-filter: saturate(180%) blur(12px);
+  min-height: var(--topbar-h); padding-block: 8px; background: var(--topbar-bg); backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px;
   padding: 0 24px; position: sticky; top: 0; z-index: 40;
 }
@@ -310,7 +315,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .modal-body { padding: 22px; overflow-y: auto; flex: 1; }
 .modal-foot {
   padding: 15px 22px; border-top: 1px solid var(--line); display: flex; gap: 10px;
-  justify-content: flex-end; align-items: center; background: #fbfdfd;
+  justify-content: flex-end; align-items: center; background: var(--soft);
   border-radius: 0 0 var(--r-lg) var(--r-lg); flex-wrap: wrap;
 }
 .modal-close { margin-left: auto; }
@@ -342,7 +347,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
   border-bottom: 1px solid var(--line-2); transition: background .12s; color: inherit;
 }
 .list-item:last-child { border-bottom: none; }
-.list-item:hover { background: #fafcfc; color: inherit; }
+.list-item:hover { background: var(--soft); color: inherit; }
 .list-item .ttl { font-weight: 600; font-size: .92rem; }
 .list-item .sub { font-size: .78rem; color: var(--muted); }
 
@@ -350,14 +355,14 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .pager { display: flex; gap: 6px; align-items: center; justify-content: center; padding: 16px; flex-wrap: wrap; }
 .pager a, .pager span {
   min-width: 34px; height: 34px; padding: 0 10px; border-radius: var(--r-xs); display: grid; place-items: center;
-  border: 1px solid var(--line); background: #fff; font-size: .85rem; font-weight: 600; color: var(--ink-2);
+  border: 1px solid var(--line); background: var(--card); font-size: .85rem; font-weight: 600; color: var(--ink-2);
 }
 .pager a:hover { border-color: var(--brand); color: var(--brand); }
 .pager .cur { background: var(--brand); border-color: var(--brand); color: #fff; }
 .pager .dots { border: none; background: none; }
 
 /* ═══ Ommaviy sahifalar ═══════════════════════════════ */
-.public-page { background: linear-gradient(180deg, #eaf3f4 0%, var(--bg) 340px); }
+.public-page { background: linear-gradient(180deg, var(--pub-top) 0%, var(--bg) 340px); }
 .pub-header {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 16px 24px; max-width: 1100px; margin: 0 auto;
@@ -370,7 +375,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .hero h1 { font-size: clamp(1.7rem, 4.4vw, 2.5rem); letter-spacing: -.03em; }
 .hero p.lead { font-size: 1.03rem; color: var(--ink-2); max-width: 560px; margin: 0 auto 26px; }
 .search-card {
-  background: #fff; border-radius: var(--r-lg); box-shadow: var(--sh-2); padding: 24px;
+  background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh-2); padding: 24px;
   max-width: 620px; margin: 0 auto; border: 1px solid var(--line);
 }
 .search-form { display: flex; gap: 10px; }
@@ -382,7 +387,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .or-line { display: flex; align-items: center; gap: 12px; margin: 20px 0 16px; color: var(--muted); font-size: .8rem; }
 .or-line::before, .or-line::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 46px; }
-.step { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 20px; }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; }
 .step .n {
   width: 30px; height: 30px; border-radius: 9px; background: var(--brand-50); color: var(--brand-dark);
   font-weight: 800; display: grid; place-items: center; margin-bottom: 10px; font-size: .9rem;
@@ -460,7 +465,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 /* ── Retsept muharriri (modal) ────────────────────────── */
 .picker { position: relative; }
 .picker-results {
-  position: absolute; left: 0; right: 0; top: calc(100% + 4px); background: #fff; z-index: 30;
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); background: var(--card); z-index: 30;
   border: 1px solid var(--line); border-radius: var(--r-sm); box-shadow: var(--sh-2);
   max-height: 288px; overflow-y: auto; display: none;
 }
@@ -471,14 +476,14 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .picker-item:hover, .picker-item.hl { background: var(--brand-50); }
 .picker-item .nm { font-weight: 600; font-size: .9rem; }
 .picker-item .meta { font-size: .76rem; color: var(--muted); }
-.picker-item.add { color: var(--brand-dark); font-weight: 700; background: #f7fbfb; position: sticky; bottom: 0; }
+.picker-item.add { color: var(--brand-dark); font-weight: 700; background: var(--soft); position: sticky; bottom: 0; }
 .selected-patient {
   display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r-sm);
   background: var(--brand-50); border: 1px solid var(--brand-100);
 }
 .drug-row {
   border: 1px solid var(--line); border-radius: var(--r-sm); padding: 13px 14px 6px;
-  margin-bottom: 12px; background: #fdfefe; position: relative;
+  margin-bottom: 12px; background: var(--soft); position: relative;
 }
 .drug-row .drug-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .drug-row .drug-num {
@@ -493,7 +498,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .suggest-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: -4px; margin-bottom: 10px; }
 .suggest-row button {
   font: inherit; font-size: .74rem; padding: 3px 9px; border-radius: 20px; border: 1px solid var(--line);
-  background: #fff; color: var(--ink-2); cursor: pointer;
+  background: var(--card); color: var(--ink-2); cursor: pointer;
 }
 .suggest-row button:hover { border-color: var(--brand); color: var(--brand-dark); background: var(--brand-50); }
 .success-panel { text-align: center; padding: 14px 0; }
@@ -535,7 +540,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 /* ── Kirish sahifasi ──────────────────────────────────── */
 .auth-page { display: grid; place-items: center; min-height: 100vh; padding: 20px;
   background: linear-gradient(140deg, #0d2b33 0%, #114c55 55%, #0e7c86 100%); }
-.auth-card { background: #fff; border-radius: var(--r-xl); box-shadow: 0 24px 70px rgba(4,26,32,.35);
+.auth-card { background: var(--card); border-radius: var(--r-xl); box-shadow: 0 24px 70px rgba(4,26,32,.35);
   width: 100%; max-width: 420px; padding: 34px 32px; }
 .auth-card .brandline { display: flex; align-items: center; gap: 11px; margin-bottom: 22px; }
 .auth-card .brandline .logo { width: 42px; height: 42px; border-radius: 12px; display: block; flex: none; }
@@ -578,7 +583,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
   .form-grid.two, .form-grid.dx { grid-template-columns: minmax(0, 1fr); }
   .mobile-nav {
     display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
-    background: rgba(255,255,255,.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line);
+    background: var(--topbar-bg); backdrop-filter: blur(12px); border-top: 1px solid var(--line);
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
   }
   .mobile-nav a {
@@ -624,9 +629,133 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
   .drug-row .grid-3, .drug-row .grid-4 { grid-template-columns: minmax(0,1fr); }
 }
 
+
+/* ═══ Tungi rejim ═════════════════════════════════════
+   data-theme="dark"  → doim tungi
+   data-theme="light" → doim yorug'
+   yo'q / "auto"      → qurilma sozlamasiga qarab
+   ═══════════════════════════════════════════════════ */
+:root[data-theme="dark"] {
+  --brand: #1aa5b2; --brand-dark: #12818c; --brand-light: #35c3cf;
+  --brand-50: #10343b; --brand-100: #17454e;
+
+  --ink: #e4eef1; --ink-2: #b2c7ce; --muted: #85a0a9;
+  --line: #26383f; --line-2: #1c2b31;
+  --bg: #0d181d; --card: #142229; --soft: #101c22; --paper: #ffffff;
+
+  --ok: #45c793; --ok-bg: #10302a;
+  --warn: #e2a851; --warn-bg: #33270f;
+  --danger: #f3796f; --danger-bg: #371a1a;
+  --info: #74acea; --info-bg: #16283b;
+
+  --sh-1: 0 1px 2px rgba(0,0,0,.4);
+  --sh-2: 0 2px 8px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.32);
+  --sh-3: 0 16px 50px rgba(0,0,0,.6);
+
+  --topbar-bg: rgba(20,34,41,.88);
+  --pub-top: #10222a;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --brand: #1aa5b2; --brand-dark: #12818c; --brand-light: #35c3cf;
+  --brand-50: #10343b; --brand-100: #17454e;
+
+  --ink: #e4eef1; --ink-2: #b2c7ce; --muted: #85a0a9;
+  --line: #26383f; --line-2: #1c2b31;
+  --bg: #0d181d; --card: #142229; --soft: #101c22; --paper: #ffffff;
+
+  --ok: #45c793; --ok-bg: #10302a;
+  --warn: #e2a851; --warn-bg: #33270f;
+  --danger: #f3796f; --danger-bg: #371a1a;
+  --info: #74acea; --info-bg: #16283b;
+
+  --sh-1: 0 1px 2px rgba(0,0,0,.4);
+  --sh-2: 0 2px 8px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.32);
+  --sh-3: 0 16px 50px rgba(0,0,0,.6);
+
+  --topbar-bg: rgba(20,34,41,.88);
+  --pub-top: #10222a;
+  color-scheme: dark;
+}
+}
+
+/* Retsept blankasi hujjat bo'lgani uchun tungi rejimda ham oq qog'ozda qoladi —
+   pechat, imzo va logotip oq fon uchun tayyorlangan, chop etishda ham shunday chiqadi. */
+.rx-sheet {
+  --card: #ffffff; --soft: #f5f9fa;
+  --ink: #16232b; --ink-2: #33505c; --muted: #6b7f8a;
+  --line: #d9e3e8; --line-2: #eef4f6;
+  --brand-50: #e9f5f6; --brand-100: #cfe9eb; --brand-dark: #0a5f67;
+  background: #fff; color: var(--ink);
+  color-scheme: light;
+}
+.rx-sheet .badge.brand { background: var(--brand-50); color: var(--brand-dark); }
+
+/* ═══ Matn o'lchami (ko'rish qulayligi) ═══════════════
+   Barcha o'lchamlar rem da — ildiz shriftini o'zgartirish butun interfeysni
+   mutanosib kattalashtiradi.
+   ═══════════════════════════════════════════════════ */
+:root[data-textsize="large"]  { font-size: 18px; }
+:root[data-textsize="xlarge"] { font-size: 20.5px; }
+
+/* Kattalashtirilgan rejimda kontrast ham kuchaytiriladi — ochiq kulrang matn
+   ko'rish qobiliyati past foydalanuvchi uchun qiyin o'qiladi. */
+:root[data-textsize="large"], :root[data-textsize="xlarge"] {
+  --muted: #4b6570;
+  --line: #cfdce1;
+}
+:root[data-textsize="large"][data-theme="dark"], :root[data-textsize="xlarge"][data-theme="dark"] {
+  --muted: #a9c2ca;
+  --line: #33474f;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-textsize="large"]:not([data-theme="light"]),
+  :root[data-textsize="xlarge"]:not([data-theme="light"]) { --muted: #a9c2ca; --line: #33474f; }
+}
+:root[data-textsize="large"] .tiny,
+:root[data-textsize="xlarge"] .tiny { font-size: .8rem; }
+:root[data-textsize="xlarge"] .small,
+:root[data-textsize="xlarge"] .hint { font-size: .9rem; }
+:root[data-textsize="large"] :focus-visible,
+:root[data-textsize="xlarge"] :focus-visible { outline-width: 3px; outline-offset: 3px; }
+/* Katta matnda sarlavha va jadval qatorlari siqilib qolmasin */
+:root[data-textsize="large"] .table th, :root[data-textsize="large"] .table td,
+:root[data-textsize="xlarge"] .table th, :root[data-textsize="xlarge"] .table td { padding: 14px 16px; }
+:root[data-textsize="xlarge"] .btn { padding: 12px 18px; }
+:root[data-textsize="xlarge"] .truncate { white-space: normal; }
+
+/* ═══ Ko'rinish sozlamalari paneli ════════════════════ */
+.setting-group { margin-bottom: 18px; }
+.setting-group:last-child { margin-bottom: 0; }
+.setting-group > .label { display: block; margin-bottom: 7px; }
+.seg {
+  display: flex; gap: 4px; background: var(--line-2); border-radius: 100px; padding: 3px;
+  flex-wrap: wrap;
+}
+.seg > * {
+  flex: 1 1 auto; min-width: 62px; text-align: center; padding: 7px 12px; border-radius: 100px;
+  font-size: .82rem; font-weight: 600; color: var(--ink-2); border: none; background: none;
+  cursor: pointer; font-family: inherit; transition: .14s; white-space: nowrap;
+}
+.seg > *:hover { background: color-mix(in srgb, var(--card) 70%, transparent); color: var(--ink); }
+.seg > .active { background: var(--card); color: var(--brand-dark); box-shadow: var(--sh-1); }
+:root[data-theme="dark"] .seg > .active { color: var(--brand-light); }
+
+.settings-pop { position: relative; }
+.settings-pop > .panel {
+  position: absolute; right: 0; top: calc(100% + 8px); width: min(310px, calc(100vw - 28px));
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r);
+  box-shadow: var(--sh-2); padding: 16px; z-index: 60; display: none;
+}
+.settings-pop.open > .panel { display: block; }
+.settings-pop .panel .seg > * { font-size: .78rem; min-width: 50px; padding: 6px 8px; }
+
 /* ═══ Chop etish ══════════════════════════════════════ */
 @media print {
-  body { background: #fff; }
+  :root { color-scheme: light; }
+  body { background: #fff; color: #16232b; }
+  .rx-sheet { box-shadow: none; }
   .no-print, .topbar, .sidebar, .mobile-nav, .rx-actions, .pub-header, .verify-banner,
   .fab, #toasts, .modal-backdrop { display: none !important; }
   .pub-main, .content { padding: 0; max-width: none; }

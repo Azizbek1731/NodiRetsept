@@ -1,0 +1,35 @@
+<%
+  // Kichik panel (ommaviy sahifa) yoki to'liq karta (profil) ko'rinishi.
+  // ⚠️ O'zgaruvchini `compact` deb nomlamaymiz — u include orqali kelgan nom,
+  // ustiga `const` yozilsa TDZ xatosi chiqadi.
+  const isCompact = locals.compact === true;
+%>
+<div class="setting-group">
+  <span class="label"><%= t('appearance.language') %></span>
+  <div class="seg">
+    <% locales.forEach(function (l) { %>
+      <a href="/lang/<%= l.code %>?next=<%= encodeURIComponent(currentUrl) %>"
+         class="<%= l.code === locale ? 'active' : '' %>" hreflang="<%= l.code %>"
+         title="<%= l.name %>"><%= isCompact ? l.short : l.name %></a>
+    <% }) %>
+  </div>
+</div>
+
+<div class="setting-group">
+  <span class="label"><%= t('appearance.theme') %></span>
+  <div class="seg" data-theme-group>
+    <button type="button" data-theme-set="light"><%= t('appearance.themeLight') %></button>
+    <button type="button" data-theme-set="dark"><%= t('appearance.themeDark') %></button>
+    <button type="button" data-theme-set="auto" title="<%= t('appearance.themeAutoHint') %>"><%= t('appearance.themeAuto') %></button>
+  </div>
+</div>
+
+<div class="setting-group">
+  <span class="label"><%= t('appearance.textSize') %></span>
+  <div class="seg" data-textsize-group>
+    <button type="button" data-textsize-set="normal"><%= t('appearance.sizeNormal') %></button>
+    <button type="button" data-textsize-set="large"><%= t('appearance.sizeLarge') %></button>
+    <button type="button" data-textsize-set="xlarge"><%= t('appearance.sizeXLarge') %></button>
+  </div>
+  <% if (!isCompact) { %><div class="hint mt-1"><%= t('appearance.sizeHint') %></div><% } %>
+</div>

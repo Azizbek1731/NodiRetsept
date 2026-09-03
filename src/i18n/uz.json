@@ -665,5 +665,22 @@
     "langChoose": "🌐 Tilni tanlang:",
     "langChanged": "✅ Til o'zgartirildi.",
     "help": "<b>NodiRetsept boti qanday ishlaydi?</b>\n\n1️⃣ Shifokor retsept yozadi va sizga ID hamda QR kod beradi.\n2️⃣ <b>🔍 Retseptni izlash</b> tugmasini bosing.\n3️⃣ ID ni yuboring — masalan <code>NR-K7M2-9QX4</code>.\n4️⃣ Bot sizga retseptning PDF faylini yuboradi.\n\nQR kodni telefon kamerangiz bilan skanerlab ham to'g'ridan-to'g'ri ochishingiz mumkin.\n\n🌐 Sayt: {url}"
+  },
+  "appearance": {
+    "title": "Ko'rinish va til",
+    "subtitle": "Sozlamalar shu qurilmada saqlanadi",
+    "open": "Ko'rinish sozlamalari",
+    "language": "Til",
+    "theme": "Mavzu",
+    "themeLight": "Yorug'",
+    "themeDark": "Tungi",
+    "themeAuto": "Avtomatik",
+    "themeAutoHint": "Qurilma sozlamasiga qarab",
+    "textSize": "Matn o'lchami",
+    "sizeNormal": "Oddiy",
+    "sizeLarge": "Katta",
+    "sizeXLarge": "Juda katta",
+    "sizeHint": "Ko'rish qulayligi uchun matn kattalashtiriladi va ranglar kuchaytiriladi",
+    "preview": "Namuna: retsept, bemor, tashxis"
   }
 }

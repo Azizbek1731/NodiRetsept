@@ -36,7 +36,6 @@
           <span class="rl"><%= currentUser.role === 'admin' ? t('profile.administrator') : (currentUser.specialty || t('profile.doctorRole')) %></span>
         </span>
       </a>
-      <div class="mt-1"><%- include('lang') %></div>
       <form method="post" action="/logout" class="mt-1">
         <button class="btn btn-ghost btn-sm btn-block" style="color:#9fc0c5"><%- icon('logout', {size:15}) %> <%= t('common.logout') %></button>
       </form>

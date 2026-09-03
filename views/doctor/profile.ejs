@@ -64,6 +64,13 @@
       </form>
     </div>
 
+    <!-- Ko'rinish va til -->
+    <div class="card">
+      <h3><%= t('appearance.title') %></h3>
+      <p class="small muted"><%= t('appearance.subtitle') %></p>
+      <%- include('../partials/appearance', { compact: false }) %>
+    </div>
+
     <!-- Parol -->
     <div class="card">
       <h3><%= t('profile.passwordTitle') %></h3>

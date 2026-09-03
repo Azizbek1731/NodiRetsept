@@ -665,5 +665,22 @@
     "langChoose": "🌐 Choose a language:",
     "langChanged": "✅ Language changed.",
     "help": "<b>How does the NodiRetsept bot work?</b>\n\n1️⃣ Your doctor writes the prescription and gives you an ID and a QR code.\n2️⃣ Tap <b>🔍 Find prescription</b>.\n3️⃣ Send the ID — for example <code>NR-K7M2-9QX4</code>.\n4️⃣ The bot sends you the prescription as a PDF.\n\nYou can also scan the QR code with your phone camera to open it directly.\n\n🌐 Website: {url}"
+  },
+  "appearance": {
+    "title": "Appearance and language",
+    "subtitle": "Saved on this device",
+    "open": "Appearance settings",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeAuto": "Auto",
+    "themeAutoHint": "Follow device setting",
+    "textSize": "Text size",
+    "sizeNormal": "Normal",
+    "sizeLarge": "Large",
+    "sizeXLarge": "Extra large",
+    "sizeHint": "Text is enlarged and contrast increased for easier reading",
+    "preview": "Sample: prescription, patient, diagnosis"
   }
 }

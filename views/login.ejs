@@ -23,7 +23,8 @@
     <button class="btn btn-primary btn-lg btn-block mt-1"><%= t('auth.submit') %></button>
   </form>
 
-  <div class="center mt-2"><%- include('partials/lang') %></div>
+  <hr>
+  <%- include('partials/appearance', { compact: true }) %>
   <div class="auth-hint">
     <%= t('auth.patientQ') %> <a href="/"><%= t('auth.patientLink') %></a>
   </div>

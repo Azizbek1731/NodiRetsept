@@ -1,5 +1,14 @@
 'use strict';
+const net = require('net');
 const { Bot, InputFile, Keyboard, InlineKeyboard, GrammyError, HttpError } = require('grammy');
+
+// Node ning "Happy Eyeballs" mexanizmi har bir IP ga ulanishga standart holda atigi 250 ms
+// beradi. Server Telegram serverlaridan uzoqda bo'lsa (masalan AWS Sidney → Yevropa, ~280 ms)
+// yoki hostda IPv6 marshruti bo'lmasa, ulanish shu chegarada uzilib, bot ishga tushmay qoladi.
+// Chegarani kengaytiramiz — bu faqat kutish vaqti, tez tarmoqqa ta'sir qilmaydi.
+if (typeof net.setDefaultAutoSelectFamilyAttemptTimeout === 'function') {
+  net.setDefaultAutoSelectFamilyAttemptTimeout(5000);
+}
 const config = require('../config');
 const db = require('../lib/db');
 const { h } = db;
@@ -277,7 +286,11 @@ async function start() {
       state.startedAt = new Date().toISOString();
       console.log(`  ✓ Telegram: @${state.username} ishga tushdi`);
     },
-  }).catch((e) => { state.running = false; state.error = e.message; });
+  }).catch((e) => {
+    state.running = false;
+    state.error = e.message;
+    console.error('  ! Telegram bot to\'xtadi:', e.message);
+  });
 }
 
 async function stop() {

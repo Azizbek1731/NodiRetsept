@@ -134,7 +134,7 @@ function start() {
     console.log(`  ✓ Sayt:     ${config.publicUrl}`);
     console.log(`  ✓ Baza:     ${config.paths.db}`);
     if (config.telegram.enabled && config.telegram.token) {
-      require('./telegram/bot').start().catch((e) => console.error('  ! Telegram bot:', e.message));
+      tgBot.start().catch((e) => console.error('  ! Telegram bot ishga tushmadi:', e.message));
     } else {
       console.log('  · Telegram bot o\'chirilgan (.env dagi TELEGRAM_ENABLED / TOKEN ni tekshiring)');
     }

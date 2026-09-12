@@ -225,7 +225,10 @@
     "readySub": "Give the patient the QR code or the ID",
     "qrHint": "The patient opens the prescription by scanning the QR code or entering this ID",
     "openRx": "Open prescription",
-    "dosePlaceholder": "1 tablet"
+    "dosePlaceholder": "1 tablet",
+    "combine": "Add to the solution above",
+    "combineHint": "When ticked, this medicine joins the solution above in one Rx block — a compounded infusion",
+    "mixture": "mixture"
   },
   "dash": {
     "greeting": "Hello, {name}!",
@@ -551,7 +554,8 @@
     "yearShort": "",
     "rxCount": "prescriptions",
     "notFoundInList": "not found in the list",
-    "createNewCard": "create a new record"
+    "createNewCard": "create a new record",
+    "mixture": "mixture"
   },
   "editorOpts": {
     "forms": [
@@ -576,6 +580,7 @@
       "orally",
       "intramuscularly",
       "intravenously",
+      "by intravenous infusion",
       "subcutaneously",
       "topically",
       "rectally",

@@ -238,6 +238,29 @@ Blanka xalqaro amaliyotga (WHO — *Guide to Good Prescribing*) mos tartibda tuz
 | **Rp.** | Dori — xalqaro nomlanish (INN), dozasi, shakli |
 | | `D.t.d. N.` — beriladigan miqdori |
 | | `S.` (Signatura) — bir martalik doza, yuborish yo'li, chastotasi, davomiyligi, ko'rsatma |
+
+### Aralashmalar (kapelnitsa, infuziya)
+
+Bir eritmaga bir nechta dori qo'shiladigan tayinlov — masalan NaCl flakoniga deksametazon —
+**bitta `Rp.` bloki** bo'lib yoziladi va `M.` (*Misce* — aralashtir) belgisi qo'yiladi.
+Bu xalqaro qoida: shunday yozilganda hamshira dorilarni alohida emas, bir flakonda
+berish kerakligini aniq tushunadi.
+
+Retsept oynasida dori qatoridagi **«Yuqoridagi eritmaga qo'shish»** belgisini qo'ying —
+qator eritma ostiga surilib, `+` bilan belgilanadi. Miqdor, yuborish yo'li va chastota
+kabi maydonlar yashiriladi, chunki ular eritmadan olinadi.
+
+Natija:
+
+```
+Rp.:  Natrii chloridi 0,9% — 200 ml
+      + Dexamethasoni 4 mg
+      + Acidi ascorbinici 5% — 5 ml
+      M. D.t.d. N. 5 in sol. pro inf.
+      S.  vena ichiga tomchilab, kuniga 1 mahal, 5 kun, 60 tomchi/daqiqa
+```
+
+Aralashmasiz oddiy dori avvalgidek alohida blok bo'lib qoladi.
 | Fizioterapiya | Muolajalar va seanslar soni |
 | Tavsiyalar | Rejim, parhez, keyingi qabul sanasi |
 | Shifokor | F.I.Sh., mutaxassisligi, telefoni, litsenziya raqami, imzo va pechat |

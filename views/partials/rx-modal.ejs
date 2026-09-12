@@ -197,6 +197,10 @@
     <div class="drug-head">
       <span class="drug-num">1</span>
       <div class="grow strong small"><%= t('editor.drugItem') %></div>
+      <label class="check combine-toggle" data-combine-wrap title="<%= t('editor.combineHint') %>">
+        <input type="checkbox" data-combine>
+        <span><%= t('editor.combine') %></span>
+      </label>
       <button type="button" class="btn btn-ghost btn-sm" data-drug-remove title="<%= t('editor.removeDrug') %>"><%- icon('trash',{size:15}) %></button>
     </div>
     <div class="grid-3">

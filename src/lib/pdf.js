@@ -5,7 +5,7 @@ const PDFDocument = require('pdfkit');
 const config = require('../config');
 const fmt = require('./format');
 const qr = require('./qr');
-const { rxLines } = require('./prescriptions');
+const { groupItems, rxGroupLines } = require('./prescriptions');
 const i18n = require('./i18n');
 
 const FONTS = path.join(config.root, 'assets', 'fonts');
@@ -248,8 +248,9 @@ function drawRx(doc, rx, accent, L) {
     return;
   }
 
-  rx.items.forEach((item, i) => {
-    const l = rxLines(item);
+  const groups = groupItems(rx.items);
+  groups.forEach((group, i) => {
+    const l = rxGroupLines(group);
     ensure(doc, 56);
     const top = doc.y;
     const numW = 22;
@@ -257,7 +258,15 @@ function drawRx(doc, rx, accent, L) {
     const x = M + numW;
     const w = CW - numW;
 
-    doc.font('bold').fontSize(10.5).fillColor(INK).text(l.head, x, top, { width: w, lineGap: 1.5 });
+    // Aralashma (kapelnitsa) bo'lsa komponentlar ustma-ust, «+» bilan chiqadi
+    l.components.forEach((c, j) => {
+      if (j === 0) {
+        doc.font('bold').fontSize(10.5).fillColor(INK).text(c, x, top, { width: w, lineGap: 1.5 });
+      } else {
+        doc.font('bold').fontSize(9.5).fillColor(accent).text('+', x, doc.y + 1, { width: 10, continued: false });
+        doc.font('bold').fontSize(10.5).fillColor(INK).text(c, x + 12, doc.y - 11, { width: w - 12, lineGap: 1.5 });
+      }
+    });
     if (l.dtd) {
       doc.font('body').fontSize(9.5).fillColor(INK).text(l.dtd, x, doc.y + 1, { width: w });
     }
@@ -268,7 +277,7 @@ function drawRx(doc, rx, accent, L) {
         .text(l.sig, x + 18, sy, { width: w - 18, lineGap: 2 });
     }
     doc.y += 9;
-    if (i < rx.items.length - 1) {
+    if (i < groups.length - 1) {
       doc.moveTo(M + numW, doc.y - 4).lineTo(PAGE.w - M, doc.y - 4).lineWidth(0.4).dash(2, { space: 2 }).stroke(LINE);
       doc.undash();
     }

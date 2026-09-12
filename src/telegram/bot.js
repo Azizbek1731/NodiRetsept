@@ -146,9 +146,12 @@ function summary(rx, t, lang) {
   }
   if (rx.items.length) {
     lines.push('', `<b>${t('bot.sumDrugs')}</b>`);
-    rx.items.forEach((it, i) => {
-      const l = rxLib.rxLines(it);
-      lines.push(`${i + 1}. <b>${esc(l.head)}</b>${l.dtd ? ` — ${esc(l.dtd)}` : ''}`);
+    rxLib.groupItems(rx.items).forEach((group, i) => {
+      const l = rxLib.rxGroupLines(group);
+      // Aralashma (kapelnitsa) bitta blok bo'lib chiqadi
+      lines.push(`${i + 1}. <b>${esc(l.components[0])}</b>`);
+      l.components.slice(1).forEach((c) => lines.push(`   + <b>${esc(c)}</b>`));
+      if (l.dtd) lines.push(`   ${esc(l.dtd)}`);
       if (l.sig) lines.push(`   <i>S. ${esc(l.sig)}</i>`);
     });
   }

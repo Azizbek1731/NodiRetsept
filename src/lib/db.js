@@ -170,6 +170,8 @@ function addColumnIfMissing(table, column, definition) {
   if (!cols.includes(column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
 }
 addColumnIfMissing('telegram_users', 'lang', 'TEXT');   // bot tili
+// Aralashma (kapelnitsa): 1 bo'lsa, dori o'zidan oldingi eritmaga qo'shiladi
+addColumnIfMissing('prescription_items', 'combine', 'INTEGER NOT NULL DEFAULT 0');
 
 /** Tashqi kod uchun qulay yordamchilar */
 const helpers = {

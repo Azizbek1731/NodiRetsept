@@ -437,6 +437,9 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .rx-item:last-child { border-bottom: none; }
 .rx-item .n { font-weight: 800; color: var(--rx-accent, var(--brand)); font-size: .92rem; min-width: 18px; }
 .rx-item .drug { font-weight: 700; font-size: 1rem; }
+/* Aralashmaning qo'shimcha komponentlari — bir oz ichkariroq, «+» belgisi bilan */
+.rx-item .drug.mix { font-weight: 600; position: relative; padding-left: 18px; }
+.rx-item .drug.mix::before { content: "+"; position: absolute; left: 2px; color: var(--rx-accent, var(--brand)); font-weight: 700; }
 .rx-item .dtd { font-size: .9rem; }
 .rx-item .sig { font-size: .9rem; margin-top: 3px; }
 .rx-item .sig b { color: var(--rx-accent, var(--brand)); margin-right: 5px; }
@@ -485,7 +488,13 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
   border: 1px solid var(--line); border-radius: var(--r-sm); padding: 13px 14px 6px;
   margin-bottom: 12px; background: var(--soft); position: relative;
 }
-.drug-row .drug-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.drug-row .drug-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.combine-toggle { font-size: .76rem; color: var(--muted); padding: 0; white-space: nowrap; }
+.combine-toggle input { width: 15px; height: 15px; }
+.combine-toggle:hover { color: var(--ink-2); }
+/* Aralashmaga qo'shilgan qator — eritmaning davomi ekani ko'rinib tursin */
+.drug-row.combined { margin-left: 22px; border-left: 3px solid var(--brand); background: var(--brand-50); }
+.drug-row.combined .drug-num { background: transparent; color: var(--brand); font-size: 1.05rem; }
 .drug-row .drug-num {
   width: 24px; height: 24px; border-radius: 7px; background: var(--brand); color: #fff;
   display: grid; place-items: center; font-size: .76rem; font-weight: 700; flex: none;

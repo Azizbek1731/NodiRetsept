@@ -77,11 +77,13 @@
         <span class="tiny muted"><%= tr('rx.drugsNote') %></span>
       </div>
       <% if (rx.items && rx.items.length) { %>
-        <% rx.items.forEach(function (item, i) { const l = rxLines(item); %>
+        <% groupItems(rx.items).forEach(function (group, i) { const l = rxGroupLines(group); %>
           <div class="rx-item">
             <div class="n"><%= i + 1 %>.</div>
             <div class="grow">
-              <div class="drug"><%= l.head %></div>
+              <% l.components.forEach(function (c, j) { %>
+                <div class="drug<%= j > 0 ? ' mix' : '' %>"><%= c %></div>
+              <% }) %>
               <% if (l.dtd) { %><div class="dtd"><%= l.dtd %></div><% } %>
               <% if (l.sig) { %><div class="sig"><b>S.</b><%= l.sig %></div><% } %>
             </div>

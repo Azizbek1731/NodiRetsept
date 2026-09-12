@@ -188,7 +188,11 @@
   function addDrugRow(data) {
     const node = tpl.content.firstElementChild.cloneNode(true);
     drugList.appendChild(node);
-    if (data) $$('[data-f]', node).forEach((inp) => { inp.value = data[inp.getAttribute('data-f')] || ''; });
+    if (data) {
+      $$('[data-f]', node).forEach((inp) => { inp.value = data[inp.getAttribute('data-f')] || ''; });
+      const cb = $('[data-combine]', node);
+      if (cb) cb.checked = Number(data.combine) === 1;
+    }
     bindDrugRow(node);
     renumber();
     updatePreview(node);
@@ -201,14 +205,31 @@
   });
 
   function renumber() {
+    let block = 0;
     $$('[data-drug-row]', drugList).forEach((row, i) => {
-      $('.drug-num', row).textContent = i + 1;
+      const cb = $('[data-combine]', row);
+      const wrap = $('[data-combine-wrap]', row);
+      // Birinchi qator eritmaning o'zi — unga «qo'shish» ma'noga ega emas
+      if (i === 0) { if (cb) cb.checked = false; if (wrap) wrap.style.display = 'none'; }
+      else if (wrap) wrap.style.display = '';
+      const combined = i > 0 && cb && cb.checked;
+      row.classList.toggle('combined', combined);
+      // Aralashmaga qo'shilgan dorida bu maydonlar ishlatilmaydi — ular eritmadan olinadi
+      ['form', 'quantity', 'dose', 'route', 'frequency', 'duration', 'instructions'].forEach((f) => {
+        const inp = $(`[data-f="${f}"]`, row);
+        const field = inp && inp.closest('.field');
+        if (field) field.style.display = combined ? 'none' : '';
+      });
+      if (!combined) block++;
+      $('.drug-num', row).textContent = combined ? '+' : String(block);
       $('[data-drug-remove]', row).style.visibility = drugList.children.length > 1 ? 'visible' : 'hidden';
     });
   }
 
   function bindDrugRow(row) {
-    $('[data-drug-remove]', row).addEventListener('click', () => { row.remove(); renumber(); });
+    $('[data-drug-remove]', row).addEventListener('click', () => { row.remove(); renumber(); refreshPreviews(); });
+    const cb = $('[data-combine]', row);
+    if (cb) cb.addEventListener('change', () => { renumber(); refreshPreviews(); });
     $$('[data-f]', row).forEach((inp) => inp.addEventListener('input', () => updatePreview(row)));
 
     // Dori nomi bo'yicha avtomatik to'ldirish
@@ -249,18 +270,33 @@
   function rowData(row) {
     const o = {};
     $$('[data-f]', row).forEach((i) => { o[i.getAttribute('data-f')] = i.value.trim(); });
+    const cb = $('[data-combine]', row);
+    o.combine = cb && cb.checked ? 1 : 0;
     return o;
   }
 
   function updatePreview(row) {
     const d = rowData(row);
-    if (!d.drug_name) { $('[data-preview]', row).innerHTML = '<span class="muted">Rp.: …</span>'; return; }
+    const box = $('[data-preview]', row);
+    if (!d.drug_name) { box.innerHTML = '<span class="muted">Rp.: …</span>'; return; }
     const head = [d.drug_name, d.strength].filter(Boolean).join(' ');
+    // Aralashmaga qo'shilgan dori o'z Rp. si bo'lmaydi — u yuqoridagi eritma tarkibiga kiradi
+    if (row.classList.contains('combined')) {
+      box.innerHTML = `<b>+</b> ${esc(head)} <span class="muted">— ${esc(T('mixture'))}</span>`;
+      return;
+    }
     const dtd = [d.quantity ? 'D.t.d. N. ' + d.quantity : '', d.form ? 'in ' + d.form : ''].filter(Boolean).join(' ');
     const sig = [d.dose, d.route, d.frequency, d.duration, d.instructions].filter(Boolean).join(', ');
-    $('[data-preview]', row).innerHTML =
-      `<b>Rp.:</b> ${esc(head)}${dtd ? ' &nbsp;·&nbsp; ' + esc(dtd) : ''}${sig ? '<br><b>S.</b> ' + esc(sig) : ''}`;
+    const next = row.nextElementSibling;
+    const mixed = next && next.classList.contains('combined');
+    box.innerHTML =
+      `<b>Rp.:</b> ${esc(head)}${mixed ? ' <span class="muted">+ …</span>' : ''}` +
+      `${dtd ? ' &nbsp;·&nbsp; ' + (mixed ? 'M. ' : '') + esc(dtd) : ''}` +
+      `${sig ? '<br><b>S.</b> ' + esc(sig) : ''}`;
   }
+
+  /** Belgi o'zgarganda barcha qatorlarning ko'rinishini yangilaymiz */
+  function refreshPreviews() { $$('[data-drug-row]', drugList).forEach(updatePreview); }
 
   /* ══ Tahrirlash uchun yuklash ══ */
   async function loadForEdit(id) {

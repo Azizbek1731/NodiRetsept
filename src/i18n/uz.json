@@ -225,7 +225,10 @@
     "readySub": "Bemorga QR kod yoki ID ni bering",
     "qrHint": "Bemor QR kodni skanerlab yoki ushbu ID ni kiritib retseptni ochadi",
     "openRx": "Retseptni ochish",
-    "dosePlaceholder": "1 tabletkadan"
+    "dosePlaceholder": "1 tabletkadan",
+    "combine": "Yuqoridagi eritmaga qo'shish",
+    "combineHint": "Belgilansa, bu dori oldingi eritma bilan bitta Rp. blokida — aralashma (kapelnitsa) sifatida yoziladi",
+    "mixture": "aralashma"
   },
   "dash": {
     "greeting": "Assalomu alaykum, {name}!",
@@ -551,7 +554,8 @@
     "yearShort": "yil",
     "rxCount": "ta retsept",
     "notFoundInList": "Ro'yxatda topilmadi",
-    "createNewCard": "yangi karta yaratish"
+    "createNewCard": "yangi karta yaratish",
+    "mixture": "aralashma"
   },
   "editorOpts": {
     "forms": [
@@ -576,6 +580,7 @@
       "ichga",
       "mushak orasiga",
       "venaga",
+      "vena ichiga tomchilab",
       "teri ostiga",
       "tashqi",
       "rektal",

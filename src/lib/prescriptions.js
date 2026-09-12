@@ -102,7 +102,7 @@ function getById(id) {
   return hydrate(h.get('SELECT * FROM prescriptions WHERE id = ?', id));
 }
 
-/** Dorining xalqaro ko'rinishdagi "Rp." satrlari */
+/** Dorining xalqaro ko'rinishdagi "Rp." satrlari (bitta dori uchun) */
 function rxLines(item) {
   const head = [item.drug_name, item.strength].filter(Boolean).join(' ');
   const dtd = [];
@@ -119,6 +119,41 @@ function rxLines(item) {
     dtd: dtd.join(' '),
     sig: sig.join(', '),
   };
+}
+
+/**
+ * Dorilarni «Rp.» bloklariga ajratadi. `combine = 1` bo'lgan dori o'zidan oldingi
+ * eritmaga qo'shiladi — ya'ni infuziya (kapelnitsa) bitta blok bo'lib chiqadi.
+ */
+function groupItems(items) {
+  const groups = [];
+  for (const it of items || []) {
+    if (groups.length && Number(it.combine)) groups[groups.length - 1].push(it);
+    else groups.push([it]);
+  }
+  return groups;
+}
+
+/**
+ * Bitta «Rp.» blokining satrlari.
+ * Aralashma bo'lsa komponentlar ustma-ust yoziladi va `M.` (Misce — aralashtir)
+ * qo'yiladi: xalqaro retsept qoidasida aralashma shunday rasmiylashtiriladi.
+ */
+function rxGroupLines(group) {
+  const base = group[0];
+  const mixed = group.length > 1;
+  const components = group.map((it) => {
+    const head = [it.drug_name, it.strength].filter(Boolean).join(' ');
+    return head + (it.brand_name ? ` (${it.brand_name})` : '');
+  });
+  const parts = [];
+  if (base.quantity) parts.push(`D.t.d. N. ${String(base.quantity).replace(/^N\.?\s*/i, '')}`);
+  if (base.form) parts.push(`in ${base.form}`);
+  let dtd = parts.join(' ');
+  if (mixed) dtd = dtd ? `M. ${dtd}` : 'M. D.';
+  const sig = [base.dose, base.route, base.frequency, base.duration, base.instructions]
+    .filter(Boolean).join(', ');
+  return { components, mixed, dtd, sig };
 }
 
 const nn = (v) => (v === undefined || v === null || v === '' ? null : String(v).trim());
@@ -189,15 +224,18 @@ const update = db.transaction((id, data) => {
 function saveItems(rxId, items) {
   const stmt = db.prepare(
     `INSERT INTO prescription_items
-      (prescription_id, sort_order, drug_name, brand_name, form, strength, quantity, route, dose, frequency, duration, instructions)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+      (prescription_id, sort_order, drug_name, brand_name, form, strength, quantity, route, dose, frequency, duration, instructions, combine)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
   );
   let order = 0;
   for (const it of items) {
     const name = nn(it.drug_name);
     if (!name) continue;
+    // Birinchi dori hech qachon «qo'shimcha» bo'la olmaydi — u eritmaning o'zi
+    const combine = order > 0 && (it.combine === 1 || it.combine === true || it.combine === '1') ? 1 : 0;
     stmt.run(rxId, order++, name, nn(it.brand_name), nn(it.form), nn(it.strength),
-      nn(it.quantity), nn(it.route), nn(it.dose), nn(it.frequency), nn(it.duration), nn(it.instructions));
+      nn(it.quantity), nn(it.route), nn(it.dose), nn(it.frequency), nn(it.duration),
+      nn(it.instructions), combine);
   }
 }
 
@@ -308,5 +346,6 @@ function stats(doctorId = null) {
 
 module.exports = {
   DEFAULT_TEMPLATE, globalTemplate, effectiveTemplate, hydrate, getByPublicId, getById,
-  create, update, list, stats, rxLines, itemsOf, snapshotDoctor, snapshotPatient, mergeSnapshot,
+  create, update, list, stats, rxLines, groupItems, rxGroupLines, itemsOf,
+  snapshotDoctor, snapshotPatient, mergeSnapshot,
 };

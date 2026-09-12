@@ -161,11 +161,11 @@ router.post('/doctors/:id/media',
     const files = req.files || {};
     if (files.stamp && files.stamp[0]) {
       upload.remove(doctor.stamp_path);
-      h.run('UPDATE users SET stamp_path = ? WHERE id = ?', upload.relPath(files.stamp[0]), id);
+      h.run('UPDATE users SET stamp_path = ? WHERE id = ?', upload.processInk(files.stamp[0]), id);
     }
     if (files.signature && files.signature[0]) {
       upload.remove(doctor.signature_path);
-      h.run('UPDATE users SET signature_path = ? WHERE id = ?', upload.relPath(files.signature[0]), id);
+      h.run('UPDATE users SET signature_path = ? WHERE id = ?', upload.processInk(files.signature[0]), id);
     }
     h.audit(req.user.id, 'doctor.media', 'user', id, null);
     flash(req, 'success', req.t('admin.mediaUploaded'));

@@ -155,11 +155,11 @@ router.post('/profile/media', auth.requireRole('doctor', 'admin'),
     const me = h.get('SELECT stamp_path, signature_path FROM users WHERE id = ?', req.user.id);
     if (files.stamp && files.stamp[0]) {
       upload.remove(me.stamp_path);
-      h.run('UPDATE users SET stamp_path = ? WHERE id = ?', upload.relPath(files.stamp[0]), req.user.id);
+      h.run('UPDATE users SET stamp_path = ? WHERE id = ?', upload.processInk(files.stamp[0]), req.user.id);
     }
     if (files.signature && files.signature[0]) {
       upload.remove(me.signature_path);
-      h.run('UPDATE users SET signature_path = ? WHERE id = ?', upload.relPath(files.signature[0]), req.user.id);
+      h.run('UPDATE users SET signature_path = ? WHERE id = ?', upload.processInk(files.signature[0]), req.user.id);
     }
     req.session.flash = { type: 'success', text: req.t('profile.mediaOk') };
     res.redirect('/profile');

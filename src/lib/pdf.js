@@ -319,17 +319,19 @@ function drawDoctor(doc, rx, { accent, stamp, sign, showStampPlaceholder, L, U }
   doc.font('body').fontSize(7.5).fillColor(MUTED)
     .text(L('rx.signature'), rx0 + 4, y + 76, { width: signW, align: 'left' });
 
-  // Pechat eng oxirida chiziladi — shunda imzo va chiziq ustida turadi
-  const stW = 80;
-  const stX = signCx - stW / 2 + 34;   // o'ngroqqa surilgan: «Imzo» yozuvi ochiq qoladi
+  // Pechat eng oxirida chiziladi — shunda imzoning ustiga bosilgandek qoplaydi.
+  // Markazi imzo markaziga to'g'rilanadi; pasti imzo chizig'ida tugaydi, shuning uchun
+  // ostidagi «Imzo» yozuvi ochiq qoladi.
+  const stW = 82;
+  const stX = rx0 + (signW * 0.8) / 2 - stW / 2;
   if (stamp) {
-    try { doc.image(stamp, stX, y + 6, { fit: [stW, 74], align: 'center', valign: 'center' }); }
+    try { doc.image(stamp, stX, y + 4, { fit: [stW, 70], align: 'center', valign: 'center' }); }
     catch { /* — */ }
   } else if (showStampPlaceholder) {
-    doc.circle(stX + stW / 2, y + 43, 33).lineWidth(0.8).dash(3, { space: 2 }).stroke(LINE);
+    doc.circle(stX + stW / 2, y + 39, 33).lineWidth(0.8).dash(3, { space: 2 }).stroke(LINE);
     doc.undash();
     doc.font('body').fontSize(8).fillColor(LINE)
-      .text(L('rx.stamp'), stX, y + 39, { width: stW, align: 'center' });
+      .text(L('rx.stamp'), stX, y + 35, { width: stW, align: 'center' });
   }
   doc.y = Math.max(ly, y + 92) + 6;
   doc.fillColor(INK);

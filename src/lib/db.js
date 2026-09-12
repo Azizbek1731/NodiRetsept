@@ -172,6 +172,8 @@ function addColumnIfMissing(table, column, definition) {
 addColumnIfMissing('telegram_users', 'lang', 'TEXT');   // bot tili
 // Aralashma (kapelnitsa): 1 bo'lsa, dori o'zidan oldingi eritmaga qo'shiladi
 addColumnIfMissing('prescription_items', 'combine', 'INTEGER NOT NULL DEFAULT 0');
+// Infuziya tezligi: tomchi/daqiqa (faqat kapelnitsa uchun)
+addColumnIfMissing('prescription_items', 'drip_rate', 'TEXT');
 
 /** Tashqi kod uchun qulay yordamchilar */
 const helpers = {

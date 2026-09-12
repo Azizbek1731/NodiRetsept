@@ -139,7 +139,7 @@ function groupItems(items) {
  * Aralashma bo'lsa komponentlar ustma-ust yoziladi va `M.` (Misce — aralashtir)
  * qo'yiladi: xalqaro retsept qoidasida aralashma shunday rasmiylashtiriladi.
  */
-function rxGroupLines(group) {
+function rxGroupLines(group, dripUnit = 'tomchi/daqiqa') {
   const base = group[0];
   const mixed = group.length > 1;
   const components = group.map((it) => {
@@ -151,7 +151,9 @@ function rxGroupLines(group) {
   if (base.form) parts.push(`in ${base.form}`);
   let dtd = parts.join(' ');
   if (mixed) dtd = dtd ? `M. ${dtd}` : 'M. D.';
-  const sig = [base.dose, base.route, base.frequency, base.duration, base.instructions]
+  // Tomchi tezligi yuborish yo'lidan keyin turadi — hamshira uni darhol ko'radi
+  const drip = base.drip_rate ? `${String(base.drip_rate).trim()} ${dripUnit}` : '';
+  const sig = [base.dose, base.route, drip, base.frequency, base.duration, base.instructions]
     .filter(Boolean).join(', ');
   return { components, mixed, dtd, sig };
 }
@@ -224,8 +226,8 @@ const update = db.transaction((id, data) => {
 function saveItems(rxId, items) {
   const stmt = db.prepare(
     `INSERT INTO prescription_items
-      (prescription_id, sort_order, drug_name, brand_name, form, strength, quantity, route, dose, frequency, duration, instructions, combine)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
+      (prescription_id, sort_order, drug_name, brand_name, form, strength, quantity, route, dose, frequency, duration, instructions, combine, drip_rate)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   );
   let order = 0;
   for (const it of items) {
@@ -235,7 +237,7 @@ function saveItems(rxId, items) {
     const combine = order > 0 && (it.combine === 1 || it.combine === true || it.combine === '1') ? 1 : 0;
     stmt.run(rxId, order++, name, nn(it.brand_name), nn(it.form), nn(it.strength),
       nn(it.quantity), nn(it.route), nn(it.dose), nn(it.frequency), nn(it.duration),
-      nn(it.instructions), combine);
+      nn(it.instructions), combine, nn(it.drip_rate));
   }
 }
 

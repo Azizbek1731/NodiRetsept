@@ -122,6 +122,7 @@ function readPayload(body, user) {
       dose: str(it.dose), frequency: str(it.frequency), duration: str(it.duration),
       instructions: str(it.instructions),
       combine: it.combine === true || it.combine === 1 || it.combine === '1' ? 1 : 0,
+      drip_rate: str(it.drip_rate),
     })).filter((it) => it.drug_name),
   };
 }

@@ -162,7 +162,8 @@
     "backList": "Back to list",
     "views": "Views",
     "rxId": "Prescription ID",
-    "scanMe": "Scan the QR code"
+    "scanMe": "Scan the QR code",
+    "dripUnit": "drops/min"
   },
   "editor": {
     "newTitle": "New prescription",
@@ -228,7 +229,9 @@
     "dosePlaceholder": "1 tablet",
     "combine": "Add to the solution above",
     "combineHint": "When ticked, this medicine joins the solution above in one Rx block — a compounded infusion",
-    "mixture": "mixture"
+    "mixture": "mixture",
+    "dripRate": "Drip rate",
+    "dripRatePlaceholder": "60"
   },
   "dash": {
     "greeting": "Hello, {name}!",
@@ -555,7 +558,8 @@
     "rxCount": "prescriptions",
     "notFoundInList": "not found in the list",
     "createNewCard": "create a new record",
-    "mixture": "mixture"
+    "mixture": "mixture",
+    "dripUnit": "drops/min"
   },
   "editorOpts": {
     "forms": [

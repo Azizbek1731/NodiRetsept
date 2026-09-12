@@ -162,7 +162,8 @@
     "backList": "Ro'yxatga qaytish",
     "views": "Ko'rilishlar soni",
     "rxId": "Retsept ID",
-    "scanMe": "QR ni skanerlang"
+    "scanMe": "QR ni skanerlang",
+    "dripUnit": "tomchi/daqiqa"
   },
   "editor": {
     "newTitle": "Retsept yozish",
@@ -228,7 +229,9 @@
     "dosePlaceholder": "1 tabletkadan",
     "combine": "Yuqoridagi eritmaga qo'shish",
     "combineHint": "Belgilansa, bu dori oldingi eritma bilan bitta Rp. blokida — aralashma (kapelnitsa) sifatida yoziladi",
-    "mixture": "aralashma"
+    "mixture": "aralashma",
+    "dripRate": "Tomchi tezligi",
+    "dripRatePlaceholder": "60"
   },
   "dash": {
     "greeting": "Assalomu alaykum, {name}!",
@@ -555,7 +558,8 @@
     "rxCount": "ta retsept",
     "notFoundInList": "Ro'yxatda topilmadi",
     "createNewCard": "yangi karta yaratish",
-    "mixture": "aralashma"
+    "mixture": "aralashma",
+    "dripUnit": "tomchi/daqiqa"
   },
   "editorOpts": {
     "forms": [

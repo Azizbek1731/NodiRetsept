@@ -261,6 +261,14 @@ Rp.:  Natrii chloridi 0,9% — 200 ml
 ```
 
 Aralashmasiz oddiy dori avvalgidek alohida blok bo'lib qoladi.
+
+**Tomchi tezligi** uchun alohida maydon bor — u faqat infuziya yozilganda ko'rinadi
+(aralashma bazasida yoki yuborish yo'lida «tomchilab» bo'lsa). Qiymat signaturada
+yuborish yo'lidan keyin turadi, o'lchov birligi tilga qarab qo'yiladi
+(`tomchi/daqiqa` · `капель/мин` · `drops/min`).
+
+**Pechat** blankada imzo ustiga qo'yiladi — qog'ozdagi hujjatda ham shunday bosiladi.
+«Imzo» yozuvi chapda qoladi, pechat uni yopmaydi.
 | Fizioterapiya | Muolajalar va seanslar soni |
 | Tavsiyalar | Rejim, parhez, keyingi qabul sanasi |
 | Shifokor | F.I.Sh., mutaxassisligi, telefoni, litsenziya raqami, imzo va pechat |

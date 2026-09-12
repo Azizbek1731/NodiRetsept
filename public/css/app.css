@@ -446,13 +446,20 @@ table.table { width: 100%; border-collapse: collapse; font-size: .89rem; }
 .rx-doctor { display: flex; justify-content: space-between; gap: 24px; align-items: flex-end;
   border-top: 1px solid var(--line); padding-top: 16px; margin-top: 26px; flex-wrap: wrap; }
 .rx-doctor .sign-area { display: flex; gap: 20px; align-items: flex-end; }
-.rx-doctor .sign { text-align: center; min-width: 130px; }
-.rx-doctor .sign img { max-height: 46px; max-width: 130px; object-fit: contain; display: block; margin: 0 auto 4px; }
+.rx-doctor .sign { text-align: left; min-width: 210px; position: relative; padding-top: 26px; }
+.rx-doctor .sign .sign-img { max-height: 46px; max-width: 140px; object-fit: contain; display: block; margin: 0 0 4px; }
 .rx-doctor .sign .line { border-bottom: 1px solid var(--line); height: 1px; margin-bottom: 4px; }
-.rx-doctor .stamp img { max-height: 92px; max-width: 110px; object-fit: contain; }
-.rx-doctor .stamp .placeholder {
-  width: 82px; height: 82px; border: 2px dashed var(--line); border-radius: 50%;
+/* Pechat imzo ustiga bosiladi — qog'ozdagi hujjatdagidek */
+.rx-doctor .stamp-over {
+  position: absolute; left: 50%; bottom: 12px; z-index: 2; pointer-events: none;
+  transform: translateX(-14%) rotate(-7deg);   /* o'ngroqqa — «Imzo» yozuvi ochiq qolsin */
+  max-height: 96px; max-width: 112px; object-fit: contain;
+  opacity: .92; mix-blend-mode: multiply;
+}
+.rx-doctor .stamp-over.stamp-placeholder {
+  width: 84px; height: 84px; border: 2px dashed var(--line); border-radius: 50%;
   display: grid; place-items: center; color: #cbd9de; font-size: .78rem; font-weight: 700;
+  mix-blend-mode: normal; opacity: 1;
 }
 .rx-footer { padding: 14px 28px; border-top: 1px solid var(--line); background: #fbfdfd;
   display: flex; justify-content: space-between; gap: 12px; font-size: .74rem; color: var(--muted); flex-wrap: wrap; }

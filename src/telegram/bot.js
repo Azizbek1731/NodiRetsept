@@ -147,7 +147,7 @@ function summary(rx, t, lang) {
   if (rx.items.length) {
     lines.push('', `<b>${t('bot.sumDrugs')}</b>`);
     rxLib.groupItems(rx.items).forEach((group, i) => {
-      const l = rxLib.rxGroupLines(group);
+      const l = rxLib.rxGroupLines(group, t('rx.dripUnit'));
       // Aralashma (kapelnitsa) bitta blok bo'lib chiqadi
       lines.push(`${i + 1}. <b>${esc(l.components[0])}</b>`);
       l.components.slice(1).forEach((c) => lines.push(`   + <b>${esc(c)}</b>`));

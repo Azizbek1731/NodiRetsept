@@ -100,7 +100,7 @@ async function buildPrescriptionPdf(rx, locale = i18n.DEFAULT_LOCALE) {
       .filter(Boolean).join('\n');
     block(doc, U('rx.recommendations'), text, accent);
   }
-  drawDoctor(doc, rx, { accent, stamp, sign, L, U });
+  drawDoctor(doc, rx, { accent, stamp, sign, showStampPlaceholder: truthy(t.show_stamp), L, U });
   drawFooters(doc, rx, accent, L);
 
   doc.end();
@@ -250,7 +250,7 @@ function drawRx(doc, rx, accent, L) {
 
   const groups = groupItems(rx.items);
   groups.forEach((group, i) => {
-    const l = rxGroupLines(group);
+    const l = rxGroupLines(group, L('rx.dripUnit'));
     ensure(doc, 56);
     const top = doc.y;
     const numW = 22;
@@ -286,7 +286,7 @@ function drawRx(doc, rx, accent, L) {
   doc.fillColor(INK);
 }
 
-function drawDoctor(doc, rx, { accent, stamp, sign, L, U }) {
+function drawDoctor(doc, rx, { accent, stamp, sign, showStampPlaceholder, L, U }) {
   ensure(doc, 130);
   const d = rx.doctor || {};
   // Imzo-muhr bloki blankaning pastki qismida turishi kerak — joy yetsa pastga tushiramiz.
@@ -305,27 +305,33 @@ function drawDoctor(doc, rx, { accent, stamp, sign, L, U }) {
     ly = doc.y;
   }
 
-  // O'ng tomon: imzo va muhr
+  // O'ng tomon: imzo, ustiga pechat — qog'ozdagi hujjatdagidek
   const rx0 = M + leftW + 12;
   const rw = PAGE.w - M - rx0;
-  if (sign) {
-    try { doc.image(sign, rx0, y + 20, { fit: [rw * 0.55, 40], align: 'center' }); } catch { /* — */ }
-  }
-  doc.moveTo(rx0, y + 66).lineTo(rx0 + rw * 0.55, y + 66).lineWidth(0.6).stroke(LINE);
-  doc.font('body').fontSize(7.5).fillColor(MUTED).text(L('rx.signature'), rx0, y + 69, { width: rw * 0.55, align: 'center' });
+  const signW = Math.min(rw - 46, 168);
+  const signCx = rx0 + signW / 2;
 
-  const sx = rx0 + rw * 0.58;
-  const sw = rw - (rw * 0.58);
+  if (sign) {
+    try { doc.image(sign, rx0, y + 26, { fit: [signW * 0.8, 38], align: 'center' }); } catch { /* — */ }
+  }
+  doc.moveTo(rx0, y + 72).lineTo(rx0 + signW, y + 72).lineWidth(0.6).stroke(LINE);
+  // Yozuv chapga surilgan — pechat uni yopib qolmasligi uchun
+  doc.font('body').fontSize(7.5).fillColor(MUTED)
+    .text(L('rx.signature'), rx0 + 4, y + 76, { width: signW, align: 'left' });
+
+  // Pechat eng oxirida chiziladi — shunda imzo va chiziq ustida turadi
+  const stW = 80;
+  const stX = signCx - stW / 2 + 34;   // o'ngroqqa surilgan: «Imzo» yozuvi ochiq qoladi
   if (stamp) {
-    try { doc.image(stamp, sx, y + 12, { fit: [Math.min(sw, 86), 76], align: 'center', valign: 'center' }); }
+    try { doc.image(stamp, stX, y + 6, { fit: [stW, 74], align: 'center', valign: 'center' }); }
     catch { /* — */ }
-  } else {
-    doc.circle(sx + Math.min(sw, 86) / 2, y + 50, 34).lineWidth(0.8).dash(3, { space: 2 }).stroke(LINE);
+  } else if (showStampPlaceholder) {
+    doc.circle(stX + stW / 2, y + 43, 33).lineWidth(0.8).dash(3, { space: 2 }).stroke(LINE);
     doc.undash();
     doc.font('body').fontSize(8).fillColor(LINE)
-      .text(L('rx.stamp'), sx, y + 46, { width: Math.min(sw, 86), align: 'center' });
+      .text(L('rx.stamp'), stX, y + 39, { width: stW, align: 'center' });
   }
-  doc.y = Math.max(ly, y + 88) + 6;
+  doc.y = Math.max(ly, y + 92) + 6;
   doc.fillColor(INK);
 }
 

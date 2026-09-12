@@ -12,7 +12,7 @@ const DIR = path.join(__dirname, '..', 'src', 'i18n');
 
 // Transliteratsiya qilinmaydigan bo'laklar: HTML teglar, {o'rinbosarlar}, texnik atamalar
 const PROTECT = new RegExp([
-  '<code>[\\s\\S]*?</code>', '<[^>]*>', '\\{\\w+\\}', 'https?://\\S+', '/[a-z][\\w/.-]*',
+  '<code>[\\s\\S]*?</code>', '<[^>]*>', '\\{\\w+\\}', 'https?://\\S+', '(?<=^|[\\s(])/[a-z][\\w/.-]*',
   '\\bNR-[A-Z0-9-]+', '\\bD\\.t\\.d\\.', '\\bRp\\.',
   '\\b(?:NodiRetsept|Telegram|INN|PDF|QR|ID|HTML|HTTPS|localhost|PNG|JPG|MB|WHO|Good|Prescribing|Signatura|Rx|Prescription|Chat)\\b',
   'МКБ-10', '\\.env', '\\.db', '[A-Z_]{4,}',

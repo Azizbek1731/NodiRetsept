@@ -241,7 +241,16 @@
         <label><%= t('editor.duration') %></label>
         <input type="text" data-f="duration" list="durList" placeholder="<%= editor.durations[2] || '' %>">
       </div>
-      <div class="field" style="grid-column:span 2">
+      <!-- Tomchi tezligi faqat infuziya (kapelnitsa) yozilganda ko'rinadi -->
+      <div class="field" data-drip-field style="display:none">
+        <label><%= t('editor.dripRate') %></label>
+        <div class="row gap-1">
+          <input type="text" data-f="drip_rate" inputmode="numeric"
+                 placeholder="<%= t('editor.dripRatePlaceholder') %>">
+          <span class="small muted nowrap"><%= t('rx.dripUnit') %></span>
+        </div>
+      </div>
+      <div class="field" data-instr-field style="grid-column:span 2">
         <label><%= t('editor.instructions') %></label>
         <input type="text" data-f="instructions" list="instrList" placeholder="<%= editor.instructions[2] || '' %>">
       </div>

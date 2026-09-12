@@ -77,7 +77,7 @@
         <span class="tiny muted"><%= tr('rx.drugsNote') %></span>
       </div>
       <% if (rx.items && rx.items.length) { %>
-        <% groupItems(rx.items).forEach(function (group, i) { const l = rxGroupLines(group); %>
+        <% groupItems(rx.items).forEach(function (group, i) { const l = rxGroupLines(group, tr('rx.dripUnit')); %>
           <div class="rx-item">
             <div class="n"><%= i + 1 %>.</div>
             <div class="grow">
@@ -118,19 +118,21 @@
         <% if (d.license_number) { %><div class="tiny muted"><%= tr('rx.license') %>: <%= d.license_number %></div><% } %>
       </div>
       <div class="sign-area">
-        <% if (t.show_signature) { %>
+        <% if (t.show_signature || t.show_stamp) { %>
+          <%# Pechat imzo ustiga qo'yiladi — haqiqiy hujjatda ham shunday bosiladi %>
           <div class="sign">
-            <% if (d.signature_path) { %><img src="/<%= d.signature_path %>" alt="Imzo"><% } else { %><div style="height:46px"></div><% } %>
-            <div class="line"></div><div class="tiny muted"><%= tr('rx.signature') %></div>
-          </div>
-        <% } %>
-        <% if (t.show_stamp) { %>
-          <div class="stamp">
-            <% if (d.stamp_path) { %>
-              <img src="/<%= d.stamp_path %>" alt="Shifokor pechati">
-            <% } else { %>
-              <div class="placeholder"><%= tr('rx.stamp') %></div>
+            <% if (t.show_stamp) { %>
+              <% if (d.stamp_path) { %>
+                <img class="stamp-over" src="/<%= d.stamp_path %>" alt="<%= tr('profile.stamp') %>">
+              <% } else { %>
+                <div class="stamp-over stamp-placeholder"><%= tr('rx.stamp') %></div>
+              <% } %>
             <% } %>
+            <% if (t.show_signature && d.signature_path) { %>
+              <img class="sign-img" src="/<%= d.signature_path %>" alt="<%= tr('rx.signature') %>">
+            <% } else { %><div style="height:46px"></div><% } %>
+            <div class="line"></div>
+            <% if (t.show_signature) { %><div class="tiny muted"><%= tr('rx.signature') %></div><% } %>
           </div>
         <% } %>
       </div>

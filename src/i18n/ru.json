@@ -162,7 +162,8 @@
     "backList": "Вернуться к списку",
     "views": "Количество просмотров",
     "rxId": "ID рецепта",
-    "scanMe": "Отсканируйте QR"
+    "scanMe": "Отсканируйте QR",
+    "dripUnit": "капель/мин"
   },
   "editor": {
     "newTitle": "Выписать рецепт",
@@ -228,7 +229,9 @@
     "dosePlaceholder": "по 1 таблетке",
     "combine": "Добавить в раствор выше",
     "combineHint": "Если отмечено, препарат войдёт в один блок Rp. с раствором выше — как смесь (капельница)",
-    "mixture": "смесь"
+    "mixture": "смесь",
+    "dripRate": "Скорость капель",
+    "dripRatePlaceholder": "60"
   },
   "dash": {
     "greeting": "Здравствуйте, {name}!",
@@ -555,7 +558,8 @@
     "rxCount": "рецептов",
     "notFoundInList": "не найден в списке",
     "createNewCard": "создать новую карту",
-    "mixture": "смесь"
+    "mixture": "смесь",
+    "dripUnit": "капель/мин"
   },
   "editorOpts": {
     "forms": [

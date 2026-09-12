@@ -195,6 +195,7 @@
     }
     bindDrugRow(node);
     renumber();
+    updateDripFields();
     updatePreview(node);
     return node;
   }
@@ -215,7 +216,7 @@
       const combined = i > 0 && cb && cb.checked;
       row.classList.toggle('combined', combined);
       // Aralashmaga qo'shilgan dorida bu maydonlar ishlatilmaydi — ular eritmadan olinadi
-      ['form', 'quantity', 'dose', 'route', 'frequency', 'duration', 'instructions'].forEach((f) => {
+      ['form', 'quantity', 'dose', 'route', 'frequency', 'duration', 'instructions', 'drip_rate'].forEach((f) => {
         const inp = $(`[data-f="${f}"]`, row);
         const field = inp && inp.closest('.field');
         if (field) field.style.display = combined ? 'none' : '';
@@ -227,9 +228,13 @@
   }
 
   function bindDrugRow(row) {
-    $('[data-drug-remove]', row).addEventListener('click', () => { row.remove(); renumber(); refreshPreviews(); });
+    $('[data-drug-remove]', row).addEventListener('click', () => {
+      row.remove(); renumber(); updateDripFields(); refreshPreviews();
+    });
     const cb = $('[data-combine]', row);
-    if (cb) cb.addEventListener('change', () => { renumber(); refreshPreviews(); });
+    if (cb) cb.addEventListener('change', () => { renumber(); updateDripFields(); refreshPreviews(); });
+    const routeInp = $('[data-f="route"]', row);
+    if (routeInp) routeInp.addEventListener('input', () => { updateDripFields(); refreshPreviews(); });
     $$('[data-f]', row).forEach((inp) => inp.addEventListener('input', () => updatePreview(row)));
 
     // Dori nomi bo'yicha avtomatik to'ldirish
@@ -286,7 +291,8 @@
       return;
     }
     const dtd = [d.quantity ? 'D.t.d. N. ' + d.quantity : '', d.form ? 'in ' + d.form : ''].filter(Boolean).join(' ');
-    const sig = [d.dose, d.route, d.frequency, d.duration, d.instructions].filter(Boolean).join(', ');
+    const drip = d.drip_rate ? `${d.drip_rate} ${T('dripUnit')}` : '';
+    const sig = [d.dose, d.route, drip, d.frequency, d.duration, d.instructions].filter(Boolean).join(', ');
     const next = row.nextElementSibling;
     const mixed = next && next.classList.contains('combined');
     box.innerHTML =
@@ -297,6 +303,22 @@
 
   /** Belgi o'zgarganda barcha qatorlarning ko'rinishini yangilaymiz */
   function refreshPreviews() { $$('[data-drug-row]', drugList).forEach(updatePreview); }
+
+  /** Tomchi tezligi maydoni faqat infuziyada kerak: aralashma bazasi yoki tomchilab yuborish */
+  const DRIP_ROUTE = /tomchila|капельн|infusion|drip|инфуз/i;
+  function updateDripFields() {
+    $$('[data-drug-row]', drugList).forEach((row) => {
+      const next = row.nextElementSibling;
+      const isMixBase = !row.classList.contains('combined') && next && next.classList.contains('combined');
+      const routeVal = ($('[data-f="route"]', row) || {}).value || '';
+      const show = !row.classList.contains('combined') && (isMixBase || DRIP_ROUTE.test(routeVal));
+      const field = $('[data-drip-field]', row);
+      const instr = $('[data-instr-field]', row);
+      if (field) field.style.display = show ? '' : 'none';
+      if (instr) instr.style.cssText = show ? '' : 'grid-column:span 2';
+      if (!show) { const inp = $('[data-f="drip_rate"]', row); if (inp) inp.value = ''; }
+    });
+  }
 
   /* ══ Tahrirlash uchun yuklash ══ */
   async function loadForEdit(id) {
